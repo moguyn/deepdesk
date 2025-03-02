@@ -17,9 +17,9 @@ public class CoreSettings {
 
     @NestedConfigurationProperty
     private String protocol;
-    
+
     @NestedConfigurationProperty
-    private IO io;
+    private UI ui;
 
     public List<Capabilities> getCapabilities() {
         return capabilities;
@@ -36,16 +36,17 @@ public class CoreSettings {
     public void setProtocol(String protocol) {
         this.protocol = protocol;
     }
-    
-    public IO getIo() {
-        return io;
+
+    public UI getUi() {
+        return ui;
     }
 
-    public void setIo(IO io) {
-        this.io = io;
+    public void setUi(UI ui) {
+        this.ui = ui;
     }
 
     public static class Capabilities {
+
         private String type;
         private Map<String, Object> config;
 
@@ -65,19 +66,20 @@ public class CoreSettings {
             this.config = config;
         }
     }
-    
+
     /**
      * Represents IO settings configuration
      */
-    public static class IO {
+    public static class UI {
+
         private String type;
-        
+
         public String getType() {
             return type;
         }
-        
+
         public void setType(String type) {
             this.type = type;
         }
     }
-} 
+}

@@ -6,6 +6,8 @@ spring:
   ai:
     openai:
       api-key: ${OPENAI_API_KEY}
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY}
 
 core:
   capabilities:
@@ -13,7 +15,8 @@ core:
       config:
         paths:
           - ${user.home}/git/deepdesk/
-          - target/
+          - ./target/
+    - type: search
 
-  io:
-    type: console
+  ui:
+    type: cli
