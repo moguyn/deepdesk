@@ -4,12 +4,10 @@ import java.util.List;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * Configuration properties for core settings in application.yaml
  */
-@Configuration
 @ConfigurationProperties(prefix = "core")
 public class CoreSettings {
 
@@ -18,6 +16,9 @@ public class CoreSettings {
 
     @NestedConfigurationProperty
     private String protocol;
+    
+    @NestedConfigurationProperty
+    private IO io;
 
     public List<Capability> getCapabilities() {
         return capabilities;
@@ -34,15 +35,30 @@ public class CoreSettings {
     public void setProtocol(String protocol) {
         this.protocol = protocol;
     }
+    
+    public IO getIo() {
+        return io;
+    }
+
+    public void setIo(IO io) {
+        this.io = io;
+    }
+
+    /**
+     * Enum representing the type of capability
+     */
+    public enum CapabilityType {
+        FILES
+    }
 
     /**
      * Represents a capability configuration
      */
     public static class Capability {
-        private String name;
+        private CapabilityType name;
         private List<String> paths;
 
-        public String getName() {
+        public CapabilityType getName() {
             return name;
         }
 
@@ -50,14 +66,27 @@ public class CoreSettings {
             return paths;
         }
 
-        public void setName(String name) {
+        public void setName(CapabilityType name) {
             this.name = name;
         }
 
         public void setPaths(List<String> paths) {
             this.paths = paths;
         }
-
     }
-
+    
+    /**
+     * Represents IO settings configuration
+     */
+    public static class IO {
+        private String type;
+        
+        public String getType() {
+            return type;
+        }
+        
+        public void setType(String type) {
+            this.type = type;
+        }
+    }
 } 

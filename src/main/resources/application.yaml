@@ -9,7 +9,7 @@ spring:
 
 core:
   capabilities:
-    - name: files
+    - name: FILES
       paths:
         - ${user.home}/git/deepdesk/
         - target/

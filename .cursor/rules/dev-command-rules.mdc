@@ -1,0 +1,10 @@
+---
+description: Useful command during development phase
+globs: 
+alwaysApply: false
+---
+
+# Use the following commands for executing code or testing
+
+- `./mvnw spring-boot:run` to run the application
+- currently we haven't created any test
