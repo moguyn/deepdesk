@@ -110,7 +110,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public McpManager mcpFactory() {
+    public McpManager mcpManager() {
         return new McpManager();
     }
 
