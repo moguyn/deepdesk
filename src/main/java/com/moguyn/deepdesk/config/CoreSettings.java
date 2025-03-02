@@ -1,6 +1,7 @@
 package com.moguyn.deepdesk.config;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -12,7 +13,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public class CoreSettings {
 
     @NestedConfigurationProperty
-    private List<Capability> capabilities;
+    private List<Capabilities> capabilities;
 
     @NestedConfigurationProperty
     private String protocol;
@@ -20,11 +21,11 @@ public class CoreSettings {
     @NestedConfigurationProperty
     private IO io;
 
-    public List<Capability> getCapabilities() {
+    public List<Capabilities> getCapabilities() {
         return capabilities;
     }
 
-    public void setCapabilities(List<Capability> capabilities) {
+    public void setCapabilities(List<Capabilities> capabilities) {
         this.capabilities = capabilities;
     }
 
@@ -44,34 +45,24 @@ public class CoreSettings {
         this.io = io;
     }
 
-    /**
-     * Enum representing the type of capability
-     */
-    public enum CapabilityType {
-        FILES
-    }
+    public static class Capabilities {
+        private String type;
+        private Map<String, Object> config;
 
-    /**
-     * Represents a capability configuration
-     */
-    public static class Capability {
-        private CapabilityType name;
-        private List<String> paths;
-
-        public CapabilityType getName() {
-            return name;
+        public String getType() {
+            return type;
         }
 
-        public List<String> getPaths() {
-            return paths;
+        public void setType(String type) {
+            this.type = type;
         }
 
-        public void setName(CapabilityType name) {
-            this.name = name;
+        public Map<String, Object> getConfig() {
+            return config;
         }
 
-        public void setPaths(List<String> paths) {
-            this.paths = paths;
+        public void setConfig(Map<String, Object> config) {
+            this.config = config;
         }
     }
     

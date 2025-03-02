@@ -9,10 +9,11 @@ spring:
 
 core:
   capabilities:
-    - name: FILES
-      paths:
-        - ${user.home}/git/deepdesk/
-        - target/
+    - type: files
+      config:
+        paths:
+          - ${user.home}/git/deepdesk/
+          - target/
 
   io:
     type: console
