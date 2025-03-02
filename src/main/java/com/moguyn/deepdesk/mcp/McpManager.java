@@ -3,11 +3,14 @@ package com.moguyn.deepdesk.mcp;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.mcp.SyncMcpToolCallback;
+
+import com.moguyn.deepdesk.config.CoreSettings;
 
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
@@ -65,5 +68,39 @@ public class McpManager {
         log.info("Search MCP Initialized: {}", init);
 
         return mcpClient;
+    }
+
+    public interface McpCallback {
+
+        void onMcpClient(McpSyncClient mcpClient);
+    }
+
+    public Collection<SyncMcpToolCallback> collectTools(CoreSettings.Capabilities capability, McpCallback callback) {
+        switch (capability.getType()) {
+            case "files" -> {
+                @SuppressWarnings("unchecked")
+                var paths = (LinkedHashMap<String, String>) capability.getConfig().get("paths");
+                var mcpClient = createFilesystemMCP(paths.values());
+                callback.onMcpClient(mcpClient);
+                return mcpClient.listTools(null)
+                        .tools()
+                        .stream()
+                        .map(tool -> new SyncMcpToolCallback(mcpClient, tool))
+                        .toList();
+            }
+            case "search" -> {
+                var mcpClient = createSearchMCP();
+                callback.onMcpClient(mcpClient);
+                return mcpClient.listTools(null)
+                        .tools()
+                        .stream()
+                        .map(tool -> new SyncMcpToolCallback(mcpClient, tool))
+                        .toList();
+            }
+            default -> {
+                log.warn("Unknown capability type: {}", capability.getType());
+                return List.<SyncMcpToolCallback>of();
+            }
+        }
     }
 }

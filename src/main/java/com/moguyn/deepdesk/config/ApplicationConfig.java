@@ -3,8 +3,6 @@ package com.moguyn.deepdesk.config;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -103,7 +101,7 @@ public class ApplicationConfig {
         var tools = new ArrayList<SyncMcpToolCallback>();
 
         for (CoreSettings.Capabilities capability : core.getCapabilities()) {
-            tools.addAll(getTools(capability, mcpManager));
+            tools.addAll(mcpManager.collectTools(capability, c -> mcpClients.add(c)));
         }
 
         return tools.toArray(SyncMcpToolCallback[]::new);
@@ -114,32 +112,4 @@ public class ApplicationConfig {
         return new McpManager();
     }
 
-    private Collection<SyncMcpToolCallback> getTools(CoreSettings.Capabilities capability, McpManager mcpManager) {
-        switch (capability.getType()) {
-            case "files" -> {
-                @SuppressWarnings("unchecked")
-                var paths = (LinkedHashMap<String, String>) capability.getConfig().get("paths");
-                var mcpClient = mcpManager.createFilesystemMCP(paths.values());
-                mcpClients.add(mcpClient); // Track the client for cleanup
-                return mcpClient.listTools(null)
-                        .tools()
-                        .stream()
-                        .map(tool -> new SyncMcpToolCallback(mcpClient, tool))
-                        .toList();
-            }
-            case "search" -> {
-                var mcpClient = mcpManager.createSearchMCP();
-                mcpClients.add(mcpClient);
-                return mcpClient.listTools(null)
-                        .tools()
-                        .stream()
-                        .map(tool -> new SyncMcpToolCallback(mcpClient, tool))
-                        .toList();
-            }
-            default -> {
-                log.warn("Unknown capability type: {}", capability.getType());
-                return List.<SyncMcpToolCallback>of();
-            }
-        }
-    }
 }
