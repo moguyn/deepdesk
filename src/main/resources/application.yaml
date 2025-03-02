@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: deepdesk
+  main:
+    web-application-type: none
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+
+core:
+  capabilities:
+    - name: files
+      paths:
+        - ${user.home}/git/deepdesk/
+        - target/
+
+  io:
+    type: console

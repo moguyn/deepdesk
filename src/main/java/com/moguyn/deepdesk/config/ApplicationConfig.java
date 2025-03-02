@@ -1,5 +1,6 @@
-package org.springframework.ai.mcp.samples.filesystem;
+package com.moguyn.deepdesk.config;
 
+import java.io.Console;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.List;
@@ -11,40 +12,35 @@ import org.springframework.ai.mcp.client.transport.ServerParameters;
 import org.springframework.ai.mcp.client.transport.StdioClientTransport;
 import org.springframework.ai.mcp.spring.McpFunctionCallback;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@SpringBootApplication
-public class Application {
-
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-	}
-
-	@Bean
+/**
+ * Application configuration to enable property binding
+ */
+@Configuration
+@EnableConfigurationProperties(CoreSettings.class)
+public class ApplicationConfig {
+    // Additional beans can be defined here if needed
+    @Bean
 	public CommandLineRunner predefinedQuestions(ChatClient.Builder chatClientBuilder,
-			List<McpFunctionCallback> functionCallbacks, ConfigurableApplicationContext context) {
+			List<McpFunctionCallback> functionCallbacks, 
+			ConfigurableApplicationContext context) {
+				Console console = System.console();
 
-		return args -> {
+		return _ -> {
                     try (context) {
                         var chatClient = chatClientBuilder
                                 .defaultFunctions(functionCallbacks.toArray(McpFunctionCallback[]::new))
                                 .build();
                         
-                        System.out.println("Running predefined questions with AI model responses:\n");
+                        console.printf("Running predefined questions with AI model responses:\n");
                         
-                        // Question 1
-                        String question1 = "Can you explain the content of the spring-ai-mcp-overview.txt file?";
-                        System.out.println("QUESTION: " + question1);
-                        System.out.println("ASSISTANT: " + chatClient.prompt(question1).call().content());
-                        
-                        // Question 2
                         String question2 = "Pleses summarize the content of the spring-ai-mcp-overview.txt file and store it a new summary.md as Markdown format?";
-                        System.out.println("\nQUESTION: " + question2);
-                        System.out.println("ASSISTANT: " +
-                                chatClient.prompt(question2).call().content());
+                        console.printf("\nQUESTION: " + question2);
+                        console.printf("ASSISTANT: " + chatClient.prompt(question2).call().content());
                     }
 
 		};
@@ -84,5 +80,4 @@ public class Application {
 	private static String getDbPath() {
 		return Paths.get(System.getProperty("user.dir"), "target").toString();
 	}
-
-}
+} 
