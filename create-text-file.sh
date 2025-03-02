@@ -4,33 +4,19 @@
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # Define the file path in the script's directory
-FILE_PATH="$SCRIPT_DIR/target/spring-ai-mcp-overview.txt"
+FILE_PATH="$SCRIPT_DIR/target/deepdesk.txt"
 
 echo "Creating a text file in $FILE_PATH..."
 
 # Create the file
 cat << 'EOF' > "$FILE_PATH"
 
-Model Context Protocol (MCP) Java SDK
+Deepdesk is a platform for creating and managing AI agents for enterprise use cases.
+It provides a chat interface to interact with the AI agents and enterprise private data sources.
+It allows companies to create custom AI agents for their use cases without the heavy lifting of integrating with multiple data sources.
+It avoids "lock-in" by using industry standard MCP protocol for agent communication and the ability to connect to any LLM or model through adapters.
+For instance, by using a local open source LLM hosted in the company's VPC, the business data will never leave the company's infrastructure.
 
-A Java implementation of the Model Context Protocol specification, providing both synchronous and 
-asynchronous clients for MCP server interactions.
-
-Overview: This SDK implements the Model Context Protocol, enabling seamless integration with AI models and tools through 
-a standardized interface. It supports both synchronous and asynchronous communication patterns, making it suitable for 
-various use cases and integration scenarios.
-
-Features
-
- Synchronous and Asynchronous client implementations
- Standard MCP operations support:
-	 Tool discovery and execution
-	 Resource management and templates
-	 Prompt handling and management
-	 Resource subscription system
-	 Server initialization and ping
- Stdio-based server transport
- Reactive programming support using Project Reactor
 
 EOF
 

@@ -1,13 +1,16 @@
 package com.moguyn.deepdesk.config;
 
-import java.io.Console;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Scanner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.memory.InMemoryChatMemory;
 import org.springframework.ai.mcp.client.McpSyncClient;
 import org.springframework.ai.mcp.spring.McpFunctionCallback;
 import org.springframework.boot.CommandLineRunner;
@@ -33,22 +36,33 @@ public class ApplicationConfig {
 
     // Additional beans can be defined here if needed
     @Bean
-    public CommandLineRunner cli(ChatClient.Builder chatClientBuilder,
+    public CommandLineRunner cli(
+            ChatClient.Builder chatClientBuilder,
             List<McpFunctionCallback> capabilities,
             ConfigurableApplicationContext context) {
 
         return _ -> {
             try (context) {
-                Console console = System.console();
+                PrintStream console = System.out;
                 var chatClient = chatClientBuilder
                         .defaultFunctions(capabilities.toArray(McpFunctionCallback[]::new))
+                        .defaultAdvisors(new MessageChatMemoryAdvisor(new InMemoryChatMemory()))
                         .build();
 
-                console.printf("Running predefined questions with AI model responses:\n");
-
-                String question2 = "Pleses summarize the content of the spring-ai-mcp-overview.txt file and store it a new summary.md as Markdown format?";
-                console.printf("\nQUESTION: " + question2);
-                console.printf("ASSISTANT: " + chatClient.prompt(question2).call().content());
+                System.out.println("\nI am your AI assistant.\n");
+                try (Scanner scanner = new Scanner(System.in)) {
+                    while (true) {
+                        console.print("\nUSER: ");
+                        String prompt = scanner.nextLine();
+                        if (prompt.equals("exit") || prompt.equals("bye")) {
+                            break;
+                        }
+                        console.println("\nASSISTANT: "
+                                + chatClient.prompt(prompt) // Get the user input
+                                        .call()
+                                        .content());
+                    }
+                }
             }
         };
     }
@@ -67,7 +81,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public List<McpFunctionCallback> functionCallbacks(CoreSettings core) {
+    public List<McpFunctionCallback> capabilities(CoreSettings core) {
         List<McpFunctionCallback> allCallbacks = new ArrayList<>();
 
         for (CoreSettings.Capabilities capability : core.getCapabilities()) {
