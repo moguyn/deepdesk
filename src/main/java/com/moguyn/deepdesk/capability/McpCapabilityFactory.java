@@ -29,8 +29,8 @@ public class McpCapabilityFactory implements CapabililtyFactory {
                 ((LinkedHashMap<String, String>) capabilitySettings.getConfig().get("paths")).values());
             case "search" ->
                 createSearch();
-            case "everything" ->
-                createEverything();
+            case "dummy" ->
+                createDummy();
             default ->
                 throw new IllegalArgumentException("Unknown capability type: " + capabilitySettings.getType());
         };
@@ -62,7 +62,7 @@ public class McpCapabilityFactory implements CapabililtyFactory {
         return createAndInitializeClient(params);
     }
 
-    private McpSyncClient createEverything() {
+    private McpSyncClient createDummy() {
         // https://github.com/modelcontextprotocol/servers/tree/main/src/everything
         var params = ServerParameters.builder(NPX)
                 .args("-y", "@modelcontextprotocol/server-everything")
