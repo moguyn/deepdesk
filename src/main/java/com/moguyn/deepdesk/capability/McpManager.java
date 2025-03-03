@@ -36,9 +36,13 @@ public class McpManager implements ToolManager {
     }
 
     private Collection<SyncMcpToolCallback> collectTools(CoreSettings.CapabilitySettings capability) {
-        var mcpClient = capabilityFactory.createCapability(capability);
+        var mcpClient = getCapabilityFactory().createCapability(capability);
         mcpClients.add(mcpClient);
         return listTools(mcpClient);
+    }
+
+    protected McpCapabilityFactory getCapabilityFactory() {
+        return capabilityFactory;
     }
 
     private Collection<SyncMcpToolCallback> listTools(McpSyncClient mcpClient) {
