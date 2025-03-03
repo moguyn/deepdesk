@@ -1,4 +1,4 @@
-package com.moguyn.deepdesk.mcp;
+package com.moguyn.deepdesk.capability;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
-import com.moguyn.deepdesk.capability.McpCapabilityFactory;
 import com.moguyn.deepdesk.config.CoreSettings;
 
 import io.modelcontextprotocol.client.McpSyncClient;
