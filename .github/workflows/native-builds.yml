@@ -3,15 +3,21 @@ name: Native Executables Build
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches:
+      - main
     paths-ignore:
       - '**.md'
       - '.gitignore'
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
     paths-ignore:
       - '**.md'
       - '.gitignore'
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   build:
