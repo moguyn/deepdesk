@@ -40,5 +40,5 @@ jobs:
   release-native-executables:
     needs: release-code
     name: Release Native Executables
-    if: github.ref_name == 'main'
+    if: ${{ needs.release-code.outputs.release_created }}
     uses: ./.github/workflows/release-native-builds.yml
