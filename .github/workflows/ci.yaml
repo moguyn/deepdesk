@@ -15,10 +15,10 @@ on:
     paths-ignore:
       - '**/*.md'
 
-  permissions:
-  contents: write
-  pull-requests: write
-  checks: write
+permissions:
+contents: write
+pull-requests: write
+checks: write
 
 jobs:
   build:
