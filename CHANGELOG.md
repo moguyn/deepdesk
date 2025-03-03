@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.5](https://github.com/moguyn/deepdesk/compare/v1.1.4...v1.1.5) (2025-03-03)
+
+
+### Bug Fixes
+
+* GH token ([#34](https://github.com/moguyn/deepdesk/issues/34)) ([e764817](https://github.com/moguyn/deepdesk/commit/e764817ff040dd4141046f26487d8163a77d8259))
+
 ## [1.1.4](https://github.com/moguyn/deepdesk/compare/v1.1.3...v1.1.4) (2025-03-03)
 
 
