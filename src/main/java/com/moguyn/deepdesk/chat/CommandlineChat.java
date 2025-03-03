@@ -1,4 +1,4 @@
-package com.moguyn.deepdesk.mcp;
+package com.moguyn.deepdesk.chat;
 
 import java.io.PrintStream;
 import java.util.Scanner;
@@ -6,6 +6,8 @@ import java.util.Scanner;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.InMemoryChatMemory;
+
+import com.moguyn.deepdesk.mcp.ToolManager;
 
 public class CommandlineChat implements ChatManager {
 

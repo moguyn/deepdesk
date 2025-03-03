@@ -8,8 +8,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.moguyn.deepdesk.mcp.ChatManager;
-import com.moguyn.deepdesk.mcp.CommandlineChat;
+import com.moguyn.deepdesk.chat.ChatManager;
+import com.moguyn.deepdesk.chat.CommandlineChat;
 import com.moguyn.deepdesk.mcp.DependencyValidator;
 import com.moguyn.deepdesk.mcp.McpDependencyValidator;
 import com.moguyn.deepdesk.mcp.McpManager;
@@ -49,7 +49,7 @@ public class ApplicationConfig {
 
     @Bean
     public DependencyValidator dependencyValidator() {
-        return new McpDependencyValidator();
+        return new McpDependencyValidator("npx");
     }
 
 }

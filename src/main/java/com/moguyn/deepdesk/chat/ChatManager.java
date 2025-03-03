@@ -1,4 +1,4 @@
-package com.moguyn.deepdesk.mcp;
+package com.moguyn.deepdesk.chat;
 
 public interface ChatManager {
 
