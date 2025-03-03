@@ -96,7 +96,7 @@ class McpCapabilityFactoryTest {
         McpCapabilityFactory factory = new McpCapabilityFactory();
 
         CoreSettings.CapabilitySettings settings = new CoreSettings.CapabilitySettings();
-        settings.setType("everything");
+        settings.setType("dummy");
 
         // When
         try (McpSyncClient capability = factory.createCapability(settings)) {
