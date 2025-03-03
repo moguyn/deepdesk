@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/moguyn/deepdesk/compare/v1.1.1...v1.1.2) (2025-03-03)
+
+
+### Bug Fixes
+
+* release workflow with native builds ([#25](https://github.com/moguyn/deepdesk/issues/25)) ([26db053](https://github.com/moguyn/deepdesk/commit/26db0537a99ac8ea6bc0fb152a5633c11883c971))
+
 ## [1.1.1](https://github.com/moguyn/deepdesk/compare/v1.1.0...v1.1.1) (2025-03-03)
 
 
