@@ -73,7 +73,7 @@ jobs:
           path: ${{ matrix.output_name }}
           retention-days: 7
 
-  create-release:
+  create-update-release:
     name: Create Release with All Executables
     needs: build
     runs-on: ubuntu-latest
@@ -87,16 +87,14 @@ jobs:
         run: ls -R
         
       - name: Create/Update Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          name: v${{ github.ref_name }}
-          tag_name: v${{ github.ref_name }}
-          draft: false
-          prerelease: false
           files: |
             ./deepdesk-linux/deepdesk-linux
             ./deepdesk-macos/deepdesk-macos
             ./deepdesk-windows.exe/deepdesk-windows.exe
             ./target/deepdesk-*.jar
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }} 
+            ./CHANGELOG.md
+            ./LICENSE
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }} 

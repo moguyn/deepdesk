@@ -20,6 +20,7 @@ core:
           - ${user.home}/git/deepdesk/
           - ./target/
     - type: search
+    - type: fetch
 
   ui:
     type: cli

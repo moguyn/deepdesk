@@ -19,6 +19,7 @@ public class McpCapabilityFactory implements CapabililtyFactory {
 
     private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(10);
     private static final String NPX = "npx";
+    private static final String UVX = "uvx";
 
     @Override
     @SuppressWarnings("unchecked")
@@ -31,6 +32,8 @@ public class McpCapabilityFactory implements CapabililtyFactory {
                 createSearch();
             case "dummy" ->
                 createDummy();
+            case "fetch" ->
+                createFetch();
             default ->
                 throw new IllegalArgumentException("Unknown capability type: " + capabilitySettings.getType());
         };
@@ -50,7 +53,7 @@ public class McpCapabilityFactory implements CapabililtyFactory {
                 .args(args.toArray(String[]::new))
                 .build();
 
-        return createAndInitializeClient(stdioParams);
+        return createAndInitialize(stdioParams);
     }
 
     private McpSyncClient createSearch() {
@@ -59,7 +62,7 @@ public class McpCapabilityFactory implements CapabililtyFactory {
                 .args("-y", "@modelcontextprotocol/server-brave-search")
                 .build();
 
-        return createAndInitializeClient(params);
+        return createAndInitialize(params);
     }
 
     private McpSyncClient createDummy() {
@@ -68,10 +71,19 @@ public class McpCapabilityFactory implements CapabililtyFactory {
                 .args("-y", "@modelcontextprotocol/server-everything")
                 .build();
 
-        return createAndInitializeClient(params);
+        return createAndInitialize(params);
     }
 
-    private McpSyncClient createAndInitializeClient(ServerParameters params) {
+    private McpSyncClient createFetch() {
+        // https://github.com/modelcontextprotocol/servers/tree/main/src/fetch
+        var params = ServerParameters.builder(UVX)
+                .args("mcp-server-fetch")
+                .build();
+
+        return createAndInitialize(params);
+    }
+
+    private McpSyncClient createAndInitialize(ServerParameters params) {
         var mcpClient = McpClient.sync(new StdioClientTransport(params))
                 .requestTimeout(REQUEST_TIMEOUT).build();
 

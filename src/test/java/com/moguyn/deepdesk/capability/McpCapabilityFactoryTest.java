@@ -91,7 +91,7 @@ class McpCapabilityFactoryTest {
     }
 
     @Test
-    void createCapability_shouldCreateEverythingCapability() {
+    void createCapability_shouldCreateDummyCapability() {
         // Given
         McpCapabilityFactory factory = new McpCapabilityFactory();
 
@@ -104,4 +104,35 @@ class McpCapabilityFactoryTest {
             assertNotNull(capability);
         }
     }
+
+    @Test
+    void createCapability_shouldCreateSearchCapability() {
+        // Given
+        McpCapabilityFactory factory = new McpCapabilityFactory();
+
+        CoreSettings.CapabilitySettings settings = new CoreSettings.CapabilitySettings();
+        settings.setType("search");
+
+        // When
+        try (McpSyncClient capability = factory.createCapability(settings)) {
+            // Then
+            assertNotNull(capability);
+        }
+    }
+
+    @Test
+    void createCapability_shouldCreateFetchCapability() {
+        // Given
+        McpCapabilityFactory factory = new McpCapabilityFactory();
+
+        CoreSettings.CapabilitySettings settings = new CoreSettings.CapabilitySettings();
+        settings.setType("fetch");
+
+        // When
+        try (McpSyncClient capability = factory.createCapability(settings)) {
+            // Then
+            assertNotNull(capability);
+        }
+    }
+
 }

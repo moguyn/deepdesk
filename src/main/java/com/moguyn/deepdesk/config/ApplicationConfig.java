@@ -54,7 +54,7 @@ public class ApplicationConfig {
 
     @Bean
     public DependencyValidator dependencyValidator() {
-        return new McpDependencyValidator("npx");
+        return new McpDependencyValidator("npx", "uvx");
     }
 
     @Bean

@@ -31,10 +31,10 @@ public class CommandlineChatRunner implements ChatRunner {
                 if ("exit".equalsIgnoreCase(prompt) || "bye".equalsIgnoreCase(prompt)) {
                     break;
                 }
-                console.print("AI: ");
-                console.println(chatClient.prompt(prompt)
+                var reply = chatClient.prompt(prompt)
                         .call()
-                        .content());
+                        .content();
+                console.println("AI: " + reply);
             }
         } catch (Exception e) {
             log.error("Error running chat", e);
