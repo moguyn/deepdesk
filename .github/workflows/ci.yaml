@@ -8,12 +8,14 @@ on:
     branches: 
       - "main"
     paths-ignore:
-      - '**/*.md'
+      - '**.md'
+      - '.gitignore'
   pull_request:
     branches: 
       - "main"
     paths-ignore:
-      - '**/*.md'
+      - '**.md'
+      - '.gitignore'
 
 permissions:
   contents: write
