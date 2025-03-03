@@ -36,6 +36,14 @@ jobs:
         java-version: '23'
         distribution: 'temurin'
         cache: maven
+
+    - name: Install uvx
+      uses: astral-sh/setup-uv@v5
+
+    - name: Install npx
+      uses: actions/setup-node@v4
+      with:
+        node-version: 23
     
     - name: Cache Maven Wrapper
       uses: actions/cache@v3
