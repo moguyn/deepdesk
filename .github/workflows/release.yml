@@ -25,26 +25,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
 
-  release:
+  release-code:
     runs-on: ubuntu-latest
     if: github.ref_name == 'main'
+    name: Release Code
     steps:
-      - name: Release
+      - name: Release Please
         uses: googleapis/release-please-action@v4
         id: release
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           release-type: maven
 
-      - name: Build Native Executables
-        if: ${{ steps.release.outputs.release_created }}
-        uses: ./.github/workflows/native-builds.yml
-
-      - name: Upload Release Artifact
-        if: ${{ steps.release.outputs.release_created }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
-        run: |
-          gh release upload ${{ steps.release.outputs.tag_name }} ./target/deepdesk-*
-          gh release upload ${{ steps.release.outputs.tag_name }} ./CHANGELOG.md
-          gh release upload ${{ steps.release.outputs.tag_name }} ./LICENSE
+  release-native-executables:
+    needs: release-code
+    name: Release Native Executables
+    if: github.ref_name == 'main'
+    uses: ./.github/workflows/release-native-builds.yml
