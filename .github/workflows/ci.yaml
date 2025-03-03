@@ -60,7 +60,7 @@ jobs:
           ${{ runner.os }}-target-
     
     - name: Lint with Maven
-      run: ./mvnw checkstyle:checkstyle -Dcheckstyle.config.location=checkstyle.xml
+      run: ./mvnw checkstyle:checkstyle
 
     - name: Upload Checkstyle results
       uses: actions/upload-artifact@v4
