@@ -11,14 +11,14 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.moguyn.deepdesk.capability.CapabililtyFactory;
+import com.moguyn.deepdesk.capability.DependencyValidator;
+import com.moguyn.deepdesk.capability.McpCapabilityFactory;
+import com.moguyn.deepdesk.capability.McpDependencyValidator;
+import com.moguyn.deepdesk.capability.McpManager;
+import com.moguyn.deepdesk.capability.ToolManager;
 import com.moguyn.deepdesk.chat.ChatRunner;
 import com.moguyn.deepdesk.chat.CommandlineChatRunner;
-import com.moguyn.deepdesk.mcp.CapabililtyFactory;
-import com.moguyn.deepdesk.mcp.DependencyValidator;
-import com.moguyn.deepdesk.mcp.McpCapabilityFactory;
-import com.moguyn.deepdesk.mcp.McpDependencyValidator;
-import com.moguyn.deepdesk.mcp.McpManager;
-import com.moguyn.deepdesk.mcp.ToolManager;
 
 import lombok.extern.slf4j.Slf4j;
 

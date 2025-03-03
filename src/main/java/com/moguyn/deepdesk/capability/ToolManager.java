@@ -1,4 +1,4 @@
-package com.moguyn.deepdesk.mcp;
+package com.moguyn.deepdesk.capability;
 
 import org.springframework.ai.mcp.SyncMcpToolCallback;
 

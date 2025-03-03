@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
+import com.moguyn.deepdesk.capability.McpDependencyValidator;
+
 /**
  * Tests for {@link McpDependencyValidator}
  */

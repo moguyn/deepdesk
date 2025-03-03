@@ -1,4 +1,4 @@
-package com.moguyn.deepdesk.mcp;
+package com.moguyn.deepdesk.capability;
 
 /**
  * Interface for validating system dependencies required by the application.

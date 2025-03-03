@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 import org.springframework.ai.chat.client.ChatClient;
 
-import com.moguyn.deepdesk.mcp.ToolManager;
+import com.moguyn.deepdesk.capability.ToolManager;
 
 public class CommandlineChatRunner implements ChatRunner {
 
