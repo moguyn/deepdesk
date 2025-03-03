@@ -43,10 +43,7 @@ chmod +x build-native.sh
 build-native.bat
 ```
 
-The resulting native executable will be created in the current directory with a platform-specific name:
-- Linux: `deepdesk-linux`
-- macOS: `deepdesk-macos`
-- Windows: `deepdesk-windows.exe`
+The resulting native executable will be created in the `target` directory the name: `deepdesk`
 
 ### Automated Multi-Platform Builds
 
