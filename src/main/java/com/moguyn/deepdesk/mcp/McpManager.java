@@ -17,11 +17,30 @@ import io.modelcontextprotocol.client.transport.StdioClientTransport;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class McpManager {
+public class McpManager implements ToolManager {
+
+    private final CoreSettings core;
+    private final List<McpSyncClient> mcpClients = new ArrayList<>();
 
     private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(10);
 
-    public McpSyncClient createFilesystemMCP(Collection<String> paths) {
+    public McpManager(CoreSettings core, DependencyValidator dependencyValidator) {
+        this.core = core;
+        dependencyValidator.verifyDependencies();
+    }
+
+    @Override
+    public SyncMcpToolCallback[] loadTools() {
+        var tools = new ArrayList<SyncMcpToolCallback>();
+
+        for (CoreSettings.Capabilities capability : core.getCapabilities()) {
+            tools.addAll(collectTools(capability));
+        }
+
+        return tools.toArray(SyncMcpToolCallback[]::new);
+    }
+
+    private McpSyncClient createFilesystemMCP(Collection<String> paths) {
         if (paths == null || paths.isEmpty()) {
             throw new IllegalArgumentException("Paths cannot be null or empty");
         }
@@ -45,7 +64,7 @@ public class McpManager {
         return mcpClient;
     }
 
-    public Collection<SyncMcpToolCallback> listTools(McpSyncClient mcpClient) {
+    private Collection<SyncMcpToolCallback> listTools(McpSyncClient mcpClient) {
         return mcpClient.listTools(null)
                 .tools()
                 .stream()
@@ -53,7 +72,7 @@ public class McpManager {
                 .toList();
     }
 
-    public McpSyncClient createSearchMCP() {
+    private McpSyncClient createSearchMCP() {
         // https://github.com/modelcontextprotocol/servers/tree/main/src/brave-search
         var params = ServerParameters.builder("npx")
                 .args("-y", "@modelcontextprotocol/server-brave-search")
@@ -69,37 +88,36 @@ public class McpManager {
         return mcpClient;
     }
 
-    public interface McpCallback {
-
-        void onMcpClient(McpSyncClient mcpClient);
-    }
-
-    public Collection<SyncMcpToolCallback> collectTools(CoreSettings.Capabilities capability, McpCallback callback) {
+    private Collection<SyncMcpToolCallback> collectTools(CoreSettings.Capabilities capability) {
         switch (capability.getType()) {
-            case "files" -> {
+            case "f les" -> {
                 @SuppressWarnings("unchecked")
                 var paths = (LinkedHashMap<String, String>) capability.getConfig().get("paths");
                 var mcpClient = createFilesystemMCP(paths.values());
-                callback.onMcpClient(mcpClient);
-                return mcpClient.listTools(null)
-                        .tools()
-                        .stream()
-                        .map(tool -> new SyncMcpToolCallback(mcpClient, tool))
-                        .toList();
+                mcpClients.add(mcpClient);
+                return listTools(mcpClient);
             }
             case "search" -> {
                 var mcpClient = createSearchMCP();
-                callback.onMcpClient(mcpClient);
-                return mcpClient.listTools(null)
-                        .tools()
-                        .stream()
-                        .map(tool -> new SyncMcpToolCallback(mcpClient, tool))
-                        .toList();
+                mcpClients.add(mcpClient);
+                return listTools(mcpClient);
             }
             default -> {
                 log.warn("Unknown capability type: {}", capability.getType());
                 return List.<SyncMcpToolCallback>of();
             }
         }
+    }
+
+    @Override
+    public void shutdown() {
+        // Close all MCP clients when the context is closed
+        mcpClients.forEach(client -> {
+            try {
+                client.close();
+            } catch (Exception e) {
+                log.error("Error closing MCP client", e);
+            }
+        });
     }
 }
