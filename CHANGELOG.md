@@ -1,41 +1,11 @@
 # Changelog
 
-## [1.1.6](https://github.com/moguyn/deepdesk/compare/v1.1.5...v1.1.6) (2025-03-03)
+## [1.1.6](https://github.com/moguyn/deepdesk/compare/v1.1.0...v1.1.6) (2025-03-03)
 
 
 ### Bug Fixes
 
 * ignore pom.xml in codeql workflow ([#37](https://github.com/moguyn/deepdesk/issues/37)) ([5a52ae1](https://github.com/moguyn/deepdesk/commit/5a52ae1b522bea1c755130909878312b217db575))
-
-## [1.1.5](https://github.com/moguyn/deepdesk/compare/v1.1.4...v1.1.5) (2025-03-03)
-
-
-### Bug Fixes
-
-* GH token ([#34](https://github.com/moguyn/deepdesk/issues/34)) ([e764817](https://github.com/moguyn/deepdesk/commit/e764817ff040dd4141046f26487d8163a77d8259))
-
-## [1.1.4](https://github.com/moguyn/deepdesk/compare/v1.1.3...v1.1.4) (2025-03-03)
-
-
-### Bug Fixes
-
-* artifacts upload ([#31](https://github.com/moguyn/deepdesk/issues/31)) ([6264290](https://github.com/moguyn/deepdesk/commit/626429075dc303201a0e5469f3ac7d937f49f120))
-
-## [1.1.3](https://github.com/moguyn/deepdesk/compare/v1.1.2...v1.1.3) (2025-03-03)
-
-
-### Bug Fixes
-
-* release workflow with native builds ([#28](https://github.com/moguyn/deepdesk/issues/28)) ([3e1285c](https://github.com/moguyn/deepdesk/commit/3e1285cd307781a05f326a7de8ea3434f26b9ce1))
-
-## [1.1.2](https://github.com/moguyn/deepdesk/compare/v1.1.1...v1.1.2) (2025-03-03)
-
-
-### Bug Fixes
-
-* release workflow with native builds ([#25](https://github.com/moguyn/deepdesk/issues/25)) ([26db053](https://github.com/moguyn/deepdesk/commit/26db0537a99ac8ea6bc0fb152a5633c11883c971))
-
-## [1.1.1](https://github.com/moguyn/deepdesk/compare/v1.1.0...v1.1.1) (2025-03-03)
 
 
 ### Bug Fixes
