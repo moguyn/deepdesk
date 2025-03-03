@@ -22,6 +22,9 @@ Deepdesk is a platform for creating and managing AI agents for enterprise use ca
 - Modular adapter system for connecting to various LLM providers
 - Secure infrastructure design keeping business data within company VPC
 
+## System Architecture
+![System Architecture](images/archi.png)
+
 ## Getting Started
 ### Prerequisites
 - Java Development Kit (JDK) 23 or higher
