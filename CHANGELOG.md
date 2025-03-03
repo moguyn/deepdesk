@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/moguyn/deepdesk/compare/v1.1.0...v1.1.1) (2025-03-03)
+
+
+### Bug Fixes
+
+* release workflow with native builds ([#21](https://github.com/moguyn/deepdesk/issues/21)) ([d3a9dab](https://github.com/moguyn/deepdesk/commit/d3a9dabc65d74b2b577061ffb8b719c721e1186f))
+* release-native-builds.yml ([#22](https://github.com/moguyn/deepdesk/issues/22)) ([a492823](https://github.com/moguyn/deepdesk/commit/a4928239936ee6a6ae1f50875e70a567639787c1))
+
 ## [1.1.0](https://github.com/moguyn/deepdesk/compare/v1.0.0...v1.1.0) (2025-03-03)
 
 
