@@ -47,3 +47,5 @@ jobs:
     uses: ./.github/workflows/release-native-builds.yml
     with:
       tag_name: ${{ needs.release-code.outputs.tag_name }}
+    secrets:
+      token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
