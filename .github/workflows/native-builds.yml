@@ -1,18 +1,5 @@
 name: Native Executables Build
 
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - '**.md'
-      - '.gitignore'
-
-permissions:
-  contents: write
-  pull-requests: write
-
 jobs:
   build:
     name: Build Native Executable - ${{ matrix.os }}
@@ -58,43 +45,11 @@ jobs:
       - name: Rename native executable (Unix)
         if: matrix.os != 'windows-latest'
         run: |
-          mv target/deepdesk ${{ matrix.output_name }}
-          chmod +x ${{ matrix.output_name }}
+          mv target/deepdesk target/${{ matrix.output_name }}
+          chmod +x target/${{ matrix.output_name }}
 
       - name: Rename native executable (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          move target\deepdesk.exe ${{ matrix.output_name }}
+          move target\deepdesk.exe target\${{ matrix.output_name }}
 
-      - name: Upload Native Build
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.output_name }}
-          path: ${{ matrix.output_name }}
-          retention-days: 7
-
-  create-update-release:
-    name: Create Release with All Executables
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    
-    steps:
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        
-      - name: Display structure of downloaded files
-        run: ls -R
-        
-      - name: Create/Update Release
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            ./deepdesk-linux/deepdesk-linux
-            ./deepdesk-macos/deepdesk-macos
-            ./deepdesk-windows.exe/deepdesk-windows.exe
-            ./target/deepdesk-*.jar
-            ./CHANGELOG.md
-            ./LICENSE
-          token: ${{ secrets.RELEASE_PLEASE_TOKEN }} 
