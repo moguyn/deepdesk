@@ -24,12 +24,42 @@ Deepdesk is a platform for creating and managing AI agents for enterprise use ca
 
 ## System Architecture
 ![System Architecture](images/archi.png)
+This diagram shows an **enterprise application** (“MCP Host”) that coordinates:
+1. **User**  
+   - Accesses the system through a **UI**.  
+   - Undergoes **User Authentication & Authorization** to ensure proper permissions.
+
+2. **MCP Host**  
+   - **Permissions**: Manages role-based access.  
+   - **Model & Resource Interaction**: Handles requests between the LLM and enterprise resources.  
+   - **MCP Client**: Communicates with backend MCP services over HTTP.  
+   - **Configuration**: Stores and manages app settings.
+
+3. **LLM**  
+   - Performs language processing and generation tasks as needed.
+
+4. **Enterprise Services**  
+   - **Document Service**: Handles PDFs, Word, TXT, etc.  
+   - **Database Service**: Connects to MySQL, PostgreSQL, etc.  
+   - **API Service**: Provides internal enterprise APIs.  
+   - **Other Services**: Additional enterprise capabilities.
+
+**Data Flow**:  
+User → UI → MCP Host (checks permissions) → MCP Client → Enterprise Services (via HTTP).  
+The LLM is also invoked through the MCP Host for language-model tasks.
+
 
 ## Getting Started
 ### Prerequisites
 - Java Development Kit (JDK) 23 or higher
 - Maven (included via Maven Wrapper)
 - Node.js with `npx` (required for MCP server)
+- Set the following environment variables:
+```shell
+export OPENAI_API_KEY='your-openai-api-key'
+export ANTHROPIC_API_KEY='your-anthropic-api-key'
+```
+
 
 ### Running the Application
 To start the application locally:
