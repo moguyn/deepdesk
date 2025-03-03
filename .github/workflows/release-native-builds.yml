@@ -75,6 +75,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.github_token }}
         run: |
-          gh release upload ${{ inputs.tag_name }} ./target/deepdesk-*
+          gh release upload ${{ inputs.tag_name }} ./target/deepdesk-linux
+          gh release upload ${{ inputs.tag_name }} ./target/deepdesk-macos
+          gh release upload ${{ inputs.tag_name }} ./target/deepdesk-windows.exe
           gh release upload ${{ inputs.tag_name }} ./CHANGELOG.md
           gh release upload ${{ inputs.tag_name }} ./LICENSE
