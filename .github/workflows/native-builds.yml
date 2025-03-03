@@ -8,12 +8,6 @@ on:
     paths-ignore:
       - '**.md'
       - '.gitignore'
-  pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - '**.md'
-      - '.gitignore'
 
 permissions:
   contents: write
@@ -92,12 +86,11 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
         
-      - name: Create Release
-        id: create_release
+      - name: Create/Update Release
         uses: softprops/action-gh-release@v1
         with:
           name: DeepDesk Native Executables
-          tag_name: native-build-${{ github.run_number }}
+          tag_name: v${{ github.ref_name }}
           draft: false
           prerelease: false
           files: |
