@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.6](https://github.com/moguyn/deepdesk/compare/v1.1.5...v1.1.6) (2025-03-03)
+
+
+### Bug Fixes
+
+* ignore pom.xml in codeql workflow ([#37](https://github.com/moguyn/deepdesk/issues/37)) ([5a52ae1](https://github.com/moguyn/deepdesk/commit/5a52ae1b522bea1c755130909878312b217db575))
+
 ## [1.1.5](https://github.com/moguyn/deepdesk/compare/v1.1.4...v1.1.5) (2025-03-03)
 
 
