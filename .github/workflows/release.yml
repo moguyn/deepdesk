@@ -42,7 +42,7 @@ jobs:
         uses: ./.github/workflows/native-builds.yml
 
       - name: Upload Release Artifact
-        needs: build-native-executables
+        if: ${{ steps.release.outputs.release_created }}
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
         run: |
