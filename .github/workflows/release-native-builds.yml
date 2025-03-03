@@ -1,7 +1,11 @@
-name: Native Executables Build
+name: Native Executables Release
 
 on:
   workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
   
 jobs:
   build:
@@ -56,3 +60,14 @@ jobs:
         run: |
           move target\deepdesk.exe target\${{ matrix.output_name }}
 
+  upload-release-artifacts:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload Release Artifact
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+        run: |
+          gh release upload ${{ steps.release.outputs.tag_name }} ./target/deepdesk-*
+          gh release upload ${{ steps.release.outputs.tag_name }} ./CHANGELOG.md
+          gh release upload ${{ steps.release.outputs.tag_name }} ./LICENSE
