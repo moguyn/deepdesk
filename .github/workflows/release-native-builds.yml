@@ -1,7 +1,7 @@
 name: Native Executables Release
 
 on:
-  workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: write
