@@ -91,16 +91,12 @@ class McpCapabilityFactoryTest {
     }
 
     @Test
-    void createCapability_shouldCreateSearchCapability() {
+    void createCapability_shouldCreateEverythingCapability() {
         // Given
         McpCapabilityFactory factory = new McpCapabilityFactory();
 
         CoreSettings.CapabilitySettings settings = new CoreSettings.CapabilitySettings();
-        settings.setType("search");
-
-        Map<String, Object> config = new HashMap<>();
-        config.put("rootDir", ".");
-        settings.setConfig(config);
+        settings.setType("dummy");
 
         // When
         try (McpSyncClient capability = factory.createCapability(settings)) {
