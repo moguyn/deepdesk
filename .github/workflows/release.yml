@@ -29,6 +29,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref_name == 'main'
     name: Release Code
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
     steps:
       - name: Release Please
         uses: googleapis/release-please-action@v4
