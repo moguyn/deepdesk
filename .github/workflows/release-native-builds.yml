@@ -70,7 +70,7 @@ jobs:
     steps:
       - name: Upload Release Artifact
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          GH_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
         run: |
           gh release upload ${{ inputs.tag_name }} ./target/deepdesk-*
           gh release upload ${{ inputs.tag_name }} ./CHANGELOG.md
