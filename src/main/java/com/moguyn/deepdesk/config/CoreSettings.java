@@ -13,16 +13,27 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public class CoreSettings {
 
     @NestedConfigurationProperty
-    private List<Capabilities> capabilities;
+    private List<CapabilitySettings> capabilities;
 
     @NestedConfigurationProperty
     private UI ui;
 
-    public List<Capabilities> getCapabilities() {
+    @NestedConfigurationProperty
+    private LLM llm;
+
+    public LLM getLlm() {
+        return llm;
+    }
+
+    public void setLlm(LLM llm) {
+        this.llm = llm;
+    }
+
+    public List<CapabilitySettings> getCapabilities() {
         return capabilities;
     }
 
-    public void setCapabilities(List<Capabilities> capabilities) {
+    public void setCapabilities(List<CapabilitySettings> capabilities) {
         this.capabilities = capabilities;
     }
 
@@ -34,7 +45,7 @@ public class CoreSettings {
         this.ui = ui;
     }
 
-    public static class Capabilities {
+    public static class CapabilitySettings {
 
         private String type;
         private Map<String, Object> config;
@@ -69,6 +80,32 @@ public class CoreSettings {
 
         public void setType(String type) {
             this.type = type;
+        }
+    }
+
+    public static class LLM {
+
+        private Prompt prompt;
+
+        public Prompt getPrompt() {
+            return prompt;
+        }
+
+        public void setPrompt(Prompt prompt) {
+            this.prompt = prompt;
+        }
+    }
+
+    public static class Prompt {
+
+        private String system;
+
+        public String getSystem() {
+            return system;
+        }
+
+        public void setSystem(String system) {
+            this.system = system;
         }
     }
 }

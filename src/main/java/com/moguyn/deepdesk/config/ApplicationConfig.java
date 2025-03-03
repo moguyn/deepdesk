@@ -1,6 +1,9 @@
 package com.moguyn.deepdesk.config;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.memory.InMemoryChatMemory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -8,9 +11,11 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.moguyn.deepdesk.chat.ChatManager;
-import com.moguyn.deepdesk.chat.CommandlineChat;
+import com.moguyn.deepdesk.chat.ChatRunner;
+import com.moguyn.deepdesk.chat.CommandlineChatRunner;
+import com.moguyn.deepdesk.mcp.CapabililtyFactory;
 import com.moguyn.deepdesk.mcp.DependencyValidator;
+import com.moguyn.deepdesk.mcp.McpCapabilityFactory;
 import com.moguyn.deepdesk.mcp.McpDependencyValidator;
 import com.moguyn.deepdesk.mcp.McpManager;
 import com.moguyn.deepdesk.mcp.ToolManager;
@@ -28,28 +33,43 @@ public class ApplicationConfig {
     @Bean
     @ConditionalOnProperty(prefix = "core.ui", name = "type", havingValue = "cli")
     public CommandLineRunner cli(
-            ChatManager chatManager,
+            ChatRunner chatManager,
             ConfigurableApplicationContext context) {
         return args -> {
             try (context) {
-                chatManager.start();
+                chatManager.run(args);
             }
         };
     }
 
     @Bean
     public ToolManager toolManager(CoreSettings core, DependencyValidator dependencyValidator) {
-        return new McpManager(core, dependencyValidator);
+        return new McpManager(core.getCapabilities(), dependencyValidator);
     }
 
     @Bean
-    public ChatManager chatManager(ChatClient.Builder chatClientBuilder, ToolManager toolManager) {
-        return new CommandlineChat(chatClientBuilder, toolManager);
+    public ChatRunner chatRunner(ChatClient chatClient, ToolManager toolManager) {
+        return new CommandlineChatRunner(chatClient, toolManager);
     }
 
     @Bean
     public DependencyValidator dependencyValidator() {
         return new McpDependencyValidator("npx");
+    }
+
+    @Bean
+    public ChatClient chatClient(ChatClient.Builder chatClientBuilder, ToolManager toolManager,
+            @Value("${core.llm.prompt.system}") String systemPrompt) {
+        return chatClientBuilder
+                .defaultSystem(systemPrompt)
+                .defaultTools(toolManager.loadTools())
+                .defaultAdvisors(new MessageChatMemoryAdvisor(new InMemoryChatMemory()))
+                .build();
+    }
+
+    @Bean
+    public CapabililtyFactory capabililtyFactory() {
+        return new McpCapabilityFactory();
     }
 
 }

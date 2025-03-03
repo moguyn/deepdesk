@@ -4,27 +4,21 @@ import java.io.PrintStream;
 import java.util.Scanner;
 
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
-import org.springframework.ai.chat.memory.InMemoryChatMemory;
 
 import com.moguyn.deepdesk.mcp.ToolManager;
 
-public class CommandlineChat implements ChatManager {
+public class CommandlineChatRunner implements ChatRunner {
 
     private final ChatClient chatClient;
     private final ToolManager toolManager;
 
-    public CommandlineChat(ChatClient.Builder chatClientBuilder, ToolManager toolManager) {
+    public CommandlineChatRunner(ChatClient chatClient, ToolManager toolManager) {
         this.toolManager = toolManager;
-        this.chatClient = chatClientBuilder
-                .defaultSystem("你是企业级AI助手, 请说中文")
-                .defaultTools(toolManager.loadTools())
-                .defaultAdvisors(new MessageChatMemoryAdvisor(new InMemoryChatMemory()))
-                .build();
+        this.chatClient = chatClient;
     }
 
     @Override
-    public void start() {
+    public void run(String... args) {
         PrintStream console = System.out;
         console.println("\n我是您的AI助手(退出请输入bye或者exit)\n");
         try (Scanner scanner = new Scanner(System.in)) {
@@ -43,8 +37,7 @@ public class CommandlineChat implements ChatManager {
         stop();
     }
 
-    @Override
-    public void stop() {
+    private void stop() {
         toolManager.shutdown();
     }
 
