@@ -16,9 +16,9 @@ on:
       - '**/*.md'
 
 permissions:
-contents: write
-pull-requests: write
-checks: write
+  contents: write
+  pull-requests: write
+  checks: write
 
 jobs:
   build:
