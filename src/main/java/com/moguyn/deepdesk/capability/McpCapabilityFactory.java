@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 public class McpCapabilityFactory implements CapabililtyFactory {
 
     private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(10);
+    private static final String NPX = "npx";
 
     @Override
     @SuppressWarnings("unchecked")
@@ -28,6 +29,8 @@ public class McpCapabilityFactory implements CapabililtyFactory {
                 ((LinkedHashMap<String, String>) capabilitySettings.getConfig().get("paths")).values());
             case "search" ->
                 createSearch();
+            case "everything" ->
+                createEverything();
             default ->
                 throw new IllegalArgumentException("Unknown capability type: " + capabilitySettings.getType());
         };
@@ -43,34 +46,37 @@ public class McpCapabilityFactory implements CapabililtyFactory {
         args.add("-y");
         args.add("@modelcontextprotocol/server-filesystem");
         args.addAll(paths);
-        var stdioParams = ServerParameters.builder("npx")
+        var stdioParams = ServerParameters.builder(NPX)
                 .args(args.toArray(String[]::new))
                 .build();
 
-        var mcpClient = McpClient.sync(new StdioClientTransport(stdioParams))
-                .requestTimeout(REQUEST_TIMEOUT).build();
-
-        var init = mcpClient.initialize();
-
-        log.info("Filesystem MCP Initialized: {}", init);
-
-        return mcpClient;
+        return createAndInitializeClient(stdioParams);
     }
 
     private McpSyncClient createSearch() {
         // https://github.com/modelcontextprotocol/servers/tree/main/src/brave-search
-        var params = ServerParameters.builder("npx")
+        var params = ServerParameters.builder(NPX)
                 .args("-y", "@modelcontextprotocol/server-brave-search")
                 .build();
 
+        return createAndInitializeClient(params);
+    }
+
+    private McpSyncClient createEverything() {
+        // https://github.com/modelcontextprotocol/servers/tree/main/src/everything
+        var params = ServerParameters.builder(NPX)
+                .args("-y", "@modelcontextprotocol/server-everything")
+                .build();
+
+        return createAndInitializeClient(params);
+    }
+
+    private McpSyncClient createAndInitializeClient(ServerParameters params) {
         var mcpClient = McpClient.sync(new StdioClientTransport(params))
                 .requestTimeout(REQUEST_TIMEOUT).build();
 
         var init = mcpClient.initialize();
-
-        log.info("Search MCP Initialized: {}", init);
-
+        log.info("MCP Initialized: {}", init);
         return mcpClient;
     }
-
 }
