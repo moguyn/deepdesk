@@ -22,6 +22,43 @@ Deepdesk is a platform for creating and managing AI agents for enterprise use ca
 - Modular adapter system for connecting to various LLM providers
 - Secure infrastructure design keeping business data within company VPC
 
+## Native Builds
+
+DeepDesk supports generation of native executables that can run without a JVM on Linux, macOS, and Windows.
+
+### Building Native Executables Locally
+
+#### Linux/macOS
+```bash
+# Make the script executable (first time only)
+chmod +x build-native.sh
+
+# Build the native executable
+./build-native.sh
+```
+
+#### Windows
+```batch
+# Build the native executable
+build-native.bat
+```
+
+The resulting native executable will be created in the current directory with a platform-specific name:
+- Linux: `deepdesk-linux`
+- macOS: `deepdesk-macos`
+- Windows: `deepdesk-windows.exe`
+
+### Automated Multi-Platform Builds
+
+Native executables for all supported platforms are automatically built using GitHub Actions. The latest builds can be found in the GitHub Releases section of this repository.
+
+### Requirements for Native Builds
+
+To build native executables locally:
+- GraalVM installation with native-image utility
+- Java 17 or newer (Java 23 recommended)
+- Maven 3.8+
+
 ## System Architecture
 ![System Architecture](images/archi.png)
 This diagram shows an **enterprise application** (“MCP Host”) that coordinates:
