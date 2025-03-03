@@ -89,4 +89,23 @@ class McpCapabilityFactoryTest {
             assertNotNull(capability);
         }
     }
+
+    @Test
+    void createCapability_shouldCreateSearchCapability() {
+        // Given
+        McpCapabilityFactory factory = new McpCapabilityFactory();
+
+        CoreSettings.CapabilitySettings settings = new CoreSettings.CapabilitySettings();
+        settings.setType("search");
+
+        Map<String, Object> config = new HashMap<>();
+        config.put("rootDir", ".");
+        settings.setConfig(config);
+
+        // When
+        try (McpSyncClient capability = factory.createCapability(settings)) {
+            // Then
+            assertNotNull(capability);
+        }
+    }
 }

@@ -6,5 +6,8 @@ alwaysApply: false
 
 # Use the following commands for executing code or testing
 
+- when modifying the code, do solve the lint issues the IDE reports
+- `./mvnw test` to run the tests
 - `./mvnw spring-boot:run` to run the application
-- currently we haven't created any test
+- `./mvnw checkstyle:checkstyle` to lint the code
+

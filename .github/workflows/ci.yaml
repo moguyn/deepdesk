@@ -60,7 +60,7 @@ jobs:
           ${{ runner.os }}-target-
     
     - name: Lint with Maven
-      run: ./mvnw checkstyle:checkstyle -Dcheckstyle.config.location=checkstyle.xml
+      run: ./mvnw checkstyle:checkstyle
 
     - name: Upload Checkstyle results
       uses: actions/upload-artifact@v4
@@ -70,6 +70,10 @@ jobs:
         retention-days: 7
 
     - name: Test with Maven
+      env:
+        BRAVE_API_KEY: ${{ secrets.BRAVE_API_KEY }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       run: ./mvnw test
 
     - name: Build with Maven

@@ -7,6 +7,9 @@ import org.springframework.ai.chat.client.ChatClient;
 
 import com.moguyn.deepdesk.capability.ToolManager;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class CommandlineChatRunner implements ChatRunner {
 
     private final ChatClient chatClient;
@@ -21,24 +24,21 @@ public class CommandlineChatRunner implements ChatRunner {
     public void run(String... args) {
         PrintStream console = System.out;
         console.println("\n我是您的AI助手(退出请输入bye或者exit)\n");
-        try (Scanner scanner = new Scanner(System.in)) {
+        try (Scanner scanner = new Scanner(System.in); toolManager) {
             while (true) {
                 console.print("\n用户: ");
                 String prompt = scanner.nextLine();
                 if ("exit".equalsIgnoreCase(prompt) || "bye".equalsIgnoreCase(prompt)) {
                     break;
                 }
-                console.println("\nAI: "
-                        + chatClient.prompt(prompt)
-                                .call()
-                                .content());
+                console.print("AI: ");
+                console.println(chatClient.prompt(prompt)
+                        .call()
+                        .content());
             }
+        } catch (Exception e) {
+            log.error("Error running chat", e);
         }
-        stop();
-    }
-
-    private void stop() {
-        toolManager.shutdown();
     }
 
 }

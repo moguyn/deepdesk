@@ -1,11 +1,5 @@
 package com.moguyn.deepdesk.chat;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -15,7 +9,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.anyString;
 import org.mockito.Mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.client.ChatClient;
 
@@ -61,7 +60,7 @@ class CommandlineChatRunnerTest {
     }
 
     @Test
-    void run_shouldProcessUserInputAndReturnAiResponse() {
+    void run_shouldProcessUserInputAndReturnAiResponse() throws Exception {
         // Given
         String userInput = "Hello AI\nexit\n";
         String expectedAiResponse = "Hello, I am an AI assistant.";
@@ -80,7 +79,7 @@ class CommandlineChatRunnerTest {
 
         // Then
         verify(chatClient, times(1)).prompt("Hello AI");
-        verify(toolManager, times(1)).shutdown();
+        verify(toolManager, times(1)).close();
 
         // Verify output contains expected strings
         String capturedOutput = outputStreamCaptor.toString();
@@ -90,7 +89,7 @@ class CommandlineChatRunnerTest {
     }
 
     @Test
-    void run_shouldExitWhenUserEntersBye() {
+    void run_shouldExitWhenUserEntersBye() throws Exception {
         // Given
         String userInput = "bye\n";
 
@@ -103,11 +102,11 @@ class CommandlineChatRunnerTest {
 
         // Then
         verify(chatClient, never()).prompt(anyString());
-        verify(toolManager, times(1)).shutdown();
+        verify(toolManager, times(1)).close();
     }
 
     @Test
-    void run_shouldExitWhenUserEntersExit() {
+    void run_shouldExitWhenUserEntersExit() throws Exception {
         // Given
         String userInput = "exit\n";
 
@@ -120,11 +119,11 @@ class CommandlineChatRunnerTest {
 
         // Then
         verify(chatClient, never()).prompt(anyString());
-        verify(toolManager, times(1)).shutdown();
+        verify(toolManager, times(1)).close();
     }
 
     @Test
-    void run_shouldHandleMultipleConversationTurns() {
+    void run_shouldHandleMultipleConversationTurns() throws Exception {
         // Given
         String userInput = "First message\nSecond message\nexit\n";
 
@@ -144,7 +143,7 @@ class CommandlineChatRunnerTest {
         // Then
         verify(chatClient, times(1)).prompt("First message");
         verify(chatClient, times(1)).prompt("Second message");
-        verify(toolManager, times(1)).shutdown();
+        verify(toolManager, times(1)).close();
 
         // Verify output contains expected strings
         String capturedOutput = outputStreamCaptor.toString();

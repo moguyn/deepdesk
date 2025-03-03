@@ -2,7 +2,8 @@ package com.moguyn.deepdesk.capability;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.ai.mcp.SyncMcpToolCallback;
 
@@ -15,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 public class McpManager implements ToolManager {
 
     private final Collection<CoreSettings.CapabilitySettings> capabilitiesConfig;
-    private final List<McpSyncClient> mcpClients = new ArrayList<>();
+    private final Map<String, McpSyncClient> mcpClients = new HashMap<>();
     private final McpCapabilityFactory capabilityFactory;
 
     public McpManager(Collection<CoreSettings.CapabilitySettings> capabilities, DependencyValidator dependencyValidator) {
@@ -37,7 +38,7 @@ public class McpManager implements ToolManager {
 
     private Collection<SyncMcpToolCallback> collectTools(CoreSettings.CapabilitySettings capability) {
         var mcpClient = getCapabilityFactory().createCapability(capability);
-        mcpClients.add(mcpClient);
+        mcpClients.put(capability.getType(), mcpClient);
         return listTools(mcpClient);
     }
 
@@ -54,13 +55,13 @@ public class McpManager implements ToolManager {
     }
 
     @Override
-    public void shutdown() {
+    public void close() throws Exception {
         // Close all MCP clients when the context is closed
-        mcpClients.forEach(client -> {
-            try {
-                client.close();
+        mcpClients.entrySet().forEach(entry -> {
+            try (McpSyncClient client = entry.getValue()) {
+                client.closeGracefully();
             } catch (Exception e) {
-                log.error("Error closing MCP client", e);
+                log.error("Error closing MCP client: {}", entry.getKey());
             }
         });
     }
