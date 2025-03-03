@@ -16,9 +16,6 @@ public class CoreSettings {
     private List<Capabilities> capabilities;
 
     @NestedConfigurationProperty
-    private String protocol;
-
-    @NestedConfigurationProperty
     private UI ui;
 
     public List<Capabilities> getCapabilities() {
@@ -27,14 +24,6 @@ public class CoreSettings {
 
     public void setCapabilities(List<Capabilities> capabilities) {
         this.capabilities = capabilities;
-    }
-
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
     }
 
     public UI getUi() {
