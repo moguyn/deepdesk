@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.InMemoryChatMemory;
@@ -24,15 +22,16 @@ import com.moguyn.deepdesk.mcp.McpManager;
 import io.modelcontextprotocol.client.McpSyncClient;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Application configuration to enable property binding
  */
+@Slf4j
 @Configuration
 @EnableConfigurationProperties(CoreSettings.class)
 public class ApplicationConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(ApplicationConfig.class);
     private final List<McpSyncClient> mcpClients = new ArrayList<>();
 
     @Bean
@@ -41,7 +40,7 @@ public class ApplicationConfig {
             ChatClient.Builder chatClientBuilder,
             SyncMcpToolCallback[] capabilities,
             ConfigurableApplicationContext context) {
-        return _ -> {
+        return args -> {
             try (context) {
                 PrintStream console = System.out;
                 var chatClient = chatClientBuilder
@@ -89,7 +88,8 @@ public class ApplicationConfig {
                     .start();
             int exitCode = process.waitFor();
             if (exitCode != 0) {
-                throw new IllegalStateException("npx command is not available. Please install Node.js and npm to use this feature.");
+                throw new IllegalStateException(
+                        "npx command is not available. Please install Node.js and npm to use this feature.");
             }
         } catch (IOException | InterruptedException e) {
             throw new IllegalStateException("Failed to verify npx availability: " + e.getMessage(), e);

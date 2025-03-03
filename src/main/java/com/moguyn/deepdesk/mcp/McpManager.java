@@ -6,8 +6,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.ai.mcp.SyncMcpToolCallback;
 
 import com.moguyn.deepdesk.config.CoreSettings;
@@ -16,10 +14,11 @@ import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.client.transport.ServerParameters;
 import io.modelcontextprotocol.client.transport.StdioClientTransport;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class McpManager {
 
-    private static final Logger log = LoggerFactory.getLogger(McpManager.class);
     private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(10);
 
     public McpSyncClient createFilesystemMCP(Collection<String> paths) {
