@@ -1,0 +1,11 @@
+---
+description: general information about the project
+globs: 
+alwaysApply: false
+---
+
+# Describe how the project is built
+
+- built with SpringBoot and mvnw, with JDK 23
+- CI related process is based on github actions
+- the architecture follows the pattern suggested by the protocal called MCP (Model Context Protocal)
