@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.7](https://github.com/moguyn/deepdesk/compare/v1.1.6...v1.1.7) (2025-03-03)
+
+
+### Bug Fixes
+
+* artifacts name ([#40](https://github.com/moguyn/deepdesk/issues/40)) ([a7bb7af](https://github.com/moguyn/deepdesk/commit/a7bb7afb4273590049df8a373a96eae885b2a6a7))
+
 ## [1.1.6](https://github.com/moguyn/deepdesk/compare/v1.1.0...v1.1.6) (2025-03-03)
 
 
