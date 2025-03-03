@@ -6,9 +6,9 @@ on:
       tag_name:
         required: true
         type: string
-      secrets:
-        github_token:
-          required: true
+    secrets:
+      github_token:
+        required: true
 
 permissions:
   contents: write
