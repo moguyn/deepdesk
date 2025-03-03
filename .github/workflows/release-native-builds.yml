@@ -6,6 +6,9 @@ on:
       tag_name:
         required: true
         type: string
+      secrets:
+        github_token:
+          required: true
 
 permissions:
   contents: write
@@ -70,7 +73,7 @@ jobs:
     steps:
       - name: Upload Release Artifact
         env:
-          GH_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          GH_TOKEN: ${{ secrets.github_token }}
         run: |
           gh release upload ${{ inputs.tag_name }} ./target/deepdesk-*
           gh release upload ${{ inputs.tag_name }} ./CHANGELOG.md
