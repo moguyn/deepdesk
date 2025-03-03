@@ -58,6 +58,7 @@ The LLM is also invoked through the MCP Host for language-model tasks.
 ```shell
 export OPENAI_API_KEY='your-openai-api-key'
 export ANTHROPIC_API_KEY='your-anthropic-api-key'
+export BRAVE_API_KEY="your-brave-api-key"
 ```
 
 

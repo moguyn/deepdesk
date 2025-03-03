@@ -10,6 +10,9 @@ spring:
       api-key: ${ANTHROPIC_API_KEY}
 
 core:
+  llm:
+    prompt:
+      system: 你是企业级AI助手, 请说中文
   capabilities:
     - type: files
       config:
