@@ -89,7 +89,7 @@ jobs:
       - name: Create/Update Release
         uses: softprops/action-gh-release@v1
         with:
-          name: DeepDesk Native Executables
+          name: v${{ github.ref_name }}
           tag_name: v${{ github.ref_name }}
           draft: false
           prerelease: false
