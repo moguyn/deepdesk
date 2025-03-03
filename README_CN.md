@@ -57,6 +57,7 @@ LLM也通过MCP宿主调用以执行语言模型任务。
 ```shell
 export OPENAI_API_KEY='your-openai-api-key'
 export ANTHROPIC_API_KEY='your-anthropic-api-key'
+export BRAVE_API_KEY="your-brave-api-key"
 ```
 
 ### 运行应用
