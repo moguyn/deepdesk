@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: deepdesk
+  main:
+    web-application-type: none
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY}
+
+core:
+  capabilities:
+    - type: files
+      config:
+        paths:
+          - ${user.home}/git/deepdesk/
+          - ./target/
+    - type: search
+
+  ui:
+    type: cli
