@@ -34,6 +34,31 @@ jobs:
         java-version: '23'
         distribution: 'temurin'
         cache: maven
+    
+    - name: Cache Maven Wrapper
+      uses: actions/cache@v3
+      with:
+        path: .mvn/wrapper
+        key: ${{ runner.os }}-maven-wrapper-${{ hashFiles('**/maven-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-wrapper-
+    
+    - name: Cache Maven Repository
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    
+    - name: Cache Build Output
+      uses: actions/cache@v3
+      with:
+        path: target
+        key: ${{ runner.os }}-target-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-target-
+    
     - name: Lint with Maven
       run: ./mvnw checkstyle:checkstyle -Dcheckstyle.config.location=checkstyle.xml
 
@@ -45,10 +70,10 @@ jobs:
         retention-days: 7
 
     - name: Test with Maven
-      run: ./mvnw clean test
+      run: ./mvnw test
 
     - name: Build with Maven
-      run: ./mvnw clean package
+      run: ./mvnw -B -DskipTests package
 
     - name: Upload JAR artifact
       uses: actions/upload-artifact@v4
