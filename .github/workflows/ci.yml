@@ -14,7 +14,7 @@ on:
     paths-ignore:
       - '**.md'
       - '.gitignore'
-
+      - 'pom.xml'
 permissions:
   contents: write
   pull-requests: write
