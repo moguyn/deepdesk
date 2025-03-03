@@ -2,6 +2,10 @@ name: Native Executables Release
 
 on:
   workflow_call:
+    inputs:
+      tag_name:
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -68,6 +72,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
         run: |
-          gh release upload ${{ steps.release.outputs.tag_name }} ./target/deepdesk-*
-          gh release upload ${{ steps.release.outputs.tag_name }} ./CHANGELOG.md
-          gh release upload ${{ steps.release.outputs.tag_name }} ./LICENSE
+          gh release upload ${{ inputs.tag_name }} ./target/deepdesk-*
+          gh release upload ${{ inputs.tag_name }} ./CHANGELOG.md
+          gh release upload ${{ inputs.tag_name }} ./LICENSE
