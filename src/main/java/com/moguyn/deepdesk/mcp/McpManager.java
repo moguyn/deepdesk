@@ -90,7 +90,7 @@ public class McpManager implements ToolManager {
 
     private Collection<SyncMcpToolCallback> collectTools(CoreSettings.Capabilities capability) {
         switch (capability.getType()) {
-            case "f les" -> {
+            case "files" -> {
                 @SuppressWarnings("unchecked")
                 var paths = (LinkedHashMap<String, String>) capability.getConfig().get("paths");
                 var mcpClient = createFilesystemMCP(paths.values());
