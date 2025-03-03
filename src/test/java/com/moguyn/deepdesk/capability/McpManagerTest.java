@@ -1,14 +1,5 @@
 package com.moguyn.deepdesk.capability;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,10 +7,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.mcp.SyncMcpToolCallback;
 
@@ -157,7 +156,7 @@ class McpManagerTest {
     }
 
     @Test
-    void shutdown_shouldCloseAllClients() {
+    void shutdown_shouldCloseAllClients() throws Exception {
         // Given
         doNothing().when(dependencyValidator).verifyDependencies();
 
@@ -174,15 +173,15 @@ class McpManagerTest {
             var field = McpManager.class.getDeclaredField("mcpClients");
             field.setAccessible(true);
             @SuppressWarnings("unchecked")
-            List<McpSyncClient> clients = (List<McpSyncClient>) field.get(mcpManager);
-            clients.add(mcpClient1);
-            clients.add(mcpClient2);
+            Map<String, McpSyncClient> clients = (Map<String, McpSyncClient>) field.get(mcpManager);
+            clients.put("files", mcpClient1);
+            clients.put("search", mcpClient2);
         } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {
             throw new IllegalStateException("Failed to set up test", e);
         }
 
         // When
-        mcpManager.shutdown();
+        mcpManager.close();
 
         // Then
         verify(mcpClient1, times(1)).close();
@@ -190,7 +189,7 @@ class McpManagerTest {
     }
 
     @Test
-    void shutdown_shouldContinueClosingRemainingClients_whenExceptionOccurs() {
+    void shutdown_shouldContinueClosingRemainingClients_whenExceptionOccurs() throws Exception {
         // Given
         doNothing().when(dependencyValidator).verifyDependencies();
 
@@ -207,9 +206,9 @@ class McpManagerTest {
             var field = McpManager.class.getDeclaredField("mcpClients");
             field.setAccessible(true);
             @SuppressWarnings("unchecked")
-            List<McpSyncClient> clients = (List<McpSyncClient>) field.get(mcpManager);
-            clients.add(mcpClient1);
-            clients.add(mcpClient2);
+            Map<String, McpSyncClient> clients = (Map<String, McpSyncClient>) field.get(mcpManager);
+            clients.put("files", mcpClient1);
+            clients.put("search", mcpClient2);
         } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {
             throw new IllegalStateException("Failed to set up test", e);
         }
@@ -218,7 +217,7 @@ class McpManagerTest {
         doThrow(new RuntimeException("Error closing client")).when(mcpClient1).close();
 
         // When
-        mcpManager.shutdown();
+        mcpManager.close();
 
         // Then
         verify(mcpClient1, times(1)).close();
@@ -226,12 +225,12 @@ class McpManagerTest {
     }
 
     @Test
-    void shutdown_shouldDoNothing_whenNoClientsExist() {
+    void shutdown_shouldDoNothing_whenNoClientsExist() throws Exception {
         // Given
         doNothing().when(dependencyValidator).verifyDependencies();
         mcpManager = new McpManager(Collections.emptyList(), dependencyValidator);
 
         // When - No exception should be thrown
-        mcpManager.shutdown();
+        mcpManager.close();
     }
 }
