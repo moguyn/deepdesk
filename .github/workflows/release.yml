@@ -48,4 +48,4 @@ jobs:
     with:
       tag_name: ${{ needs.release-code.outputs.tag_name }}
     secrets:
-      github_token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+      token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
