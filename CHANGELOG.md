@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0](https://github.com/moguyn/deepdesk/compare/v0.0.10...v0.1.0) (2025-03-04)
+
+
+### Features
+
+* support anthoric like web endpoint ([#56](https://github.com/moguyn/deepdesk/issues/56)) ([0b38ba3](https://github.com/moguyn/deepdesk/commit/0b38ba363af57d3f666669fcb75f399f7fe1457b))
+
 ## [0.0.10](https://github.com/moguyn/deepdesk/compare/v1.1.9...v0.0.10) (2025-03-04)
 
 
