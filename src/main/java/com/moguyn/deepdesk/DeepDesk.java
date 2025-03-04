@@ -12,4 +12,4 @@ public class DeepDesk {
     public static void main(String[] args) {
         SpringApplication.run(DeepDesk.class, args);
     }
-} 
+}
