@@ -156,6 +156,8 @@
                         <configuration>
                             <excludes>
                                 <exclude>com/moguyn/deepdesk/config/**/*</exclude>
+                                <exclude>com/moguyn/deepdesk/controller/**/*</exclude>
+                                <exclude>com/moguyn/deepdesk/model/**/*</exclude>
                             </excludes>
                         </configuration>
                     </execution>

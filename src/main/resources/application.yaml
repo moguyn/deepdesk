@@ -2,7 +2,7 @@ spring:
   application:
     name: deepdesk
   main:
-    web-application-type: none
+    web-application-type: servlet
   ai:
     openai:
       api-key: ${OPENAI_API_KEY}

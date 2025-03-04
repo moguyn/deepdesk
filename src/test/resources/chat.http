@@ -1,0 +1,6 @@
+POST http://localhost:8080/chat
+Content-Type: application/json
+
+{
+    "messages": [{"role": "user", "content": "总结 CHANGELOG.md 文件"}]
+}
