@@ -8,8 +8,6 @@ on:
       - '**.md'
       - '.gitignore'
       - 'pom.xml'
-  schedule:
-    - cron: '20 2 * * 0'
 
 jobs:
   analyze:
