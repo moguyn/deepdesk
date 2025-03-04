@@ -34,9 +34,22 @@ public class McpCapabilityFactory implements CapabililtyFactory {
                 createDummy();
             case "fetch" ->
                 createFetch();
+            case "browser" ->
+                createBrowser();
+            case "mysql" ->
+                createMySQL();
             default ->
                 throw new IllegalArgumentException("Unknown capability type: " + capabilitySettings.getType());
         };
+    }
+
+    private McpSyncClient createBrowser() {
+        // https://github.com/modelcontextprotocol/servers/tree/main/src/puppeteer
+        var params = ServerParameters.builder(NPX)
+                .args("-y", "@modelcontextprotocol/server-puppeteer")
+                .build();
+
+        return createAndInitialize(params);
     }
 
     private McpSyncClient createFilesystem(Collection<String> paths) {
@@ -83,12 +96,27 @@ public class McpCapabilityFactory implements CapabililtyFactory {
         return createAndInitialize(params);
     }
 
-    private McpSyncClient createAndInitialize(ServerParameters params) {
-        var mcpClient = McpClient.sync(new StdioClientTransport(params))
-                .requestTimeout(REQUEST_TIMEOUT).build();
+    private McpSyncClient createMySQL() {
+        // https://github.com/modelcontextprotocol/servers/tree/main/src/mysql
+        var params = ServerParameters.builder(NPX)
+                .args("-y", "@benborla29/mcp-server-mysql")
+                .build();
 
-        var init = mcpClient.initialize();
-        log.info("MCP Initialized: {}", init);
-        return mcpClient;
+        return createAndInitialize(params);
+
+    }
+
+    private McpSyncClient createAndInitialize(ServerParameters params) {
+        try {
+            var mcpClient = McpClient.sync(new StdioClientTransport(params))
+                    .requestTimeout(REQUEST_TIMEOUT).build();
+
+            var init = mcpClient.initialize();
+            log.info("MCP Initialized: {}", init);
+            return mcpClient;
+        } catch (Exception e) {
+            log.error("Error initializing MCP client: {}", e.getMessage());
+            throw new IllegalStateException("Failed to initialize MCP client", e);
+        }
     }
 }

@@ -135,4 +135,33 @@ class McpCapabilityFactoryTest {
         }
     }
 
+    @Test
+    void createCapability_shouldCreateBrowserCapability() {
+        // Given
+        McpCapabilityFactory factory = new McpCapabilityFactory();
+
+        CoreSettings.CapabilitySettings settings = new CoreSettings.CapabilitySettings();
+        settings.setType("browser");
+
+        // When
+        try (McpSyncClient capability = factory.createCapability(settings)) {
+            // Then
+            assertNotNull(capability);
+        }
+    }
+
+    @Test
+    void createCapability_shouldCreateMySQLCapability() {
+        // Given
+        McpCapabilityFactory factory = new McpCapabilityFactory();
+
+        CoreSettings.CapabilitySettings settings = new CoreSettings.CapabilitySettings();
+        settings.setType("mysql");
+
+        // When
+        try (McpSyncClient capability = factory.createCapability(settings)) {
+            // Then
+            assertNotNull(capability);
+        }
+    }
 }
