@@ -88,6 +88,7 @@ The LLM is also invoked through the MCP Host for language-model tasks.
 - Java Development Kit (JDK) 23 or higher
 - Maven (included via Maven Wrapper)
 - Node.js with `npx` (required for MCP server)
+- Python 3.13.x with uv package manager (required for MCP server)
 - Set the following environment variables:
 ```shell
 export OPENAI_API_KEY='your-openai-api-key'

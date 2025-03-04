@@ -87,6 +87,7 @@ LLM也通过MCP宿主调用以执行语言模型任务。
 - Java开发工具包 (JDK) 23或更高版本
 - Maven（通过Maven Wrapper提供）
 - Node.js和`npx`（MCP服务器所需）
+- Python 3.13.x和uv包管理器（（MCP服务器所需））
 - 设置以下环境变量
 ```shell
 export OPENAI_API_KEY='your-openai-api-key'
