@@ -1,5 +1,5 @@
 # Deepdesk
-[![CI](https://github.com/moguyn/deepdesk/actions/workflows/ci.yml/badge.svg)]
+[![CI](https://github.com/moguyn/deepdesk/actions/workflows/ci.yml/badge.svg)](https://github.com/moguyn/deepdesk/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/moguyn/deepdesk/graph/badge.svg?token=Q46OP0MTY5)](https://codecov.io/gh/moguyn/deepdesk)
 
 ## Overview
