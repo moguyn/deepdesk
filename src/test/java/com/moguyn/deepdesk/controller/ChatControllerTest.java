@@ -37,7 +37,7 @@ import com.moguyn.deepdesk.service.ChatService;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-public class ChatControllerIntegrationTest {
+public class ChatControllerTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
