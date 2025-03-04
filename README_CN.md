@@ -22,40 +22,6 @@
 - 用于连接各种LLM提供商的模块化适配器系统
 - 安全的基础设施设计，确保业务数据安全
 
-## 原生构建
-
-深知支持生成可在Linux、macOS和Windows上不需要JVM即可运行的原生可执行文件。
-
-### 本地构建原生可执行文件
-
-#### Linux/macOS
-```bash
-# 使脚本可执行（仅首次）
-chmod +x build-native.sh
-
-# 构建原生可执行文件
-./build-native.sh
-```
-
-#### Windows
-```batch
-# 构建原生可执行文件
-build-native.bat
-```
-
-生成的原生可执行文件将创建在`target`目录中，名称为：`deepdesk`
-
-### 自动化多平台构建
-
-所有支持平台的原生可执行文件都使用GitHub Actions自动构建。最新的构建可以在本仓库的GitHub Releases部分找到。
-
-### 原生构建的要求
-
-要在本地构建原生可执行文件：
-- GraalVM安装，含native-image工具
-- Java 17或更新版本（推荐Java 23）
-- Maven 3.8+
-
 ## 系统架构
 ![系统架构图](images/archi.png)
 该图展示了一个**企业应用程序**（"MCP宿主"）协调以下组件：
@@ -118,6 +84,41 @@ java -jar target/deepdesk-<version>.jar
 ```bash
 ./mvnw test
 ```
+
+
+## 原生构建
+
+深知支持生成可在Linux、macOS和Windows上不需要JVM即可运行的原生可执行文件。
+
+### 本地构建原生可执行文件
+
+#### Linux/macOS
+```bash
+# 使脚本可执行（仅首次）
+chmod +x build-native.sh
+
+# 构建原生可执行文件
+./build-native.sh
+```
+
+#### Windows
+```batch
+# 构建原生可执行文件
+build-native.bat
+```
+
+生成的原生可执行文件将创建在`target`目录中，名称为：`deepdesk`
+
+### 自动化多平台构建
+
+所有支持平台的原生可执行文件都使用GitHub Actions自动构建。最新的构建可以在本仓库的GitHub Releases部分找到。
+
+### 原生构建的要求
+
+要在本地构建原生可执行文件：
+- GraalVM安装，含native-image工具
+- Java 17或更新版本（推荐Java 23）
+- Maven 3.8+
 
 ## 安全与隐私
 深知在设计时考虑了企业安全性：
