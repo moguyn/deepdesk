@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.8](https://github.com/moguyn/deepdesk/compare/v1.1.7...v1.1.8) (2025-03-04)
+
+
+### Bug Fixes
+
+* upload docs ([#43](https://github.com/moguyn/deepdesk/issues/43)) ([dcdb5d8](https://github.com/moguyn/deepdesk/commit/dcdb5d8e4d9dc19db814fb47b3da29f04960fbc9))
+
 ## [1.1.7](https://github.com/moguyn/deepdesk/compare/v1.1.6...v1.1.7) (2025-03-03)
 
 
