@@ -17,7 +17,7 @@ core:
     - type: files
       config:
         paths:
-          - ${user.home}/git/deepdesk/
+          - '.'
 
   ui:
     type: web
