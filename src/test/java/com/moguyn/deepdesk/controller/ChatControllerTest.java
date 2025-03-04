@@ -10,18 +10,23 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
 import org.mockito.Captor;
-import org.mockito.Mock;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import com.moguyn.deepdesk.model.ChatAnswer;
 import com.moguyn.deepdesk.model.ChatMessage;
@@ -37,12 +42,24 @@ import com.moguyn.deepdesk.service.ChatService;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
+@TestPropertySource(properties = {"core.ui.type=web"})
 public class ChatControllerTest {
+
+    @TestConfiguration
+    @SuppressWarnings("unused")
+    static class TestConfig {
+
+        @Bean
+        @Primary
+        public ChatService chatService() {
+            return mock(ChatService.class);
+        }
+    }
 
     @Autowired
     private TestRestTemplate restTemplate;
 
-    @Mock
+    @Autowired
     private ChatService chatService;
 
     @Captor
@@ -51,13 +68,16 @@ public class ChatControllerTest {
     private static final String TEST_MODEL = "gpt-3.5-turbo";
     private static final String TEST_USER_MESSAGE = "Hello, AI!";
     private static final String TEST_AI_RESPONSE = "Hello! How can I help you today?";
-    private static final String TEST_RESPONSE_ID = "resp_123456789012";
+    private static final String TEST_RESPONSE_ID = "resp_6c16820f97b7";
 
     private ChatAnswer defaultAnswer;
     private HttpHeaders headers;
 
     @BeforeEach
     public void setUp() {
+        // Reset mock before each test
+        reset(chatService);
+
         // Set up reusable objects
         defaultAnswer = ChatAnswer.builder()
                 .content(Collections.singletonList(new ContentItem(TEST_AI_RESPONSE, "text")))
@@ -101,7 +121,7 @@ public class ChatControllerTest {
         assertEquals(TEST_AI_RESPONSE, actualContent.get(0).getText());
         assertEquals("text", actualContent.get(0).getType());
 
-        // Verify that the request was passed correctly to the service
+        // Verify the request was passed correctly to the service
         verify(chatService).processChat(chatRequestCaptor.capture());
         ChatRequest capturedRequest = chatRequestCaptor.getValue();
         assertEquals(TEST_MODEL, capturedRequest.getModel());
