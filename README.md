@@ -1,4 +1,6 @@
 # Deepdesk
+[![CI](https://github.com/moguyn/deepdesk/actions/workflows/ci.yml/badge.svg)]
+[![codecov](https://codecov.io/gh/moguyn/deepdesk/graph/badge.svg?token=Q46OP0MTY5)](https://codecov.io/gh/moguyn/deepdesk)
 
 ## Overview
 Deepdesk is a platform for creating and managing AI agents for enterprise use cases. It provides organizations with the ability to leverage AI capabilities while maintaining control over their data and infrastructure.
