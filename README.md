@@ -88,6 +88,7 @@ The LLM is also invoked through the MCP Host for language-model tasks.
 - Java Development Kit (JDK) 23 or higher
 - Maven (included via Maven Wrapper)
 - Node.js with `npx` (required for MCP server)
+- Python 3.13.x with uv package manager (required for MCP server)
 - Set the following environment variables:
 ```shell
 export OPENAI_API_KEY='your-openai-api-key'
@@ -100,6 +101,18 @@ export BRAVE_API_KEY="your-brave-api-key"
 To start the application locally:
 ```bash
 ./mvnw spring-boot:run
+```
+
+### Building the Executable JAR
+To build an executable JAR file with SpringBoot:
+```bash
+./mvnw clean package
+```
+The resulting executable JAR will be created in the `target` directory with the name `deepdesk-<version>.jar`.
+
+To run the executable JAR:
+```bash
+java -jar target/deepdesk-<version>.jar
 ```
 
 ### Running Tests
