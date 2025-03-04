@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/moguyn/deepdesk/compare/v0.1.0...v0.2.0) (2025-03-04)
+
+
+### Features
+
+* **capability:** support browser and mysql ([#60](https://github.com/moguyn/deepdesk/issues/60)) ([ced4e36](https://github.com/moguyn/deepdesk/commit/ced4e3679a1cdf7d0e2646a33246d866222ecb3f))
+
 ## [0.1.0](https://github.com/moguyn/deepdesk/compare/v0.0.10...v0.1.0) (2025-03-04)
 
 
