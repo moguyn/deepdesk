@@ -101,6 +101,18 @@ export BRAVE_API_KEY="your-brave-api-key"
 ./mvnw spring-boot:run
 ```
 
+### 构建可执行JAR
+使用SpringBoot构建可执行JAR文件：
+```bash
+./mvnw clean package
+```
+生成的可执行JAR文件将创建在`target`目录中，名称为`deepdesk-<version>.jar`。
+
+运行可执行JAR：
+```bash
+java -jar target/deepdesk-<version>.jar
+```
+
 ### 运行测试
 运行测试套件：
 ```bash

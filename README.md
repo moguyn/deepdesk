@@ -103,6 +103,18 @@ To start the application locally:
 ./mvnw spring-boot:run
 ```
 
+### Building the Executable JAR
+To build an executable JAR file with SpringBoot:
+```bash
+./mvnw clean package
+```
+The resulting executable JAR will be created in the `target` directory with the name `deepdesk-<version>.jar`.
+
+To run the executable JAR:
+```bash
+java -jar target/deepdesk-<version>.jar
+```
+
 ### Running Tests
 To run the test suite:
 ```bash
