@@ -56,27 +56,26 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: .\mvnw.cmd -B clean package -Pnative -DskipTests
         
-      - name: Rename native executable (Unix)
+      - name: Upload native executable (Unix)
         if: matrix.os != 'windows-latest'
+        env:
+          GH_TOKEN: ${{ secrets.token }}
         run: |
           mv target/deepdesk target/${{ matrix.output_name }}
           chmod +x target/${{ matrix.output_name }}
+          gh release upload ${{ inputs.tag_name }} target/${{ matrix.output_name }}
 
-      - name: Rename native executable (Windows)
+      - name: Upload native executable (Windows)
         if: matrix.os == 'windows-latest'
+        env:
+          GH_TOKEN: ${{ secrets.token }}
         run: |
           move target\deepdesk.exe target\${{ matrix.output_name }}
+          gh release upload ${{ inputs.tag_name }} target\${{ matrix.output_name }}
 
-  upload-release-artifacts:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Upload Release Artifact
+      - name: Upload Docs
         env:
-          GH_TOKEN: ${{ secrets.github_token }}
+          GH_TOKEN: ${{ secrets.token }}
         run: |
-          gh release upload ${{ inputs.tag_name }} ./target/deepdesk-linux
-          gh release upload ${{ inputs.tag_name }} ./target/deepdesk-macos
-          gh release upload ${{ inputs.tag_name }} ./target/deepdesk-windows.exe
           gh release upload ${{ inputs.tag_name }} ./CHANGELOG.md
           gh release upload ${{ inputs.tag_name }} ./LICENSE
