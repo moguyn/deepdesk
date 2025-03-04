@@ -36,6 +36,8 @@ public class McpCapabilityFactory implements CapabililtyFactory {
                 createFetch();
             case "browser" ->
                 createBrowser();
+            case "mysql" ->
+                createMySQL();
             default ->
                 throw new IllegalArgumentException("Unknown capability type: " + capabilitySettings.getType());
         };
@@ -92,6 +94,16 @@ public class McpCapabilityFactory implements CapabililtyFactory {
                 .build();
 
         return createAndInitialize(params);
+    }
+
+    private McpSyncClient createMySQL() {
+        // https://github.com/modelcontextprotocol/servers/tree/main/src/mysql
+        var params = ServerParameters.builder(NPX)
+                .args("-y", "@benborla29/mcp-server-mysql")
+                .build();
+
+        return createAndInitialize(params);
+
     }
 
     private McpSyncClient createAndInitialize(ServerParameters params) {
