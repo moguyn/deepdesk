@@ -45,7 +45,7 @@ jobs:
     needs: release-code
     name: Release Native Executables
     if: ${{ needs.release-code.outputs.release_created }}
-    uses: ./.github/workflows/release-native-builds.yml
+    uses: ./.github/workflows/release-packages.yml
     with:
       tag_name: ${{ needs.release-code.outputs.tag_name }}
     secrets:
