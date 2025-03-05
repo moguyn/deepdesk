@@ -46,7 +46,7 @@ jobs:
         with:
           java-version: '23'
           distribution: 'graalvm'
-          github-token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          github-token: ${{ secrets.token }}
           native-image-job-reports: 'true'
 
       - name: Build with Maven (Native) - Unix
