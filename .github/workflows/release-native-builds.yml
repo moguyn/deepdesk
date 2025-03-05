@@ -13,6 +13,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  packages: write
   
 jobs:
   build:
@@ -79,3 +80,36 @@ jobs:
         run: |
           gh release upload --clobber ${{ inputs.tag_name }} ./CHANGELOG.md
           gh release upload --clobber ${{ inputs.tag_name }} ./LICENSE
+
+  docker:
+    name: Build and Publish Docker Image
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.token }}
+      
+      - name: Download Linux executable
+        env:
+          GH_TOKEN: ${{ secrets.token }}
+        run: |
+          mkdir -p target
+          gh release download ${{ inputs.tag_name }} -p "deepdesk-linux" -O target/deepdesk-linux
+          chmod +x target/deepdesk-linux
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/deepdesk:latest
+            ghcr.io/${{ github.repository_owner }}/deepdesk:${{ inputs.tag_name }}
