@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.6](https://github.com/moguyn/deepdesk/compare/v0.2.5...v0.2.6) (2025-03-05)
+
+
+### Bug Fixes
+
+* dockerhub token ([#80](https://github.com/moguyn/deepdesk/issues/80)) ([61947be](https://github.com/moguyn/deepdesk/commit/61947be5420b50d35b8e398106b1fb53fdebc17e))
+
 ## [0.2.5](https://github.com/moguyn/deepdesk/compare/v0.2.4...v0.2.5) (2025-03-05)
 
 
