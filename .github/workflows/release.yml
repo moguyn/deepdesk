@@ -41,11 +41,11 @@ jobs:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           release-type: maven
 
-  release-native-executables:
+  release-packages:
     needs: release-code
-    name: Release Native Executables
+    name: Release Packages
     if: ${{ needs.release-code.outputs.release_created }}
-    uses: ./.github/workflows/release-native-builds.yml
+    uses: ./.github/workflows/release-packages.yml
     with:
       tag_name: ${{ needs.release-code.outputs.tag_name }}
     secrets:
