@@ -1,4 +1,4 @@
-name: Native Executables Release
+name: Packages Release
 
 on:
   workflow_call:
@@ -103,8 +103,8 @@ jobs:
           GH_TOKEN: ${{ secrets.token }}
         run: |
           mkdir -p target
-          gh release download ${{ inputs.tag_name }} -p "deepdesk-linux" -O target/deepdesk-linux
-          chmod +x target/deepdesk-linux
+          gh release download ${{ inputs.tag_name }} -p "deepdesk-linux" -O deepdesk
+          chmod +x deepdesk
       
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
