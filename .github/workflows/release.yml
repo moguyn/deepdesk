@@ -50,3 +50,4 @@ jobs:
       tag_name: ${{ needs.release-code.outputs.tag_name }}
     secrets:
       token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
