@@ -102,7 +102,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.token }}
         run: |
-          mkdir -p target
           gh release download ${{ inputs.tag_name }} -p "deepdesk-linux" -O deepdesk
           chmod +x deepdesk
       
@@ -110,6 +109,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
+          context: .
           tags: |
             ghcr.io/${{ github.repository_owner }}/deepdesk:latest
             ghcr.io/${{ github.repository_owner }}/deepdesk:${{ inputs.tag_name }}

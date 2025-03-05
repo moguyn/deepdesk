@@ -1,6 +1,6 @@
 FROM scratch
 
-COPY deepdesk /
+COPY ./deepdesk /
 
 EXPOSE 8080
 
