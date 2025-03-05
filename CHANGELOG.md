@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/moguyn/deepdesk/compare/v0.2.2...v0.2.3) (2025-03-05)
+
+
+### Bug Fixes
+
+* docker build ([#71](https://github.com/moguyn/deepdesk/issues/71)) ([279d8cb](https://github.com/moguyn/deepdesk/commit/279d8cb3957bb5e1cc6320fd9010211048b8d6f8))
+
 ## [0.2.2](https://github.com/moguyn/deepdesk/compare/v0.2.1...v0.2.2) (2025-03-05)
 
 
