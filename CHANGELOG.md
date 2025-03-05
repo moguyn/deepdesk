@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.1](https://github.com/moguyn/deepdesk/compare/v0.2.0...v0.2.1) (2025-03-05)
+
+
+### Bug Fixes
+
+* add docker release workflow ([#64](https://github.com/moguyn/deepdesk/issues/64)) ([469a4d1](https://github.com/moguyn/deepdesk/commit/469a4d159d33bb86ba1036799f15e869be248baf))
+* add packages write permission ([#65](https://github.com/moguyn/deepdesk/issues/65)) ([9c3703c](https://github.com/moguyn/deepdesk/commit/9c3703caaba1c5a6e3534b638e88c3fa090ebaf2))
+
 ## [0.2.0](https://github.com/moguyn/deepdesk/compare/v0.1.0...v0.2.0) (2025-03-04)
 
 
