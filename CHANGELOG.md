@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/moguyn/deepdesk/compare/v0.2.3...v0.2.4) (2025-03-05)
+
+
+### Bug Fixes
+
+* docker push permission ([#74](https://github.com/moguyn/deepdesk/issues/74)) ([e73b2bc](https://github.com/moguyn/deepdesk/commit/e73b2bc53b7777a622e2aefe45ab48f704c636ef))
+
 ## [0.2.3](https://github.com/moguyn/deepdesk/compare/v0.2.2...v0.2.3) (2025-03-05)
 
 
