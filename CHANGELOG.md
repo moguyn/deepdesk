@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.5](https://github.com/moguyn/deepdesk/compare/v0.2.4...v0.2.5) (2025-03-05)
+
+
+### Bug Fixes
+
+* docker push url ([#77](https://github.com/moguyn/deepdesk/issues/77)) ([59d37cd](https://github.com/moguyn/deepdesk/commit/59d37cda36822051a039ec8c11df729cef56d1e1))
+
 ## [0.2.4](https://github.com/moguyn/deepdesk/compare/v0.2.3...v0.2.4) (2025-03-05)
 
 
