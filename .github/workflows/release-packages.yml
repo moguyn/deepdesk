@@ -9,6 +9,8 @@ on:
     secrets:
       token:
         required: true
+      DOCKERHUB_TOKEN:
+        required: true
 
 permissions:
   contents: write
