@@ -1,8 +1,6 @@
 package com.moguyn.deepdesk.config;
 
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
-import org.springframework.ai.chat.memory.InMemoryChatMemory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -63,7 +61,7 @@ public class ApplicationConfig {
         return chatClientBuilder
                 .defaultSystem(systemPrompt)
                 .defaultTools(toolManager.loadTools())
-                .defaultAdvisors(new MessageChatMemoryAdvisor(new InMemoryChatMemory()))
+                .defaultAdvisors()
                 .build();
     }
 
