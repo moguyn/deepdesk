@@ -9,6 +9,12 @@ spring:
     anthropic:
       api-key: ${ANTHROPIC_API_KEY}
 
+# Logging configuration
+logging:
+  level:
+    root: INFO
+    io.modelcontextprotocol: INFO
+
 core:
   llm:
     prompt:
