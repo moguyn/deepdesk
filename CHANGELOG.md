@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.7](https://github.com/moguyn/deepdesk/compare/v0.2.6...v0.2.7) (2025-03-07)
+
+
+### Bug Fixes
+
+* interaction with LLM in web mode ([#83](https://github.com/moguyn/deepdesk/issues/83)) ([85fa832](https://github.com/moguyn/deepdesk/commit/85fa832052b5e9974f021d20ff16c726575a7ffe))
+
 ## [0.2.6](https://github.com/moguyn/deepdesk/compare/v0.2.5...v0.2.6) (2025-03-05)
 
 
