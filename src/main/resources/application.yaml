@@ -13,7 +13,8 @@ spring:
 logging:
   level:
     root: INFO
-    io.modelcontextprotocol: INFO
+    io.modelcontextprotocol: DEBUG
+    com.moguyn.deepdesk.service: DEBUG
 
 core:
   llm:
