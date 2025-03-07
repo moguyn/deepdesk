@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.moguyn.deepdesk.model.ChatAnswer;
@@ -20,26 +19,13 @@ public class ChatService {
 
     private final ChatClient chatClient;
 
-    @Value("${core.llm.prompt.system}")
-    private String systemPrompt;
-
     public ChatAnswer processChat(ChatRequest request) {
-        // Build the prompt with the ChatClient's fluent API
-        var promptBuilder = chatClient.prompt();
+        String lastPrompt = request.getMessages().get(request.getMessages().size() - 1).getContent();
+        var aiResponse = chatClient.prompt(lastPrompt)
+                .call()
+                .content();
 
-        // Add system prompt
-        promptBuilder.system(systemPrompt);
-
-        // Add user messages - assuming we're processing the last user message
-        request.getMessages().forEach(message -> {
-            if ("user".equals(message.getRole())) {
-                promptBuilder.user(message.getContent());
-            }
-        });
-
-        var aiResponse = promptBuilder.call();
-
-        var reply = Optional.ofNullable(aiResponse.content()).orElse("");
+        var reply = Optional.ofNullable(aiResponse).orElse("");
 
         return ChatAnswer.builder()
                 .content(Collections.singletonList(new ContentItem(reply, "text")))

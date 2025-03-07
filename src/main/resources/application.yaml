@@ -9,18 +9,21 @@ spring:
     anthropic:
       api-key: ${ANTHROPIC_API_KEY}
 
+# Logging configuration
+logging:
+  level:
+    root: INFO
+    io.modelcontextprotocol: INFO
+
 core:
-  llm:
-    prompt:
-      system: 你是企业级AI助手, 请说中文
   capabilities:
     - type: files
       config:
         paths:
-          - ${user.home}/git/deepdesk/
-          - ./target/
+          - ${user.home}
     - type: search
     - type: fetch
+    - type: browser
 
   ui:
-    type: cli
+    type: web
