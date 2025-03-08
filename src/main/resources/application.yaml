@@ -5,7 +5,12 @@ spring:
     web-application-type: servlet
   ai:
     openai:
-      api-key: ${OPENAI_API_KEY}
+      api-key: ${DEEPSEEK_API_KEY}
+      base-url: https://api.deepseek.com 
+      chat:
+        options:
+          model: deepseek-chat
+          max-completion-tokens: 5000
     anthropic:
       api-key: ${ANTHROPIC_API_KEY}
 
@@ -20,14 +25,16 @@ core:
   llm:
     prompt:
       system: 你是企业级AI助手, 请说中文
+    max-tokens: 10000
+    history-window-size: 2
   capabilities:
     - type: files
       config:
         paths:
           - ${user.home}
-    - type: search
-    - type: fetch
-    - type: browser
+    # - type: search
+    # - type: fetch
+    # - type: browser
 
   ui:
-    type: web
+    type: cli
