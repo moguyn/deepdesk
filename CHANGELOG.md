@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.8](https://github.com/moguyn/deepdesk/compare/v0.2.7...v0.2.8) (2025-03-08)
+
+
+### Bug Fixes
+
+* 修复max_tokens by removing memory ([#86](https://github.com/moguyn/deepdesk/issues/86)) ([6269fd0](https://github.com/moguyn/deepdesk/commit/6269fd08ce75932f56369ecf5ab4fe6e88484a69))
+
 ## [0.2.7](https://github.com/moguyn/deepdesk/compare/v0.2.6...v0.2.7) (2025-03-07)
 
 
