@@ -10,7 +10,7 @@ spring:
       chat:
         enabled: true
         options:
-          model: gpt-4o
+          model: gpt-4o-mini
           max-completion-tokens: 6000
     anthropic:
       api-key: ${ANTHROPIC_API_KEY}
