@@ -16,8 +16,10 @@ import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.MessageAggregator;
 import org.springframework.lang.NonNull;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 
+@Slf4j
 public class TokenLimitedChatMemoryAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
 
     private final ExcessiveContentTruncator<Message> excessiveContentTruncator;
@@ -80,11 +82,11 @@ public class TokenLimitedChatMemoryAdvisor extends AbstractChatMemoryAdvisor<Cha
         advisedMessages.addAll(memoryMessages);
 
         // 3. Purge the excessive content.
-        List<Message> purgedMessages = this.excessiveContentTruncator.truncate(advisedMessages);
-        advisedMessages = purgedMessages;
+        advisedMessages = this.excessiveContentTruncator.truncate(advisedMessages);
 
         // 4. Create a new request with the advised messages.
         AdvisedRequest advisedRequest = AdvisedRequest.from(request).messages(advisedMessages).build();
+        log.debug("advisedRequest: {}", advisedRequest);
 
         // 5. Add the new user input to the conversation memory.
         UserMessage userMessage = new UserMessage(request.userText(), request.media());

@@ -20,6 +20,7 @@ logging:
     root: INFO
     io.modelcontextprotocol: DEBUG
     com.moguyn.deepdesk.service: DEBUG
+    com.moguyn.deepdesk.advisor: DEBUG
 
 core:
   llm:
