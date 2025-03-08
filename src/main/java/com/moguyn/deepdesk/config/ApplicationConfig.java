@@ -17,9 +17,9 @@ import org.springframework.context.annotation.Configuration;
 import com.moguyn.deepdesk.advisor.ExcessiveContentTruncator;
 import com.moguyn.deepdesk.advisor.MaxTokenSizeContenTruncator;
 import com.moguyn.deepdesk.advisor.TokenLimitedChatMemoryAdvisor;
-import com.moguyn.deepdesk.capability.McpDependencyValidator;
 import com.moguyn.deepdesk.chat.ChatRunner;
 import com.moguyn.deepdesk.chat.CommandlineChatRunner;
+import com.moguyn.deepdesk.dependency.McpDependencyValidator;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;

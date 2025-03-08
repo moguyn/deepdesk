@@ -28,11 +28,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
+import com.moguyn.deepdesk.chat.ChatService;
 import com.moguyn.deepdesk.model.ChatAnswer;
 import com.moguyn.deepdesk.model.ChatMessage;
 import com.moguyn.deepdesk.model.ChatRequest;
 import com.moguyn.deepdesk.model.ContentItem;
-import com.moguyn.deepdesk.service.ChatService;
 
 /**
  * Integration test for the ChatController.

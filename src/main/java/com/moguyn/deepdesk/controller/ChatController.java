@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.moguyn.deepdesk.chat.ChatService;
 import com.moguyn.deepdesk.model.ChatAnswer;
 import com.moguyn.deepdesk.model.ChatRequest;
-import com.moguyn.deepdesk.service.ChatService;
 
 import lombok.RequiredArgsConstructor;
 

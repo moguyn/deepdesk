@@ -1,4 +1,4 @@
-package com.moguyn.deepdesk.service;
+package com.moguyn.deepdesk.chat;
 
 import java.util.List;
 
