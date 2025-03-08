@@ -5,12 +5,12 @@ spring:
     web-application-type: servlet
   ai:
     openai:
-      api-key: ${DEEPSEEK_API_KEY}
-      base-url: https://api.deepseek.com
+      api-key: ${OPENAI_API_KEY}
+      base-url: https://api.openai.com
       chat:
         enabled: true
         options:
-          model: deepseek-chat
+          model: gpt-4o
           max-completion-tokens: 6000
     anthropic:
       api-key: ${ANTHROPIC_API_KEY}
@@ -30,6 +30,7 @@ logging:
     root: INFO
     org.springframework.web.client: DEBUG
     org.springframework.ai: DEBUG
+    org.springframework.ai.openai: DEBUG
 
 core:
   llm:
