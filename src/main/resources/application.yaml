@@ -8,19 +8,26 @@ spring:
       api-key: ${OPENAI_API_KEY}
       base-url: https://api.openai.com 
       chat:
+        enabled: false
         options:
           model: gpt-4o
           max-completion-tokens: 5000
     anthropic:
       api-key: ${ANTHROPIC_API_KEY}
+      chat:
+        enabled: true
+        options:
+          model: claude-3-7-sonnet-20250219
+          max-completion-tokens: 5000
 
 # Logging configuration
 logging:
   level:
     root: INFO
-    io.modelcontextprotocol: DEBUG
-    com.moguyn.deepdesk.service: DEBUG
-    com.moguyn.deepdesk.advisor: DEBUG
+    io.modelcontextprotocol: INFO
+    com.moguyn.deepdesk.service: INFO
+    com.moguyn.deepdesk.advisor: INFO
+    org.springframework.ai: TRACE
 
 core:
   llm:
