@@ -64,7 +64,7 @@ LLM通过MCP宿主调用以执行所有语言模型操作。
 
 ### 前置要求
 
-- Java开发工具包 (JDK) 23或更高版本
+- Java开发工具包 (JDK) 21或更高版本
 - Maven（通过Maven Wrapper提供）
 - Node.js和`npx`（MCP服务器所需）
 - Python 3.13.x和uv包管理器（MCP服务器所需）
