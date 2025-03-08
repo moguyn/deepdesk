@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.9](https://github.com/moguyn/deepdesk/compare/v0.2.8...v0.2.9) (2025-03-08)
+
+
+### Bug Fixes
+
+* update readme ([#89](https://github.com/moguyn/deepdesk/issues/89)) ([487076e](https://github.com/moguyn/deepdesk/commit/487076eadcc0259837fd0f1ead9faf894f2b07d4))
+
 ## [0.2.8](https://github.com/moguyn/deepdesk/compare/v0.2.7...v0.2.8) (2025-03-08)
 
 
