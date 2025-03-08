@@ -18,8 +18,6 @@ import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.client.ChatClient;
 
-import com.moguyn.deepdesk.capability.ToolManager;
-
 /**
  * Tests for {@link CommandlineChatRunner}
  */
@@ -28,9 +26,6 @@ class CommandlineChatRunnerTest {
 
     @Mock
     private ChatClient chatClient;
-
-    @Mock
-    private ToolManager toolManager;
 
     @Mock
     private ChatClient.ChatClientRequestSpec requestSpec;
@@ -49,7 +44,7 @@ class CommandlineChatRunnerTest {
         outputStreamCaptor = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStreamCaptor));
 
-        chatRunner = new CommandlineChatRunner(chatClient, toolManager);
+        chatRunner = new CommandlineChatRunner(chatClient);
     }
 
     @AfterEach
@@ -79,12 +74,11 @@ class CommandlineChatRunnerTest {
 
         // Then
         verify(chatClient, times(1)).prompt("Hello AI");
-        verify(toolManager, times(1)).close();
 
         // Verify output contains expected strings
         String capturedOutput = outputStreamCaptor.toString();
         assert (capturedOutput.contains("我是您的AI助手"));
-        assert (capturedOutput.contains("用户: "));
+        assert (capturedOutput.contains("我: "));
         assert (capturedOutput.contains("AI: " + expectedAiResponse));
     }
 
@@ -102,7 +96,6 @@ class CommandlineChatRunnerTest {
 
         // Then
         verify(chatClient, never()).prompt(anyString());
-        verify(toolManager, times(1)).close();
     }
 
     @Test
@@ -119,7 +112,6 @@ class CommandlineChatRunnerTest {
 
         // Then
         verify(chatClient, never()).prompt(anyString());
-        verify(toolManager, times(1)).close();
     }
 
     @Test
@@ -143,7 +135,6 @@ class CommandlineChatRunnerTest {
         // Then
         verify(chatClient, times(1)).prompt("First message");
         verify(chatClient, times(1)).prompt("Second message");
-        verify(toolManager, times(1)).close();
 
         // Verify output contains expected strings
         String capturedOutput = outputStreamCaptor.toString();

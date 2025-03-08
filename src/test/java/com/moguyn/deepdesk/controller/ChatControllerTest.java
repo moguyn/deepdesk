@@ -28,11 +28,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
+import com.moguyn.deepdesk.chat.ChatService;
 import com.moguyn.deepdesk.model.ChatAnswer;
 import com.moguyn.deepdesk.model.ChatMessage;
 import com.moguyn.deepdesk.model.ChatRequest;
 import com.moguyn.deepdesk.model.ContentItem;
-import com.moguyn.deepdesk.service.ChatService;
 
 /**
  * Integration test for the ChatController.
@@ -95,7 +95,7 @@ public class ChatControllerTest {
     void chat_shouldReturnValidResponse() {
         // Arrange
         ChatMessage message = new ChatMessage("user", TEST_USER_MESSAGE);
-        ChatRequest request = new ChatRequest(TEST_MODEL, 4000, Collections.singletonList(message));
+        ChatRequest request = new ChatRequest(TEST_MODEL, "123", 4000, Collections.singletonList(message));
 
         when(chatService.processChat(any(ChatRequest.class))).thenReturn(defaultAnswer);
 
@@ -140,6 +140,7 @@ public class ChatControllerTest {
 
         ChatRequest request = new ChatRequest(
                 TEST_MODEL,
+                "123",
                 4000,
                 List.of(message1, message2, message3)
         );
@@ -170,7 +171,7 @@ public class ChatControllerTest {
         // Arrange
         String customModel = "gpt-4";
         ChatMessage message = new ChatMessage("user", TEST_USER_MESSAGE);
-        ChatRequest request = new ChatRequest(customModel, 8000, Collections.singletonList(message));
+        ChatRequest request = new ChatRequest(customModel, "123", 8000, Collections.singletonList(message));
 
         // Create a custom answer with the specific model
         ChatAnswer customAnswer = ChatAnswer.builder()
@@ -206,7 +207,7 @@ public class ChatControllerTest {
     void chat_withEmptyMessages_shouldNotAcceptEmptyMessages() {
         // Arrange - Create a request with at least one user message to avoid the validation error
         ChatMessage message = new ChatMessage("user", TEST_USER_MESSAGE);
-        ChatRequest request = new ChatRequest(TEST_MODEL, 4000, Collections.singletonList(message));
+        ChatRequest request = new ChatRequest(TEST_MODEL, "123", 4000, Collections.singletonList(message));
 
         when(chatService.processChat(any(ChatRequest.class))).thenReturn(defaultAnswer);
 

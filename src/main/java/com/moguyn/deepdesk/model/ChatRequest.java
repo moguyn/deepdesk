@@ -15,6 +15,9 @@ public class ChatRequest {
 
     private String model;
 
+    @JsonProperty("conversation_id")
+    private String conversationId;
+
     @JsonProperty("max_tokens")
     private Integer maxTokens;
 

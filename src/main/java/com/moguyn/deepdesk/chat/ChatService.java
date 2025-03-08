@@ -1,10 +1,14 @@
-package com.moguyn.deepdesk.service;
+package com.moguyn.deepdesk.chat;
 
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.ai.chat.client.ChatClient;
+import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY;
+import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.stereotype.Service;
 
 import com.moguyn.deepdesk.model.ChatAnswer;
@@ -20,8 +24,13 @@ public class ChatService {
     private final ChatClient chatClient;
 
     public ChatAnswer processChat(ChatRequest request) {
-        String lastPrompt = request.getMessages().get(request.getMessages().size() - 1).getContent();
-        var aiResponse = chatClient.prompt(lastPrompt)
+        var messages = request
+                .getMessages()
+                .stream()
+                .map(m -> new UserMessage(m.getContent()))
+                .toArray(Message[]::new);
+        var aiResponse = chatClient.prompt(new Prompt(messages))
+                .advisors(ad -> ad.param(CHAT_MEMORY_CONVERSATION_ID_KEY, request.getConversationId()))
                 .call()
                 .content();
 

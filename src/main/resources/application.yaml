@@ -6,24 +6,38 @@ spring:
   ai:
     openai:
       api-key: ${OPENAI_API_KEY}
+      base-url: https://api.openai.com
+      chat:
+        enabled: true
+        options:
+          model: gpt-4o
+          max-completion-tokens: 6000
     anthropic:
       api-key: ${ANTHROPIC_API_KEY}
+      chat:
+        enabled: false
+        options:
+          model: claude-3-7-sonnet-20250219
+          max-completion-tokens: 6000
+    mcp:
+      client:
+        stdio:
+          servers-configuration: classpath:mcp-servers.json
 
 # Logging configuration
 logging:
   level:
     root: INFO
-    io.modelcontextprotocol: INFO
+    org.springframework.web.client: DEBUG
+    org.springframework.ai: DEBUG
+    org.springframework.ai.openai: DEBUG
 
 core:
-  capabilities:
-    - type: files
-      config:
-        paths:
-          - ${user.home}
-    - type: search
-    - type: fetch
-    - type: browser
+  llm:
+    prompt:
+      system: 你是企业级AI助手, 请说中文
+    max-tokens: 20000
+    history-window-size: 5
 
   ui:
-    type: web
+    type: cli

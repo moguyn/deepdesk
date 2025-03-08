@@ -4,3 +4,8 @@ Content-Type: application/json
 {
     "messages": [{"role": "user", "content": "总结 CHANGELOG.md 文件"}]
 }
+
+###
+GET https://api.anthropic.com/v1/models
+x-api-key: {{$processEnv ANTHROPIC_API_KEY}}
+anthropic-version: 2023-06-01
