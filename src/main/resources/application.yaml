@@ -19,6 +19,10 @@ spring:
         options:
           model: claude-3-7-sonnet-20250219
           max-completion-tokens: 5000
+    mcp:
+      client:
+        stdio:
+          servers-configuration: classpath:mcp-servers.json
 
 # Logging configuration
 logging:
@@ -27,7 +31,7 @@ logging:
     io.modelcontextprotocol: INFO
     com.moguyn.deepdesk.service: INFO
     com.moguyn.deepdesk.advisor: INFO
-    org.springframework.ai: TRACE
+    org.springframework.ai: DEBUG
 
 core:
   llm:
@@ -40,9 +44,5 @@ core:
       config:
         paths:
           - '.'
-    # - type: search
-    # - type: fetch
-    # - type: browser
-
   ui:
     type: cli

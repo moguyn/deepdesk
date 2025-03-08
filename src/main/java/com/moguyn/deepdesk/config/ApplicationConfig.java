@@ -4,6 +4,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.InMemoryChatMemory;
 import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.ai.tokenizer.JTokkitTokenCountEstimator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -16,15 +17,11 @@ import org.springframework.context.annotation.Configuration;
 import com.moguyn.deepdesk.advisor.ExcessiveContentTruncator;
 import com.moguyn.deepdesk.advisor.MaxTokenSizeContenTruncator;
 import com.moguyn.deepdesk.advisor.TokenLimitedChatMemoryAdvisor;
-import com.moguyn.deepdesk.capability.CapabililtyFactory;
-import com.moguyn.deepdesk.capability.DependencyValidator;
-import com.moguyn.deepdesk.capability.McpCapabilityFactory;
 import com.moguyn.deepdesk.capability.McpDependencyValidator;
-import com.moguyn.deepdesk.capability.McpManager;
-import com.moguyn.deepdesk.capability.ToolManager;
 import com.moguyn.deepdesk.chat.ChatRunner;
 import com.moguyn.deepdesk.chat.CommandlineChatRunner;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -75,36 +72,26 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public ToolManager toolManager(CoreSettings core, DependencyValidator dependencyValidator) {
-        return new McpManager(core.getCapabilities(), dependencyValidator);
+    public ChatRunner chatRunner(ChatClient chatClient) {
+        return new CommandlineChatRunner(chatClient);
     }
 
-    @Bean
-    public ChatRunner chatRunner(ChatClient chatClient, ToolManager toolManager) {
-        return new CommandlineChatRunner(chatClient, toolManager);
-    }
-
-    @Bean
-    public DependencyValidator dependencyValidator() {
-        return new McpDependencyValidator("npx", "uvx");
+    @PostConstruct
+    public void dependencyValidation() {
+        var validator = new McpDependencyValidator("npx", "uvx");
+        validator.verifyDependencies();
     }
 
     @Bean
     public ChatClient chatClient(ChatClient.Builder chatClientBuilder,
-            ToolManager toolManager,
+            SyncMcpToolCallbackProvider toolCallbackProvider,
             ChatMemory chatMemory,
             TokenLimitedChatMemoryAdvisor tokenLimitedChatMemoryAdvisor,
             @Value("${core.llm.prompt.system}") String systemPrompt) {
         return chatClientBuilder
                 .defaultSystem(systemPrompt)
-                .defaultTools(toolManager.loadTools())
+                .defaultTools(toolCallbackProvider.getToolCallbacks())
                 .defaultAdvisors(tokenLimitedChatMemoryAdvisor)
                 .build();
     }
-
-    @Bean
-    public CapabililtyFactory capabililtyFactory() {
-        return new McpCapabilityFactory();
-    }
-
 }
