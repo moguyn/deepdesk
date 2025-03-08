@@ -1,4 +1,4 @@
-package com.moguyn.deepdesk.capability;
+package com.moguyn.deepdesk.dependency;
 
 import java.io.IOException;
 import java.util.Arrays;
