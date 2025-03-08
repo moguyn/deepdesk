@@ -10,24 +10,20 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
 import org.mockito.Captor;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moguyn.deepdesk.chat.ChatService;
 import com.moguyn.deepdesk.model.ChatAnswer;
 import com.moguyn.deepdesk.model.ChatMessage;
@@ -36,30 +32,18 @@ import com.moguyn.deepdesk.model.ContentItem;
 
 /**
  * Integration test for the ChatController.
- *
- * Uses SpringBootTest to start a real server context and test the HTTP
- * endpoint.
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@WebMvcTest(ChatController.class)
 @ActiveProfiles("test")
-@TestPropertySource(properties = {"core.ui.type=web"})
 public class ChatControllerTest {
 
-    @TestConfiguration
-    @SuppressWarnings("unused")
-    static class TestConfig {
-
-        @Bean
-        @Primary
-        public ChatService chatService() {
-            return mock(ChatService.class);
-        }
-    }
+    @Autowired
+    private MockMvc mockMvc;
 
     @Autowired
-    private TestRestTemplate restTemplate;
+    private ObjectMapper objectMapper;
 
-    @Autowired
+    @MockitoBean
     private ChatService chatService;
 
     @Captor
@@ -71,7 +55,6 @@ public class ChatControllerTest {
     private static final String TEST_RESPONSE_ID = "resp_6c16820f97b7";
 
     private ChatAnswer defaultAnswer;
-    private HttpHeaders headers;
 
     @BeforeEach
     public void setUp() {
@@ -86,29 +69,27 @@ public class ChatControllerTest {
                 .role("assistant")
                 .type("message")
                 .build();
-
-        headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
     }
 
     @Test
-    void chat_shouldReturnValidResponse() {
+    void chat_shouldReturnValidResponse() throws Exception {
         // Arrange
         ChatMessage message = new ChatMessage("user", TEST_USER_MESSAGE);
         ChatRequest request = new ChatRequest(TEST_MODEL, "123", 4000, Collections.singletonList(message));
 
         when(chatService.processChat(any(ChatRequest.class))).thenReturn(defaultAnswer);
 
-        HttpEntity<ChatRequest> requestEntity = new HttpEntity<>(request, headers);
-
         // Act
-        ResponseEntity<ChatAnswer> responseEntity = restTemplate.postForEntity(
-                "/chat", requestEntity, ChatAnswer.class);
+        MvcResult result = mockMvc.perform(post("/chat")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andReturn();
 
         // Assert
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        ChatAnswer actualAnswer = objectMapper.readValue(
+                result.getResponse().getContentAsString(), ChatAnswer.class);
 
-        ChatAnswer actualAnswer = responseEntity.getBody();
         assertNotNull(actualAnswer);
         assertEquals(TEST_RESPONSE_ID, actualAnswer.getId());
         assertEquals(TEST_MODEL, actualAnswer.getModel());
@@ -132,7 +113,7 @@ public class ChatControllerTest {
     }
 
     @Test
-    void chat_withMultipleMessages_shouldProcessAllMessages() {
+    void chat_withMultipleMessages_shouldProcessAllMessages() throws Exception {
         // Arrange
         ChatMessage message1 = new ChatMessage("user", "First message");
         ChatMessage message2 = new ChatMessage("assistant", "AI response");
@@ -147,15 +128,11 @@ public class ChatControllerTest {
 
         when(chatService.processChat(any(ChatRequest.class))).thenReturn(defaultAnswer);
 
-        HttpEntity<ChatRequest> requestEntity = new HttpEntity<>(request, headers);
-
         // Act
-        ResponseEntity<ChatAnswer> responseEntity = restTemplate.postForEntity(
-                "/chat", requestEntity, ChatAnswer.class);
-
-        // Assert
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertNotNull(responseEntity.getBody());
+        mockMvc.perform(post("/chat")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
 
         // Verify that the request was passed correctly to the service
         verify(chatService).processChat(chatRequestCaptor.capture());
@@ -167,7 +144,7 @@ public class ChatControllerTest {
     }
 
     @Test
-    void chat_withCustomModel_shouldUseProvidedModel() {
+    void chat_withCustomModel_shouldUseProvidedModel() throws Exception {
         // Arrange
         String customModel = "gpt-4";
         ChatMessage message = new ChatMessage("user", TEST_USER_MESSAGE);
@@ -184,16 +161,17 @@ public class ChatControllerTest {
 
         when(chatService.processChat(any(ChatRequest.class))).thenReturn(customAnswer);
 
-        HttpEntity<ChatRequest> requestEntity = new HttpEntity<>(request, headers);
-
         // Act
-        ResponseEntity<ChatAnswer> responseEntity = restTemplate.postForEntity(
-                "/chat", requestEntity, ChatAnswer.class);
+        MvcResult result = mockMvc.perform(post("/chat")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andReturn();
 
         // Assert
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        ChatAnswer actualAnswer = objectMapper.readValue(
+                result.getResponse().getContentAsString(), ChatAnswer.class);
 
-        ChatAnswer actualAnswer = responseEntity.getBody();
         assertNotNull(actualAnswer);
         assertEquals(customModel, actualAnswer.getModel());
 
@@ -204,22 +182,18 @@ public class ChatControllerTest {
     }
 
     @Test
-    void chat_withEmptyMessages_shouldNotAcceptEmptyMessages() {
-        // Arrange - Create a request with at least one user message to avoid the validation error
+    void chat_withEmptyMessages_shouldNotAcceptEmptyMessages() throws Exception {
+        // Arrange - Create a request with at least one user message
         ChatMessage message = new ChatMessage("user", TEST_USER_MESSAGE);
         ChatRequest request = new ChatRequest(TEST_MODEL, "123", 4000, Collections.singletonList(message));
 
         when(chatService.processChat(any(ChatRequest.class))).thenReturn(defaultAnswer);
 
-        HttpEntity<ChatRequest> requestEntity = new HttpEntity<>(request, headers);
-
-        // Act
-        ResponseEntity<ChatAnswer> responseEntity = restTemplate.postForEntity(
-                "/chat", requestEntity, ChatAnswer.class);
-
-        // Assert - We expect success when a message is provided
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertNotNull(responseEntity.getBody());
+        // Act & Assert - We expect success when a message is provided
+        mockMvc.perform(post("/chat")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
 
         // Verify message was processed
         verify(chatService).processChat(chatRequestCaptor.capture());
