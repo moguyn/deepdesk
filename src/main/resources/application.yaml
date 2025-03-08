@@ -8,7 +8,7 @@ spring:
       api-key: ${OPENAI_API_KEY}
       base-url: https://api.openai.com
       chat:
-        enabled: true
+        enabled: false
         options:
           model: gpt-4o-mini
           max-completion-tokens: 6000
@@ -19,6 +19,11 @@ spring:
         options:
           model: claude-3-7-sonnet-20250219
           max-completion-tokens: 6000
+    ollama:
+      chat:
+        enabled: true
+        options:
+          model: mistral
     mcp:
       client:
         stdio:
