@@ -9,3 +9,5 @@ comment:
   layout: "diff, flags, files"
   behavior: default
   require_changes: true
+codecov:
+  max_report_age: off

@@ -23,21 +23,20 @@ public class CommandlineChatRunner implements ChatRunner {
         console.println("\n我是您的AI助手，退出请键入 bye 或 exit\n");
         try (Scanner scanner = new Scanner(System.in)) {
             while (true) {
-                try {
-                    String prompt = getUserInput(scanner);
-                    if (shouldExit(prompt)) {
-                        break;
-                    }
-                    if (shouldContinue(prompt)) {
-                        continue;
-                    }
-                    String reply = promptAI(prompt);
-                    console.println("AI: " + reply);
-                } catch (Exception e) {
-                    log.error("Error running chat", e);
-                    console.println("系统: 发生错误了");
+                String prompt = getUserInput(scanner);
+                if (shouldExit(prompt)) {
+                    break;
                 }
+                if (shouldContinue(prompt)) {
+                    continue;
+                }
+                String reply = promptAI(prompt);
+                console.println("AI: " + reply);
+
             }
+        } catch (Exception e) {
+            log.error("Error running chat", e);
+            console.println("系统: 发生错误了");
         }
     }
 

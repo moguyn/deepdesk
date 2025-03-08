@@ -64,7 +64,7 @@ The LLM is invoked through the MCP Host for all language model operations.
 
 ### Prerequisites
 
-- Java Development Kit (JDK) 23 or higher
+- Java Development Kit (JDK) 21 or higher
 - Maven (included via Maven Wrapper)
 - Node.js with `npx` (required for MCP server)
 - Python 3.13.x with uv package manager (required for MCP server)

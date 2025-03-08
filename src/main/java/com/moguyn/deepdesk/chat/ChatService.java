@@ -38,7 +38,7 @@ public class ChatService {
 
         return ChatAnswer.builder()
                 .content(Collections.singletonList(new ContentItem(reply, "text")))
-                .id("resp_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12))
+                .id("response-" + UUID.randomUUID().toString().replace("-", "").substring(0, 12))
                 .model(request.getModel())
                 .role("assistant")
                 .type("message")

@@ -10,7 +10,7 @@ spring:
       chat:
         enabled: true
         options:
-          model: gpt-4o
+          model: gpt-4o-mini
           max-completion-tokens: 6000
     anthropic:
       api-key: ${ANTHROPIC_API_KEY}
@@ -19,6 +19,11 @@ spring:
         options:
           model: claude-3-7-sonnet-20250219
           max-completion-tokens: 6000
+    ollama:
+      chat:
+        enabled: false
+        options:
+          model: mistral
     mcp:
       client:
         stdio:
