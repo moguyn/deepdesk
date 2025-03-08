@@ -11,30 +11,43 @@ import lombok.extern.slf4j.Slf4j;
 public class CommandlineChatRunner implements ChatRunner {
 
     private final ChatClient chatClient;
+    private final PrintStream console;
 
     public CommandlineChatRunner(ChatClient chatClient) {
         this.chatClient = chatClient;
+        this.console = System.out;
     }
 
     @Override
     public void run(String... args) {
-        PrintStream console = System.out;
-        console.println("\n我是您的AI助手(退出请输入bye或者exit)\n");
+        console.println("\n我是您的AI助手，退出请键入 bye 或 exit\n");
         try (Scanner scanner = new Scanner(System.in)) {
             while (true) {
-                console.print("\n用户: ");
-                String prompt = scanner.nextLine();
-                if ("exit".equalsIgnoreCase(prompt) || "bye".equalsIgnoreCase(prompt)) {
+                String prompt = getUserInput(scanner);
+                if (shouldExit(prompt)) {
                     break;
                 }
-                var reply = chatClient.prompt(prompt)
-                        .call()
-                        .content();
+                String reply = promptAI(prompt);
                 console.println("AI: " + reply);
             }
         } catch (Exception e) {
             log.error("Error running chat", e);
+            console.println("发生错误，请稍后再试。");
         }
     }
 
+    private String getUserInput(Scanner scanner) {
+        console.print("\n我: ");
+        return scanner.nextLine();
+    }
+
+    private boolean shouldExit(String prompt) {
+        return "exit".equalsIgnoreCase(prompt) || "bye".equalsIgnoreCase(prompt);
+    }
+
+    private String promptAI(String prompt) {
+        return chatClient.prompt(prompt)
+                .call()
+                .content();
+    }
 }
