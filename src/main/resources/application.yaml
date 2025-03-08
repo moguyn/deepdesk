@@ -38,11 +38,7 @@ core:
     prompt:
       system: 你是企业级AI助手, 请说中文
     max-tokens: 20000
-    history-window-size: 2
-  capabilities:
-    - type: files
-      config:
-        paths:
-          - '.'
+    history-window-size: 5
+    
   ui:
     type: cli
