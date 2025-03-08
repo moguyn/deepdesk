@@ -26,6 +26,13 @@
             "args": [
                 "mcp-server-time"
             ]
+        },
+        "memory": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-memory"
+            ]
         }
     }
 }
