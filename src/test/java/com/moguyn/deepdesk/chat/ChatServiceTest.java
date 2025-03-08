@@ -77,7 +77,7 @@ class ChatServiceTest {
         assertEquals("assistant", answer.getRole());
         assertEquals("message", answer.getType());
         assertNotNull(answer.getId());
-        assertTrue(answer.getId().startsWith("resp_"));
+        assertTrue(answer.getId().startsWith("response-"));
 
         // Verify content
         assertNotNull(answer.getContent());
