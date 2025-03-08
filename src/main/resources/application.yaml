@@ -28,9 +28,7 @@ spring:
 logging:
   level:
     root: INFO
-    io.modelcontextprotocol: INFO
-    com.moguyn.deepdesk.service: INFO
-    com.moguyn.deepdesk.advisor: INFO
+    org.springframework.web.client: DEBUG
     org.springframework.ai: DEBUG
 
 core:

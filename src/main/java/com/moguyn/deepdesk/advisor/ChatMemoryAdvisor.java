@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 
 @Slf4j
-public class TokenLimitedChatMemoryAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
+public class ChatMemoryAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
 
     private final ExcessiveContentTruncator<Message> excessiveContentTruncator;
 
@@ -34,7 +34,7 @@ public class TokenLimitedChatMemoryAdvisor extends AbstractChatMemoryAdvisor<Cha
      * @param excessiveContentTruncator the truncator to use to truncate
      * excessive content
      */
-    public TokenLimitedChatMemoryAdvisor(ChatMemory chatMemory, String defaultConversationId,
+    public ChatMemoryAdvisor(ChatMemory chatMemory, String defaultConversationId,
             int chatHistoryWindowSize, ExcessiveContentTruncator<Message> excessiveContentTruncator) {
         super(chatMemory, defaultConversationId, chatHistoryWindowSize, true);
         this.excessiveContentTruncator = excessiveContentTruncator;

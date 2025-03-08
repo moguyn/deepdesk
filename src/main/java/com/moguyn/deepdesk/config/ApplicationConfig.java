@@ -14,9 +14,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.moguyn.deepdesk.advisor.ChatMemoryAdvisor;
 import com.moguyn.deepdesk.advisor.ExcessiveContentTruncator;
 import com.moguyn.deepdesk.advisor.MaxTokenSizeContenTruncator;
-import com.moguyn.deepdesk.advisor.TokenLimitedChatMemoryAdvisor;
 import com.moguyn.deepdesk.chat.ChatRunner;
 import com.moguyn.deepdesk.chat.CommandlineChatRunner;
 import com.moguyn.deepdesk.dependency.McpDependencyValidator;
@@ -60,11 +60,11 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public TokenLimitedChatMemoryAdvisor tokenLimitedChatMemoryAdvisor(
+    public ChatMemoryAdvisor tokenLimitedChatMemoryAdvisor(
             ChatMemory chatMemory,
             ExcessiveContentTruncator<Message> excessiveContentTruncator,
             @Value("${core.llm.history-window-size}") int historyWindowSize) {
-        return new TokenLimitedChatMemoryAdvisor(
+        return new ChatMemoryAdvisor(
                 chatMemory,
                 DEFAULT_CONVERSATION_ID,
                 historyWindowSize,
@@ -86,7 +86,7 @@ public class ApplicationConfig {
     public ChatClient chatClient(ChatClient.Builder chatClientBuilder,
             SyncMcpToolCallbackProvider toolCallbackProvider,
             ChatMemory chatMemory,
-            TokenLimitedChatMemoryAdvisor tokenLimitedChatMemoryAdvisor,
+            ChatMemoryAdvisor tokenLimitedChatMemoryAdvisor,
             @Value("${core.llm.prompt.system}") String systemPrompt) {
         return chatClientBuilder
                 .defaultSystem(systemPrompt)

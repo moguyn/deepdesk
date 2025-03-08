@@ -78,7 +78,7 @@ class CommandlineChatRunnerTest {
         // Verify output contains expected strings
         String capturedOutput = outputStreamCaptor.toString();
         assert (capturedOutput.contains("我是您的AI助手"));
-        assert (capturedOutput.contains("用户: "));
+        assert (capturedOutput.contains("我: "));
         assert (capturedOutput.contains("AI: " + expectedAiResponse));
     }
 
