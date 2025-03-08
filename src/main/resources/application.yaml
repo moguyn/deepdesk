@@ -31,7 +31,7 @@ core:
     - type: files
       config:
         paths:
-          - ${user.home}
+          - '.'
     # - type: search
     # - type: fetch
     # - type: browser

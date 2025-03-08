@@ -98,7 +98,7 @@ public class ApplicationConfig {
         return chatClientBuilder
                 .defaultSystem(systemPrompt)
                 .defaultTools(toolManager.loadTools())
-                // .defaultAdvisors(tokenLimitedChatMemoryAdvisor)
+                .defaultAdvisors(tokenLimitedChatMemoryAdvisor)
                 .build();
     }
 
