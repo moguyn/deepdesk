@@ -1,5 +1,5 @@
 server:
-  port: 18080
+  port: 18082
 
 spring:
   application:
@@ -8,8 +8,8 @@ spring:
     web-application-type: servlet
   ai:
     openai:
-      api-key: ${OPENAI_API_KEY}
-      base-url: https://api.openai.com
+      api-key: ${WOKA_API_KEY}
+      base-url: https://4.0.wokaai.com
       chat:
         enabled: true
         options:

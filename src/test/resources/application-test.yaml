@@ -12,7 +12,7 @@ spring:
 core:
   llm:
     prompt:
-      system: 你是企业级AI助手, 请说中文
+      system: 你是企业级AI助手, 请说中文, 请使用markdown格式输出
   capabilities:
     - type: files
       config:
