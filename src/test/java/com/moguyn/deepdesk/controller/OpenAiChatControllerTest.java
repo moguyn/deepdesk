@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
 import org.mockito.Captor;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -178,6 +180,101 @@ public class OpenAiChatControllerTest {
         assertEquals("user", capturedRequest.getMessages().get(0).getRole());
         assertEquals(TEST_USER_MESSAGE, capturedRequest.getMessages().get(0).getContent());
         assertTrue(capturedRequest.isStream());
+    }
+
+    @Test
+    void chatStream_shouldHandleErrorsGracefully() throws Exception {
+        // Arrange
+        ChatMessage message = new ChatMessage();
+        message.setRole("user");
+        message.setContent(TEST_USER_MESSAGE);
+
+        ChatCompletionRequest request = new ChatCompletionRequest();
+        request.setModel(TEST_MODEL);
+        request.setMessages(Arrays.asList(message));
+        request.setStream(true);
+
+        // Simulate an error in the service
+        RuntimeException testException = new RuntimeException("Test error message");
+        when(openAiService.streamChat(any(ChatCompletionRequest.class)))
+                .thenReturn(Flux.error(testException));
+
+        // Act & Assert - we're not checking the content type here, just that it completes
+        mockMvc.perform(post("/openai/chat/completions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.TEXT_EVENT_STREAM)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
+
+        // Verify the service was called
+        verify(openAiService).streamChat(any(ChatCompletionRequest.class));
+    }
+
+    @Test
+    void chatStream_shouldReturnErrorChunkOnException() throws Exception {
+        // Arrange
+        ChatMessage message = new ChatMessage();
+        message.setRole("user");
+        message.setContent(TEST_USER_MESSAGE);
+
+        ChatCompletionRequest request = new ChatCompletionRequest();
+        request.setModel(TEST_MODEL);
+        request.setMessages(Arrays.asList(message));
+        request.setStream(true);
+
+        // Create a test exception
+        String errorMessage = "Test error message";
+        RuntimeException testException = new RuntimeException(errorMessage);
+
+        // Mock the service to return an error
+        when(openAiService.streamChat(any(ChatCompletionRequest.class)))
+                .thenReturn(Flux.error(testException));
+
+        // Use a custom result handler to capture the response
+        MvcResult mvcResult = mockMvc.perform(post("/openai/chat/completions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.TEXT_EVENT_STREAM)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // Get the response content
+        String responseContent = mvcResult.getResponse().getContentAsString();
+
+        // Verify the error message is included in the response
+        assertTrue(responseContent.contains("An error occurred: " + errorMessage)
+                || responseContent.contains("\"content\":\"An error occurred: " + errorMessage + "\""));
+        assertTrue(responseContent.contains("\"finish_reason\":\"error\"")
+                || responseContent.contains("finishReason\":\"error\""));
+    }
+
+    @Test
+    void chatStream_shouldHandleNonStreamingRequestCorrectly() throws Exception {
+        // Arrange
+        ChatMessage message = new ChatMessage();
+        message.setRole("user");
+        message.setContent(TEST_USER_MESSAGE);
+
+        // Create a request with stream=false
+        ChatCompletionRequest request = new ChatCompletionRequest();
+        request.setModel(TEST_MODEL);
+        request.setMessages(Arrays.asList(message));
+        request.setStream(false);
+
+        // Act & Assert - expect an UnsupportedOperationException
+        try {
+            mockMvc.perform(post("/openai/chat/completions")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.TEXT_EVENT_STREAM)
+                    .content(objectMapper.writeValueAsString(request)));
+        } catch (Exception e) {
+            // Verify the exception is of the expected type
+            assertTrue(e.getCause() instanceof UnsupportedOperationException);
+            assertEquals("We expect stream = true", e.getCause().getMessage());
+        }
+
+        // Verify the service was not called
+        verify(openAiService, never()).streamChat(any(ChatCompletionRequest.class));
     }
 
     @Test
