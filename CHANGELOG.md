@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.10](https://github.com/moguyn/deepdesk/compare/v0.2.9...v0.2.10) (2025-03-09)
+
+
+### Bug Fixes
+
+* support openai API style ([#92](https://github.com/moguyn/deepdesk/issues/92)) ([c2d9f70](https://github.com/moguyn/deepdesk/commit/c2d9f709847713ff0b7d125354e8ee69ab6aaad3))
+
 ## [0.2.9](https://github.com/moguyn/deepdesk/compare/v0.2.8...v0.2.9) (2025-03-08)
 
 
