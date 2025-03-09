@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/moguyn/deepdesk/compare/v0.3.0...v0.3.1) (2025-03-09)
+
+
+### Bug Fixes
+
+* ci ([#101](https://github.com/moguyn/deepdesk/issues/101)) ([6a9f9da](https://github.com/moguyn/deepdesk/commit/6a9f9dadd910c74640933cb486605a6443122dff))
+
 ## [0.3.0](https://github.com/moguyn/deepdesk/compare/v0.2.11...v0.3.0) (2025-03-09)
 
 
