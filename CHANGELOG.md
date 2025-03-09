@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/moguyn/deepdesk/compare/v0.2.11...v0.3.0) (2025-03-09)
+
+
+### Features
+
+* support stream response ([#98](https://github.com/moguyn/deepdesk/issues/98)) ([22d844d](https://github.com/moguyn/deepdesk/commit/22d844d5aea66a4e8a019730188d4789f599449a))
+
 ## [0.2.11](https://github.com/moguyn/deepdesk/compare/v0.2.10...v0.2.11) (2025-03-09)
 
 
