@@ -28,7 +28,9 @@ public class OpenAiChatController {
 
     private final OpenAiService openAiService;
 
-    @PostMapping(path = "/chat/completions", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/chat/completions",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_EVENT_STREAM_VALUE})
     public ResponseEntity<?> chat(@RequestBody ChatCompletionRequest request) {
         if (!request.isStream()) {
             ChatCompletionResponse response = openAiService.processChat(request);
@@ -37,7 +39,7 @@ public class OpenAiChatController {
             Flux<ChatCompletionChunk> streamResponse = openAiService.streamChat(request);
             return ResponseEntity
                     .ok()
-                    .contentType(MediaType.APPLICATION_NDJSON)
+                    .contentType(MediaType.TEXT_EVENT_STREAM)
                     .body(streamResponse);
         }
     }

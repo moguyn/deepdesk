@@ -233,4 +233,100 @@ class OpenAiServiceTest {
         // Verify that chatResponse() was called on the stream response spec
         verify(streamResponseSpec).chatResponse();
     }
+
+    @Test
+    void getModels_shouldReturnSupportedModels() {
+        // Act
+        List<String> models = openAiService.getModels();
+
+        // Assert
+        assertEquals(1, models.size());
+        assertEquals("deepdesk", models.get(0));
+    }
+
+    @Test
+    void streamChat_shouldHandleEmptyResponse() {
+        // Arrange
+        ChatCompletionRequest request = new ChatCompletionRequest();
+        List<ChatMessage> messages = new ArrayList<>();
+        messages.add(new ChatMessage("user", "Hello"));
+        request.setMessages(messages);
+        request.setStream(true);
+
+        // Mock the stream response
+        ChatClient.ChatClientRequestSpec streamRequestSpec = mock(ChatClient.ChatClientRequestSpec.class);
+        ChatClient.StreamResponseSpec streamResponseSpec = mock(ChatClient.StreamResponseSpec.class);
+
+        when(chatClient.prompt(any(Prompt.class))).thenReturn(streamRequestSpec);
+        when(streamRequestSpec.stream()).thenReturn(streamResponseSpec);
+        when(streamResponseSpec.chatResponse()).thenReturn(Flux.empty());
+
+        // Act
+        Flux<ChatCompletionChunk> result = openAiService.streamChat(request);
+
+        // Assert
+        assertNotNull(result);
+        result.collectList().block(); // Verify the flux completes without error
+    }
+
+    @Test
+    void processChat_shouldHandleEmptyResponse() {
+        // Arrange
+        ChatCompletionRequest request = new ChatCompletionRequest();
+        List<ChatMessage> messages = new ArrayList<>();
+        messages.add(new ChatMessage("user", "Hello"));
+        request.setMessages(messages);
+
+        when(responseSpec.content()).thenReturn("");
+
+        // Act
+        ChatCompletionResponse response = openAiService.processChat(request);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals("", response.getChoices().get(0).getMessage().getContent());
+    }
+
+    @Test
+    void processChat_shouldHandleNullResponse() {
+        // Arrange
+        ChatCompletionRequest request = new ChatCompletionRequest();
+        List<ChatMessage> messages = new ArrayList<>();
+        messages.add(new ChatMessage("user", "Hello"));
+        request.setMessages(messages);
+
+        when(responseSpec.content()).thenReturn(null);
+
+        // Act
+        ChatCompletionResponse response = openAiService.processChat(request);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals("", response.getChoices().get(0).getMessage().getContent());
+    }
+
+    @Test
+    void processChat_shouldHandleAllMessageTypes() {
+        // Arrange
+        ChatCompletionRequest request = new ChatCompletionRequest();
+        List<ChatMessage> messages = new ArrayList<>();
+        messages.add(new ChatMessage("system", "System message"));
+        messages.add(new ChatMessage("user", "User message"));
+        messages.add(new ChatMessage("assistant", "Assistant message"));
+        request.setMessages(messages);
+
+        when(responseSpec.content()).thenReturn("Response");
+
+        // Act
+        ChatCompletionResponse response = openAiService.processChat(request);
+
+        // Assert
+        assertNotNull(response);
+        verify(chatClient).prompt(promptCaptor.capture());
+        Prompt capturedPrompt = promptCaptor.getValue();
+        String promptString = capturedPrompt.toString();
+        assertTrue(promptString.contains("System message"));
+        assertTrue(promptString.contains("User message"));
+        assertTrue(promptString.contains("Assistant message"));
+    }
 }
