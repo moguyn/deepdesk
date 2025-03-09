@@ -4,7 +4,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.InMemoryChatMemory;
 import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
+import org.springframework.ai.mcp.AsyncMcpToolCallbackProvider;
 import org.springframework.ai.tokenizer.JTokkitTokenCountEstimator;
 import org.springframework.ai.tokenizer.TokenCountEstimator;
 import org.springframework.beans.factory.annotation.Value;
@@ -90,13 +90,13 @@ public class ApplicationConfig {
 
     @Bean
     public ChatClient chatClient(ChatClient.Builder chatClientBuilder,
-            SyncMcpToolCallbackProvider toolCallbackProvider,
+            AsyncMcpToolCallbackProvider toolCallbackProvider,
             ChatMemory chatMemory,
             ChatMemoryAdvisor tokenLimitedChatMemoryAdvisor,
             @Value("${core.llm.prompt.system}") String systemPrompt) {
         return chatClientBuilder
                 .defaultSystem(systemPrompt)
-                .defaultTools(toolCallbackProvider.getToolCallbacks())
+                .defaultTools(toolCallbackProvider)
                 .defaultAdvisors(tokenLimitedChatMemoryAdvisor)
                 .build();
     }

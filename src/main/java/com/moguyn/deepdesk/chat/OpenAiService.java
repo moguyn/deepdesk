@@ -130,27 +130,53 @@ public class OpenAiService {
         return promptResponse
                 .stream()
                 .chatResponse()
-                .map(tr -> ChatCompletionChunk.builder()
-                .id(tr.getMetadata().getId())
-                .object("chat.completion.chunk")
-                .created(System.currentTimeMillis() / 1000)
-                .usage(OpenAiUsage.builder()
-                        .promptTokens(tr.getMetadata().getUsage().getPromptTokens())
-                        .completionTokens(tr.getMetadata().getUsage().getCompletionTokens())
-                        .totalTokens(tr.getMetadata().getUsage().getTotalTokens())
-                        .build())
-                .model(tr.getMetadata().getModel())
-                .systemFingerprint(tr.getMetadata().toString())
-                .choices(tr.getResults()
-                        .stream()
-                        .map(g -> ChatCompletionChunk.ChunkChoice.builder()
-                        .index(g.getMetadata().getOrDefault("index", 0))
-                        .delta(ChatMessage.builder().content(g.getMetadata().getOrDefault("delta", "")).build())
-                        .finishReason(g.getMetadata().getOrDefault("finish_reason", ""))
-                        .logprobs(g.getMetadata().getOrDefault("logprobs", ""))
-                        .build())
-                        .collect(Collectors.toList()))
-                .build());
+                .map(tr -> {
+                    // Create a builder with safe defaults
+                    var chunkBuilder = ChatCompletionChunk.builder()
+                            .id(tr.getMetadata().getId() != null ? tr.getMetadata().getId() : "deepdesk-" + java.util.UUID.randomUUID())
+                            .object("chat.completion.chunk")
+                            .created(System.currentTimeMillis() / 1000)
+                            .model(tr.getMetadata().getModel() != null ? tr.getMetadata().getModel() : request.getModel());
+
+                    // Safely handle usage data if available
+                    if (tr.getMetadata().getUsage() != null) {
+                        chunkBuilder.usage(OpenAiUsage.builder()
+                                .promptTokens(tr.getMetadata().getUsage().getPromptTokens())
+                                .completionTokens(tr.getMetadata().getUsage().getCompletionTokens())
+                                .totalTokens(tr.getMetadata().getUsage().getTotalTokens())
+                                .build());
+                    }
+
+                    // Set system fingerprint if needed
+                    if (tr.getMetadata() != null) {
+                        chunkBuilder.systemFingerprint(tr.getMetadata().toString());
+                    }
+
+                    // Safely map results to choices
+                    List<ChatCompletionChunk.ChunkChoice> choices = tr.getResults()
+                            .stream()
+                            .map(g -> {
+                                var choiceBuilder = ChatCompletionChunk.ChunkChoice.builder();
+
+                                // Safely extract index or default to 0
+                                choiceBuilder.index(g.getMetadata().getOrDefault("index", 0));
+
+                                // Safely create delta message
+                                String content = g.getMetadata().getOrDefault("delta", "");
+                                choiceBuilder.delta(ChatMessage.builder()
+                                        .role("assistant")
+                                        .content(content)
+                                        .build());
+
+                                // Set finish reason if available
+                                choiceBuilder.finishReason(g.getMetadata().getOrDefault("finish_reason", ""));
+
+                                return choiceBuilder.build();
+                            })
+                            .collect(Collectors.toList());
+
+                    return chunkBuilder.choices(choices).build();
+                });
     }
 
     private int estimateTokenCount(String text) {

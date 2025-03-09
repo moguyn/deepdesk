@@ -42,6 +42,7 @@ public class ChatCompletionChunk {
         @JsonProperty("finish_reason")
         private String finishReason;
 
+        @JsonInclude(JsonInclude.Include.NON_NULL)
         private Object logprobs;
     }
 }

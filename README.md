@@ -145,6 +145,11 @@ To build native executables locally:
 - Java 17 or newer (Java 23 recommended)
 - Maven 3.8+
 
+## Known issues
+
+- streaming mode is not yet supported (due to [this issue in Spring](https://github.com/spring-projects/spring-ai/issues/2341))
+   - reproducible by [src/test/resources/chat.http]
+
 ## Security & Privacy
 
 Deepdesk is architected with enterprise security as a foundation:

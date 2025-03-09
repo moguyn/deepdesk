@@ -145,6 +145,11 @@ build-native.bat
 - Java 17或更新版本（推荐Java 23）
 - Maven 3.8+
 
+## 已知问题
+
+- 流式模式尚不支持（由于[Spring中的这个问题](https://github.com/spring-projects/spring-ai/issues/2341)）
+   - 可通过[src/test/resources/chat.http]复现
+
 ## 安全与隐私
 
 深知以企业安全为基础进行架构设计：

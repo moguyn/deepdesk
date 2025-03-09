@@ -1,8 +1,21 @@
-POST http://localhost:8080/chat
+POST http://localhost:18082/openai/chat/completions
 Content-Type: application/json
 
 {
-    "messages": [{"role": "user", "content": "总结 CHANGELOG.md 文件"}]
+    "messages": [{"role": "user", "content": "总结 CHANGELOG.md 文件"}],
+    "stream": false
+}
+
+### not working yet
+POST http://localhost:18082/openai/chat/completions
+Accept: text/event-stream
+Content-Type: application/json
+Cache-Control: no-cache
+Connection: keep-alive
+
+{
+    "messages": [{"role": "user", "content": "总结 CHANGELOG.md 文件"}],
+    "stream": true
 }
 
 ###
