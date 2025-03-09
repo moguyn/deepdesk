@@ -27,6 +27,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.ChatClient.CallResponseSpec;
 import org.springframework.ai.chat.client.ChatClient.ChatClientRequestSpec;
+import org.springframework.ai.chat.messages.AssistantMessage;
+import org.springframework.ai.chat.metadata.ChatResponseMetadata;
+import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.tokenizer.TokenCountEstimator;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -203,7 +207,6 @@ class OpenAiServiceTest {
     }
 
     @Test
-    @SuppressWarnings({"unchecked", "rawtypes"})
     void streamChat_shouldMapResponseCorrectly() {
         // This test verifies that the streamChat method can handle a response
         // Since we don't have access to the actual response classes, we'll just
@@ -222,7 +225,19 @@ class OpenAiServiceTest {
         ChatClient.StreamResponseSpec streamResponseSpec = mock(ChatClient.StreamResponseSpec.class);
 
         // Create an empty flux for the response
-        Flux responseFlux = Flux.empty();
+        ChatResponseMetadata metadata = ChatResponseMetadata.builder()
+                .model("test-model")
+                .id("test-id")
+                .keyValue("index", 0)
+                .keyValue("delta", "test-content")
+                .keyValue("finish_reason", "stop")
+                .keyValue("logprobs", "test-1")
+                .build();
+        Flux<ChatResponse> responseFlux = Flux.just(ChatResponse
+                .builder()
+                .metadata(metadata)
+                .generations(List.of(new Generation(new AssistantMessage("test-content"))))
+                .build());
 
         when(chatClient.prompt(any(Prompt.class))).thenReturn(streamRequestSpec);
         when(streamRequestSpec.stream()).thenReturn(streamResponseSpec);

@@ -144,7 +144,7 @@ public class OpenAiService {
                 .choices(tr.getResults()
                         .stream()
                         .map(g -> ChatCompletionChunk.ChunkChoice.builder()
-                        .index(g.getMetadata().getOrDefault("idnex", 0))
+                        .index(g.getMetadata().getOrDefault("index", 0))
                         .delta(ChatMessage.builder().content(g.getMetadata().getOrDefault("delta", "")).build())
                         .finishReason(g.getMetadata().getOrDefault("finish_reason", ""))
                         .logprobs(g.getMetadata().getOrDefault("logprobs", ""))
