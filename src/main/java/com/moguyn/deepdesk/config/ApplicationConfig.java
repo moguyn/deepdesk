@@ -96,7 +96,7 @@ public class ApplicationConfig {
             @Value("${core.llm.prompt.system}") String systemPrompt) {
         return chatClientBuilder
                 .defaultSystem(systemPrompt)
-                .defaultTools(toolCallbackProvider.getToolCallbacks())
+                .defaultTools(toolCallbackProvider)
                 .defaultAdvisors(tokenLimitedChatMemoryAdvisor)
                 .build();
     }

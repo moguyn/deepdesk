@@ -6,9 +6,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,6 +28,7 @@ public class ChatCompletionChunk {
     private List<ChunkChoice> choices;
     private OpenAiUsage usage;
 
+    @Builder
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -39,6 +42,7 @@ public class ChatCompletionChunk {
         @JsonProperty("finish_reason")
         private String finishReason;
 
+        @JsonInclude(JsonInclude.Include.NON_NULL)
         private Object logprobs;
     }
 }
