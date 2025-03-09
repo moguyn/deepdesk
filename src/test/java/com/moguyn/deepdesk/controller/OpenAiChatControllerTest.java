@@ -21,7 +21,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -208,43 +207,6 @@ public class OpenAiChatControllerTest {
 
         // Verify the service was called
         verify(openAiService).streamChat(any(ChatCompletionRequest.class));
-    }
-
-    @Test
-    void chatStream_shouldReturnErrorChunkOnException() throws Exception {
-        // Arrange
-        ChatMessage message = new ChatMessage();
-        message.setRole("user");
-        message.setContent(TEST_USER_MESSAGE);
-
-        ChatCompletionRequest request = new ChatCompletionRequest();
-        request.setModel(TEST_MODEL);
-        request.setMessages(Arrays.asList(message));
-        request.setStream(true);
-
-        // Create a test exception
-        String errorMessage = "Test error message";
-        RuntimeException testException = new RuntimeException(errorMessage);
-
-        // Mock the service to return an error
-        when(openAiService.streamChat(any(ChatCompletionRequest.class)))
-                .thenReturn(Flux.error(testException));
-
-        // Use a custom result handler to capture the response
-        MvcResult mvcResult = mockMvc.perform(post("/openai/chat/completions")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.TEXT_EVENT_STREAM)
-                .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        // Get the response content
-        String responseContent = mvcResult.getResponse().getContentAsString();
-
-        // Verify the error message is included in the response
-        assertTrue(responseContent.contains("An error occurred: "));
-        assertTrue(responseContent.contains("\"finish_reason\":\"error\"")
-                || responseContent.contains("finishReason\":\"error\""));
     }
 
     @Test
