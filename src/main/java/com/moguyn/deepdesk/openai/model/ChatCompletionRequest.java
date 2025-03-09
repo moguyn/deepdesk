@@ -29,7 +29,7 @@ public class ChatCompletionRequest {
 
     private Integer n;
 
-    private Boolean stream;
+    private boolean stream;
 
     @JsonProperty("stream_options")
     private StreamOptions streamOptions;
