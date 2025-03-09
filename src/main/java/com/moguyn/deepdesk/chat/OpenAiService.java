@@ -38,12 +38,6 @@ public class OpenAiService {
     private String systemPrompt;
 
     public ChatCompletionResponse processChat(ChatCompletionRequest request) {
-        // Return streaming response if stream is true
-        if (Boolean.TRUE.equals(request.getStream())) {
-            throw new IllegalArgumentException("Stream mode should be used with streamChat method");
-        }
-
-        // Convert OpenAI messages to Spring AI messages
         List<Message> messages = new ArrayList<>();
 
         // Add system message if not present in the request
@@ -121,5 +115,9 @@ public class OpenAiService {
 
     private int estimateTokenCount(String text) {
         return tokenCountEstimator.estimate(text);
+    }
+
+    public List<String> getModels() {
+        return List.of("deepdesk");
     }
 }

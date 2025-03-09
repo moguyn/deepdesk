@@ -6,6 +6,7 @@ import org.springframework.ai.chat.memory.InMemoryChatMemory;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.ai.tokenizer.JTokkitTokenCountEstimator;
+import org.springframework.ai.tokenizer.TokenCountEstimator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -55,8 +56,13 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public ExcessiveContentTruncator<Message> excessiveContentTruncator(@Value("${core.llm.max-tokens}") int maxTokens) {
-        return new MaxTokenSizeContenTruncator<>(new JTokkitTokenCountEstimator(), maxTokens);
+    public ExcessiveContentTruncator<Message> excessiveContentTruncator(TokenCountEstimator tokenCountEstimator, @Value("${core.llm.max-tokens}") int maxTokens) {
+        return new MaxTokenSizeContenTruncator<>(tokenCountEstimator, maxTokens);
+    }
+
+    @Bean
+    public TokenCountEstimator tokenCountEstimator() {
+        return new JTokkitTokenCountEstimator();
     }
 
     @Bean

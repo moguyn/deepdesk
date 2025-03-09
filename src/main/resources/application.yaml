@@ -1,3 +1,6 @@
+server:
+  port: 18080
+
 spring:
   application:
     name: deepdesk
@@ -45,4 +48,4 @@ core:
     history-window-size: 5
 
   ui:
-    type: cli
+    type: web
