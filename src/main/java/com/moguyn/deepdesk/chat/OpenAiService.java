@@ -39,6 +39,10 @@ public class OpenAiService {
     private String systemPrompt;
 
     public ChatCompletionResponse processChat(ChatCompletionRequest request) {
+        if (request.isStream()) {
+            throw new IllegalArgumentException("Stream mode should be used with streamChat method");
+        }
+
         ChatClient.ChatClientRequestSpec promptResponse = prepareMessages(request);
 
         // Call the AI model

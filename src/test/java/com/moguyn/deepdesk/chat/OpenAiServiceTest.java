@@ -18,6 +18,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -28,9 +29,12 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.tokenizer.TokenCountEstimator;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import com.moguyn.deepdesk.openai.model.ChatCompletionChunk;
 import com.moguyn.deepdesk.openai.model.ChatCompletionRequest;
 import com.moguyn.deepdesk.openai.model.ChatCompletionResponse;
 import com.moguyn.deepdesk.openai.model.ChatMessage;
+
+import reactor.core.publisher.Flux;
 
 @ExtendWith(MockitoExtension.class)
 class OpenAiServiceTest {
@@ -171,6 +175,9 @@ class OpenAiServiceTest {
     void processChat_shouldThrowException_whenStreamIsTrue() {
         // Arrange
         ChatCompletionRequest request = new ChatCompletionRequest();
+        List<ChatMessage> messages = new ArrayList<>();
+        messages.add(new ChatMessage("user", "Hello"));
+        request.setMessages(messages);
         request.setStream(true);
 
         // Act & Assert
@@ -191,5 +198,39 @@ class OpenAiServiceTest {
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> openAiService.processChat(request));
         assertEquals("Unsupported role: unsupported_role", exception.getMessage());
+    }
+
+    @Test
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    void streamChat_shouldPrepareMessagesAndReturnFlux() {
+        // Arrange
+        ChatCompletionRequest request = new ChatCompletionRequest();
+        List<ChatMessage> messages = new ArrayList<>();
+        messages.add(new ChatMessage("user", "Hello"));
+        request.setMessages(messages);
+        request.setStream(true);
+
+        // Mock the stream response
+        ChatClient.ChatClientRequestSpec streamRequestSpec = mock(ChatClient.ChatClientRequestSpec.class);
+        ChatClient.StreamResponseSpec streamResponseSpec = mock(ChatClient.StreamResponseSpec.class);
+
+        // Create a simple Flux for the response
+        Flux responseFlux = Flux.empty();
+
+        when(chatClient.prompt(any(Prompt.class))).thenReturn(streamRequestSpec);
+        when(streamRequestSpec.stream()).thenReturn(streamResponseSpec);
+        when(streamResponseSpec.chatResponse()).thenReturn(responseFlux);
+
+        // Act
+        Flux<ChatCompletionChunk> result = openAiService.streamChat(request);
+
+        // Assert
+        assertNotNull(result);
+        // Verify that the prompt was created with the correct messages
+        verify(chatClient).prompt(any(Prompt.class));
+        // Verify that stream() was called on the request spec
+        verify(streamRequestSpec).stream();
+        // Verify that chatResponse() was called on the stream response spec
+        verify(streamResponseSpec).chatResponse();
     }
 }
