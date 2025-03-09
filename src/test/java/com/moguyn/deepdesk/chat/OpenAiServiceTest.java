@@ -192,15 +192,4 @@ class OpenAiServiceTest {
                 () -> openAiService.processChat(request));
         assertEquals("Unsupported role: unsupported_role", exception.getMessage());
     }
-
-    @Test
-    void streamChat_shouldThrowException() {
-        // Arrange
-        ChatCompletionRequest request = new ChatCompletionRequest();
-
-        // Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class,
-                () -> openAiService.streamChat(request));
-        assertEquals("Stream mode is not supported yet!", exception.getMessage());
-    }
 }
