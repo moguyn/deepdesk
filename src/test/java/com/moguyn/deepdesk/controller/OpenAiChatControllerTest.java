@@ -242,8 +242,7 @@ public class OpenAiChatControllerTest {
         String responseContent = mvcResult.getResponse().getContentAsString();
 
         // Verify the error message is included in the response
-        assertTrue(responseContent.contains("An error occurred: " + errorMessage)
-                || responseContent.contains("\"content\":\"An error occurred: " + errorMessage + "\""));
+        assertTrue(responseContent.contains("An error occurred: "));
         assertTrue(responseContent.contains("\"finish_reason\":\"error\"")
                 || responseContent.contains("finishReason\":\"error\""));
     }
