@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.11](https://github.com/moguyn/deepdesk/compare/v0.2.10...v0.2.11) (2025-03-09)
+
+
+### Bug Fixes
+
+* remove chat endpoint ([#95](https://github.com/moguyn/deepdesk/issues/95)) ([9a5c1c8](https://github.com/moguyn/deepdesk/commit/9a5c1c802b07a6971541ee96fc57d2819889d4c6))
+
 ## [0.2.10](https://github.com/moguyn/deepdesk/compare/v0.2.9...v0.2.10) (2025-03-09)
 
 
