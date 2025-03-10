@@ -116,6 +116,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Add Netty DNS resolver for MacOS -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-resolver-dns-native-macos</artifactId>
+            <classifier>osx-aarch_64</classifier>
+        </dependency>
+
     </dependencies>
 
     <build>
