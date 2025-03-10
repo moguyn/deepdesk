@@ -1,5 +1,5 @@
 server:
-  port: 18083
+  port: 18082
 
 spring:
   application:
@@ -48,4 +48,4 @@ core:
     history-window-size: 5
 
   ui:
-    type: cli
+    type: web
