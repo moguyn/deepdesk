@@ -33,6 +33,13 @@
                 "-y",
                 "@modelcontextprotocol/server-memory"
             ]
+        },
+        "mysql": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@benborla29/mcp-server-mysql"
+            ]
         }
     }
 }
