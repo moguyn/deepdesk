@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/moguyn/deepdesk/compare/v0.3.1...v0.3.2) (2025-03-11)
+
+
+### Bug Fixes
+
+* stream chat ([#105](https://github.com/moguyn/deepdesk/issues/105)) ([f56c81e](https://github.com/moguyn/deepdesk/commit/f56c81ea10a0c35a5e3ef3eade3b34ac92494fcc))
+
 ## [0.3.1](https://github.com/moguyn/deepdesk/compare/v0.3.0...v0.3.1) (2025-03-09)
 
 
