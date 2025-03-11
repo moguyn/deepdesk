@@ -33,6 +33,20 @@
                 "-y",
                 "@modelcontextprotocol/server-memory"
             ]
+        },
+        "mysql": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@benborla29/mcp-server-mysql"
+            ],
+            "env": {
+                "MYSQL_HOST": "127.0.0.1",
+                "MYSQL_PORT": "3306",
+                "MYSQL_USER": "test",
+                "MYSQL_PASS": "mysql",
+                "MYSQL_DB": "test"
+            }
         }
     }
 }

@@ -29,6 +29,7 @@ spring:
           model: mistral
     mcp:
       client:
+        type: ASYNC
         stdio:
           servers-configuration: classpath:mcp-servers.json
 
