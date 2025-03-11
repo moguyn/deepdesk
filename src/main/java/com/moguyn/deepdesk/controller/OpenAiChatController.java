@@ -34,47 +34,37 @@ public class OpenAiChatController {
 
     @PostMapping(path = "/chat/completions",
             consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> chat(@RequestBody ChatCompletionRequest request) {
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_EVENT_STREAM_VALUE})
+    public Object chat(@RequestBody ChatCompletionRequest request) {
         if (!request.isStream()) {
             ChatCompletionResponse response = openAiService.processChat(request);
             return ResponseEntity.ok(response);
-        }
-        throw new UnsupportedOperationException("Stream is not supported for stream = false");
-    }
-
-    @PostMapping(path = "/chat/completions",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = {MediaType.TEXT_EVENT_STREAM_VALUE})
-    public Flux<ChatCompletionChunk> chatStream(@RequestBody ChatCompletionRequest request) {
-        if (request.isStream()) {
+        } else {
             return openAiService.streamChat(request)
-                    .onErrorResume(e -> {
-                        // Log the error
-                        log.error("Error in chat stream: {}", e.getMessage(), e);
+            .onErrorResume(e -> {
+                // Log the error
+                log.error("Error in chat stream: {}", e.getMessage(), e);
 
-                        // Return an error chunk
-                        ChatCompletionChunk errorChunk = ChatCompletionChunk.builder()
-                                .id("error-" + java.util.UUID.randomUUID())
-                                .object("chat.completion.chunk")
-                                .created(System.currentTimeMillis() / 1000)
-                                .model(request.getModel())
-                                .choices(List.of(
-                                        ChatCompletionChunk.ChunkChoice.builder()
-                                                .index(0)
-                                                .delta(ChatMessage.builder()
-                                                        .role("assistant")
-                                                        .content("An error occurred: " + e.getMessage())
-                                                        .build())
-                                                .finishReason("error")
-                                                .build()
-                                ))
-                                .build();
-
-                        return Flux.just(errorChunk);
-                    });
+                // Return an error chunk
+                ChatCompletionChunk errorChunk = ChatCompletionChunk.builder()
+                        .id("error-" + java.util.UUID.randomUUID())
+                        .object("chat.completion.chunk")
+                        .created(System.currentTimeMillis() / 1000)
+                        .model(request.getModel())
+                        .choices(List.of(
+                                ChatCompletionChunk.ChunkChoice.builder()
+                                        .index(0)
+                                        .delta(ChatMessage.builder()
+                                                .role("assistant")
+                                                .content("An error occurred: " + e.getMessage())
+                                                .build())
+                                        .finishReason("error")
+                                        .build()
+                        ))
+                        .build();
+                return Flux.just(errorChunk);
+            });
         }
-        throw new UnsupportedOperationException("We expect stream = true");
     }
 
     @GetMapping(path = "/models")

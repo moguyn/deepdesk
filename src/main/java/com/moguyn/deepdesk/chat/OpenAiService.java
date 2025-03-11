@@ -127,29 +127,23 @@ public class OpenAiService {
      */
     public Flux<ChatCompletionChunk> streamChat(ChatCompletionRequest request) {
         var promptResponse = prepareMessages(request);
+        var chunkId = "deepdesk-" + java.util.UUID.randomUUID();
+        var systemFingerprint = "fp_" + java.util.UUID.randomUUID().toString();
+        var created = System.currentTimeMillis() / 1000;
         return promptResponse
                 .stream()
                 .chatResponse()
                 .map(tr -> {
                     // Create a builder with safe defaults
                     var chunkBuilder = ChatCompletionChunk.builder()
-                            .id(tr.getMetadata().getId() != null ? tr.getMetadata().getId() : "deepdesk-" + java.util.UUID.randomUUID())
+                            .id(tr.getMetadata().getId() != null ? tr.getMetadata().getId() : chunkId)
                             .object("chat.completion.chunk")
-                            .created(System.currentTimeMillis() / 1000)
+                            .created(created)
                             .model(tr.getMetadata().getModel() != null ? tr.getMetadata().getModel() : request.getModel());
-
-                    // Safely handle usage data if available
-                    if (tr.getMetadata().getUsage() != null) {
-                        chunkBuilder.usage(OpenAiUsage.builder()
-                                .promptTokens(tr.getMetadata().getUsage().getPromptTokens())
-                                .completionTokens(tr.getMetadata().getUsage().getCompletionTokens())
-                                .totalTokens(tr.getMetadata().getUsage().getTotalTokens())
-                                .build());
-                    }
 
                     // Set system fingerprint if needed
                     if (tr.getMetadata() != null) {
-                        chunkBuilder.systemFingerprint(tr.getMetadata().toString());
+                        chunkBuilder.systemFingerprint(systemFingerprint);
                     }
 
                     // Safely map results to choices
@@ -162,14 +156,16 @@ public class OpenAiService {
                                 choiceBuilder.index(g.getMetadata().getOrDefault("index", 0));
 
                                 // Safely create delta message
-                                String content = g.getMetadata().getOrDefault("delta", "");
+                                var content = g.getOutput().getText();
                                 choiceBuilder.delta(ChatMessage.builder()
-                                        .role("assistant")
+                                        .role(content != null && content.isEmpty() ? "assistant" : null)
                                         .content(content)
                                         .build());
 
                                 // Set finish reason if available
-                                choiceBuilder.finishReason(g.getMetadata().getOrDefault("finish_reason", ""));
+                                choiceBuilder
+                                        .logprobs(g.getMetadata().get("logprobs"))
+                                        .finishReason(content == null ? "stop" : null);
 
                                 return choiceBuilder.build();
                             })

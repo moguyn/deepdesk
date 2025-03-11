@@ -14,7 +14,7 @@ Cache-Control: no-cache
 Connection: keep-alive
 
 {
-    "messages": [{"role": "user", "content": "总结 CHANGELOG.md 文件"}],
+    "messages": [{"role": "user", "content": "你是谁"}],
     "stream": true
 }
 
