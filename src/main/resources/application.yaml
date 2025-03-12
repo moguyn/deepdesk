@@ -8,8 +8,8 @@ spring:
     web-application-type: servlet
   ai:
     openai:
-      api-key: ${WOKA_API_KEY}
-      base-url: https://4.0.wokaai.com
+      api-key: ${OPENAI_API_KEY}
+      base-url: https://api.openai.com
       chat:
         enabled: true
         options:
@@ -37,9 +37,7 @@ spring:
 logging:
   level:
     root: INFO
-    org.springframework.web.client: DEBUG
     org.springframework.ai: DEBUG
-    org.springframework.ai.openai: DEBUG
 
 core:
   llm:

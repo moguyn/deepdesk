@@ -15,11 +15,8 @@
             ]
         },
         "search": {
-            "command": "npx",
-            "args": [
-                "-y",
-                "@modelcontextprotocol/server-brave-search"
-            ]
+            "command": ".vscode/mcp-search-server",
+            "args": []
         },
         "time": {
             "command": "uvx",
