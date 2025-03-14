@@ -1,10 +1,8 @@
 {
     "mcpServers": {
         "filesystem": {
-            "command": "npx",
+            "command": "mcp-go-filesystem",
             "args": [
-                "-y",
-                "@modelcontextprotocol/server-filesystem",
                 "."
             ]
         },
@@ -15,7 +13,7 @@
             ]
         },
         "search": {
-            "command": ".vscode/mcp-search-server",
+            "command": "mcp-search-server",
             "args": []
         },
         "time": {
