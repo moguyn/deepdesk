@@ -47,4 +47,4 @@ core:
     history-window-size: 5
 
   ui:
-    type: web
+    type: cli

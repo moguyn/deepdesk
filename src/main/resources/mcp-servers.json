@@ -4,8 +4,9 @@
             "command": "npx",
             "args": [
                 "-y",
-                "@modelcontextprotocol/server-filesystem",
-                "."
+                "supergateway",
+                "--sse",
+                "http://0.0.0.0:38085/sse"
             ]
         },
         "fetch": {
