@@ -1,9 +1,12 @@
 {
     "mcpServers": {
         "filesystem": {
-            "command": "mcp-go-filesystem",
+            "command": "npx",
             "args": [
-                "."
+                "-y",
+                "supergateway",
+                "--sse",
+                "http://0.0.0.0:38085/sse"
             ]
         },
         "fetch": {
@@ -13,7 +16,7 @@
             ]
         },
         "search": {
-            "command": "mcp-search-server",
+            "command": ".vscode/mcp-search-server",
             "args": []
         },
         "time": {
