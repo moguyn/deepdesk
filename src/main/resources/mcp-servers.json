@@ -1,14 +1,5 @@
 {
     "mcpServers": {
-        "filesystem": {
-            "command": "npx",
-            "args": [
-                "-y",
-                "supergateway",
-                "--sse",
-                "http://0.0.0.0:38085/sse"
-            ]
-        },
         "fetch": {
             "command": "uvx",
             "args": [

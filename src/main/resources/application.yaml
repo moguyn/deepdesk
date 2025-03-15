@@ -32,6 +32,10 @@ spring:
         type: ASYNC
         stdio:
           servers-configuration: classpath:mcp-servers.json
+        sse:
+          connections:
+            code-filesystem:
+              url: http://0.0.0.0:38085/sse
       server:
         name: think-mcp-server
         version: 1.0.0
@@ -47,7 +51,7 @@ logging:
 core:
   llm:
     prompt:
-      system: 你是企业级AI助手, 请说中文, 请使用markdown格式输出。对于用户输入的任何问题, 请先进行思考, 然后给出回答。
+      system: 你是企业级AI助手, 请说中文, 请使用markdown格式输出。对于用户输入的任何问题, 请先进行思考和分析, 然后给出回答。
     max-tokens: 20000
     history-window-size: 5
 
