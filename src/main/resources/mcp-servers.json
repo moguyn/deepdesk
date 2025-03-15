@@ -25,13 +25,6 @@
                 "mcp-server-time"
             ]
         },
-        "memory": {
-            "command": "npx",
-            "args": [
-                "-y",
-                "@modelcontextprotocol/server-memory"
-            ]
-        },
         "mysql": {
             "command": "npx",
             "args": [
@@ -45,6 +38,12 @@
                 "MYSQL_PASS": "mysql",
                 "MYSQL_DB": "test"
             }
+        },
+        "think": {
+            "command": "uvx",
+            "args": [
+                "mcp-server-think"
+            ]
         }
     }
 }

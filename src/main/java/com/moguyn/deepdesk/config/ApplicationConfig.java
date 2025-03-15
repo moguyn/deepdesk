@@ -7,6 +7,7 @@ import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.tokenizer.JTokkitTokenCountEstimator;
 import org.springframework.ai.tokenizer.TokenCountEstimator;
 import org.springframework.ai.tool.ToolCallbackProvider;
+import org.springframework.ai.tool.method.MethodToolCallbackProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -14,6 +15,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 import com.moguyn.deepdesk.advisor.ChatMemoryAdvisor;
 import com.moguyn.deepdesk.advisor.ExcessiveContentTruncator;
@@ -21,6 +23,7 @@ import com.moguyn.deepdesk.advisor.MaxTokenSizeContenTruncator;
 import com.moguyn.deepdesk.chat.ChatRunner;
 import com.moguyn.deepdesk.chat.CommandlineChatRunner;
 import com.moguyn.deepdesk.dependency.McpDependencyValidator;
+import com.moguyn.deepdesk.mcp.ThinkService;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -86,6 +89,20 @@ public class ApplicationConfig {
     public void dependencyValidation() {
         var validator = new McpDependencyValidator("npx", "uvx");
         validator.verifyDependencies();
+    }
+
+    /**
+     * Registers the ThinkService as a tool callback provider.
+     *
+     * @param thinkService The service containing the think tool methods
+     * @return A ToolCallbackProvider with the registered think tool
+     */
+    @Bean
+    @Lazy
+    public ToolCallbackProvider thinkToolCallbackProvider(ThinkService thinkService) {
+        return MethodToolCallbackProvider.builder()
+                .toolObjects(thinkService)
+                .build();
     }
 
     @Bean
