@@ -1,11 +1,5 @@
 {
     "mcpServers": {
-        "fetch": {
-            "command": "uvx",
-            "args": [
-                "mcp-server-fetch"
-            ]
-        },
         "search": {
             "command": ".vscode/mcp-search-server",
             "args": []
@@ -29,12 +23,6 @@
                 "MYSQL_PASS": "mysql",
                 "MYSQL_DB": "test"
             }
-        },
-        "think": {
-            "command": "uvx",
-            "args": [
-                "mcp-server-think"
-            ]
         }
     }
 }

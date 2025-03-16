@@ -35,8 +35,8 @@ public class ChatMemoryAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
      * excessive content
      */
     public ChatMemoryAdvisor(ChatMemory chatMemory, String defaultConversationId,
-            int chatHistoryWindowSize, ExcessiveContentTruncator<Message> excessiveContentTruncator) {
-        super(chatMemory, defaultConversationId, chatHistoryWindowSize, true);
+            int chatHistoryWindowSize, ExcessiveContentTruncator<Message> excessiveContentTruncator, int order) {
+        super(chatMemory, defaultConversationId, chatHistoryWindowSize, true, order);
         this.excessiveContentTruncator = excessiveContentTruncator;
     }
 
@@ -86,7 +86,7 @@ public class ChatMemoryAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
 
         // 4. Create a new request with the advised messages.
         AdvisedRequest advisedRequest = AdvisedRequest.from(request).messages(advisedMessages).build();
-        log.debug("advisedRequest: {}", advisedRequest);
+        log.debug("query received: {}", advisedRequest.userText());
 
         // 5. Add the new user input to the conversation memory.
         UserMessage userMessage = new UserMessage(request.userText(), request.media());

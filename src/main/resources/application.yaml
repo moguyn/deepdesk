@@ -6,6 +6,8 @@ spring:
     name: deepdesk
   main:
     web-application-type: servlet
+  codec:
+      max-in-memory-size: 10MB
   ai:
     openai:
       api-key: ${OPENAI_API_KEY}
@@ -35,23 +37,23 @@ spring:
         sse:
           connections:
             code-filesystem:
-              url: http://0.0.0.0:38085/sse
+              url: http://0.0.0.0:38085
       server:
         name: think-mcp-server
         version: 1.0.0
         type: SYNC
         sse-message-endpoint: /mcp/messages
-
 # Logging configuration
 logging:
   level:
     root: INFO
     org.springframework.ai: DEBUG
+    com.moguyn.deepdesk: DEBUG
 
 core:
   llm:
     prompt:
-      system: 你是企业级AI助手, 请说中文, 请使用markdown格式输出。对于用户输入的任何问题, 请先进行思考和分析, 然后给出回答。
+      system: 你是企业级AI助手, 请说中文, 请使用markdown格式输出。优先选择<think>标签的工具。
     max-tokens: 20000
     history-window-size: 5
 
