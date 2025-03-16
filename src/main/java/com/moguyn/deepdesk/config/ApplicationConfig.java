@@ -1,6 +1,10 @@
 package com.moguyn.deepdesk.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.InMemoryChatMemory;
 import org.springframework.ai.chat.messages.Message;
@@ -15,12 +19,16 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moguyn.deepdesk.advisor.ChatMemoryAdvisor;
-import com.moguyn.deepdesk.advisor.ExcessiveContentTruncator;
-import com.moguyn.deepdesk.advisor.MaxTokenSizeContenTruncator;
+import com.moguyn.deepdesk.advisor.ContextLimiter;
+import com.moguyn.deepdesk.advisor.CriticalThinker;
+import com.moguyn.deepdesk.advisor.MaxTokenSizeContentLimiter;
+import com.moguyn.deepdesk.advisor.NextStepAdvisor;
+import com.moguyn.deepdesk.advisor.PlanAdvisor;
 import com.moguyn.deepdesk.chat.ChatRunner;
 import com.moguyn.deepdesk.chat.CommandlineChatRunner;
-import com.moguyn.deepdesk.dependency.McpDependencyValidator;
+import com.moguyn.deepdesk.dependency.SoftwareDependencyValidator;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -56,8 +64,8 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public ExcessiveContentTruncator<Message> excessiveContentTruncator(TokenCountEstimator tokenCountEstimator, @Value("${core.llm.max-tokens}") int maxTokens) {
-        return new MaxTokenSizeContenTruncator<>(tokenCountEstimator, maxTokens);
+    public ContextLimiter<Message> contextLimiter(TokenCountEstimator tokenCountEstimator, CoreSettings coreSettings) {
+        return new MaxTokenSizeContentLimiter<>(tokenCountEstimator, coreSettings.getLlm().getMaxTokens());
     }
 
     @Bean
@@ -68,13 +76,29 @@ public class ApplicationConfig {
     @Bean
     public ChatMemoryAdvisor tokenLimitedChatMemoryAdvisor(
             ChatMemory chatMemory,
-            ExcessiveContentTruncator<Message> excessiveContentTruncator,
-            @Value("${core.llm.history-window-size}") int historyWindowSize) {
+            ContextLimiter<Message> contextLimiter,
+            CoreSettings coreSettings) {
         return new ChatMemoryAdvisor(
                 chatMemory,
                 DEFAULT_CONVERSATION_ID,
-                historyWindowSize,
-                excessiveContentTruncator);
+                coreSettings.getLlm().getHistoryWindowSize(),
+                contextLimiter,
+                1000);
+    }
+
+    @Bean
+    public PlanAdvisor planAdvisor(ChatClient.Builder chatClientBuilder, ToolCallbackProvider toolCallbackProvider, ObjectMapper objectMapper, ChatMemory chatMemory) {
+        return new PlanAdvisor(chatClientBuilder, chatMemory, toolCallbackProvider, objectMapper, 10);
+    }
+
+    @Bean
+    public NextStepAdvisor nextStepAdvisor(ChatClient.Builder chatClientBuilder, ToolCallbackProvider toolCallbackProvider, ObjectMapper objectMapper) {
+        return new NextStepAdvisor(chatClientBuilder, toolCallbackProvider, objectMapper, 20);
+    }
+
+    @Bean
+    public CriticalThinker criticalThinker(ChatClient.Builder chatClientBuilder, ToolCallbackProvider toolCallbackProvider, ObjectMapper objectMapper) {
+        return new CriticalThinker(chatClientBuilder, toolCallbackProvider, objectMapper, 30);
     }
 
     @Bean
@@ -84,20 +108,63 @@ public class ApplicationConfig {
 
     @PostConstruct
     public void dependencyValidation() {
-        var validator = new McpDependencyValidator("npx", "uvx");
+        var validator = new SoftwareDependencyValidator("npx", "uvx");
         validator.verifyDependencies();
     }
 
     @Bean
     public ChatClient chatClient(ChatClient.Builder chatClientBuilder,
             ToolCallbackProvider toolCallbackProvider,
-            ChatMemory chatMemory,
+            PlanAdvisor planAdvisor,
+            NextStepAdvisor nextStepAdvisor,
+            CriticalThinker criticalThinker,
             ChatMemoryAdvisor tokenLimitedChatMemoryAdvisor,
+            CoreSettings coreSettings,
             @Value("${core.llm.prompt.system}") String systemPrompt) {
-        return chatClientBuilder
+
+        var builder = chatClientBuilder
                 .defaultSystem(systemPrompt)
-                .defaultTools(toolCallbackProvider)
-                .defaultAdvisors(tokenLimitedChatMemoryAdvisor)
-                .build();
+                .defaultTools(toolCallbackProvider);
+
+        // Dynamically add advisors based on configuration
+        List<Advisor> enabledAdvisors = new ArrayList<>();
+
+        CoreSettings.Advisors advisorSettings = coreSettings.getAdvisors();
+        if (advisorSettings != null) {
+            if (advisorSettings.isPlanAdvisorEnabled()) {
+                log.info("Enabling Plan Advisor");
+                enabledAdvisors.add(planAdvisor);
+            }
+
+            if (advisorSettings.isNextStepAdvisorEnabled()) {
+                log.info("Enabling Next Step Advisor");
+                enabledAdvisors.add(nextStepAdvisor);
+            }
+
+            if (advisorSettings.isCriticalThinkerEnabled()) {
+                log.info("Enabling Critical Thinker");
+                enabledAdvisors.add(criticalThinker);
+            }
+
+            if (advisorSettings.isChatMemoryAdvisorEnabled()) {
+                log.info("Enabling Chat Memory Advisor");
+                enabledAdvisors.add(tokenLimitedChatMemoryAdvisor);
+            }
+        } else {
+            log.warn("No advisor configuration found, enabling all advisors by default");
+            enabledAdvisors.add(planAdvisor);
+            enabledAdvisors.add(nextStepAdvisor);
+            enabledAdvisors.add(criticalThinker);
+            enabledAdvisors.add(tokenLimitedChatMemoryAdvisor);
+        }
+
+        // Apply the enabled advisors
+        if (!enabledAdvisors.isEmpty()) {
+            builder.defaultAdvisors(enabledAdvisors.toArray(Advisor[]::new));
+        } else {
+            log.warn("No advisors enabled, chat client will operate without advisors");
+        }
+
+        return builder.build();
     }
 }

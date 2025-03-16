@@ -66,8 +66,8 @@ class OpenAiServiceTest {
     private final String defaultSystemPrompt = "你是企业级AI助手, 请说中文, 请使用markdown格式输出";
 
     @BeforeEach
-    @SuppressWarnings({"unchecked", "unused"})
-    void setup() {
+    @SuppressWarnings({"unchecked"})
+    public void setup() {
         ReflectionTestUtils.setField(openAiService, "systemPrompt", defaultSystemPrompt);
 
         // Make these setup mocks lenient to avoid unnecessary stubbing errors

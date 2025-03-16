@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.ai.model.Content;
 
-public interface ExcessiveContentTruncator<T extends Content> {
+public interface ContextLimiter<T extends Content> {
 
     List<T> truncate(List<T> messages);
 }

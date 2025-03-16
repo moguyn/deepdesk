@@ -22,7 +22,7 @@ import reactor.core.publisher.Flux;
 @Slf4j
 public class ChatMemoryAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
 
-    private final ExcessiveContentTruncator<Message> excessiveContentTruncator;
+    private final ContextLimiter<Message> contextLimiter;
 
     /**
      * Create a new TokenLimitedChatMemoryAdvisor with the specified memory,
@@ -35,9 +35,9 @@ public class ChatMemoryAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
      * excessive content
      */
     public ChatMemoryAdvisor(ChatMemory chatMemory, String defaultConversationId,
-            int chatHistoryWindowSize, ExcessiveContentTruncator<Message> excessiveContentTruncator) {
-        super(chatMemory, defaultConversationId, chatHistoryWindowSize, true);
-        this.excessiveContentTruncator = excessiveContentTruncator;
+            int chatHistoryWindowSize, ContextLimiter<Message> contextLimiter, int order) {
+        super(chatMemory, defaultConversationId, chatHistoryWindowSize, true, order);
+        this.contextLimiter = contextLimiter;
     }
 
     public static Builder builder(ChatMemory chatMemory) {
@@ -68,7 +68,7 @@ public class ChatMemoryAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
         return new MessageAggregator().aggregateAdvisedResponse(advisedResponses, this::observeAfter);
     }
 
-    private AdvisedRequest before(AdvisedRequest request) {
+    protected AdvisedRequest before(AdvisedRequest request) {
 
         String conversationId = this.doGetConversationId(request.adviseContext());
 
@@ -82,11 +82,11 @@ public class ChatMemoryAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
         advisedMessages.addAll(memoryMessages);
 
         // 3. Purge the excessive content.
-        advisedMessages = this.excessiveContentTruncator.truncate(advisedMessages);
+        advisedMessages = this.contextLimiter.truncate(advisedMessages);
 
         // 4. Create a new request with the advised messages.
         AdvisedRequest advisedRequest = AdvisedRequest.from(request).messages(advisedMessages).build();
-        log.debug("advisedRequest: {}", advisedRequest);
+        log.debug("query received: {}", advisedRequest.userText());
 
         // 5. Add the new user input to the conversation memory.
         UserMessage userMessage = new UserMessage(request.userText(), request.media());

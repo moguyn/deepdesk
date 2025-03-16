@@ -21,6 +21,9 @@ public class CoreSettings {
     @NestedConfigurationProperty
     private LLM llm;
 
+    @NestedConfigurationProperty
+    private Advisors advisors;
+
     public LLM getLlm() {
         return llm;
     }
@@ -43,6 +46,14 @@ public class CoreSettings {
 
     public void setUi(UI ui) {
         this.ui = ui;
+    }
+
+    public Advisors getAdvisors() {
+        return advisors;
+    }
+
+    public void setAdvisors(Advisors advisors) {
+        this.advisors = advisors;
     }
 
     public static class CapabilitySettings {
@@ -86,6 +97,24 @@ public class CoreSettings {
     public static class LLM {
 
         private Prompt prompt;
+        private int maxTokens;
+        private int historyWindowSize;
+
+        public int getMaxTokens() {
+            return maxTokens;
+        }
+
+        public void setMaxTokens(int maxTokens) {
+            this.maxTokens = maxTokens;
+        }
+
+        public int getHistoryWindowSize() {
+            return historyWindowSize;
+        }
+
+        public void setHistoryWindowSize(int historyWindowSize) {
+            this.historyWindowSize = historyWindowSize;
+        }
 
         public Prompt getPrompt() {
             return prompt;
@@ -106,6 +135,49 @@ public class CoreSettings {
 
         public void setSystem(String system) {
             this.system = system;
+        }
+    }
+
+    /**
+     * Configuration for enabling/disabling advisors
+     */
+    public static class Advisors {
+
+        private boolean planAdvisorEnabled = true;
+        private boolean nextStepAdvisorEnabled = true;
+        private boolean criticalThinkerEnabled = true;
+        private boolean chatMemoryAdvisorEnabled = true;
+
+        public boolean isPlanAdvisorEnabled() {
+            return planAdvisorEnabled;
+        }
+
+        public void setPlanAdvisorEnabled(boolean planAdvisorEnabled) {
+            this.planAdvisorEnabled = planAdvisorEnabled;
+        }
+
+        public boolean isNextStepAdvisorEnabled() {
+            return nextStepAdvisorEnabled;
+        }
+
+        public void setNextStepAdvisorEnabled(boolean nextStepAdvisorEnabled) {
+            this.nextStepAdvisorEnabled = nextStepAdvisorEnabled;
+        }
+
+        public boolean isCriticalThinkerEnabled() {
+            return criticalThinkerEnabled;
+        }
+
+        public void setCriticalThinkerEnabled(boolean criticalThinkerEnabled) {
+            this.criticalThinkerEnabled = criticalThinkerEnabled;
+        }
+
+        public boolean isChatMemoryAdvisorEnabled() {
+            return chatMemoryAdvisorEnabled;
+        }
+
+        public void setChatMemoryAdvisorEnabled(boolean chatMemoryAdvisorEnabled) {
+            this.chatMemoryAdvisorEnabled = chatMemoryAdvisorEnabled;
         }
     }
 }

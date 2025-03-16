@@ -6,6 +6,8 @@ spring:
     name: deepdesk
   main:
     web-application-type: servlet
+  codec:
+      max-in-memory-size: 10MB
   ai:
     openai:
       api-key: ${OPENAI_API_KEY}
@@ -32,19 +34,29 @@ spring:
         type: ASYNC
         stdio:
           servers-configuration: classpath:mcp-servers.json
+        sse:
+          connections:
+            code-filesystem:
+              url: http://0.0.0.0:38085
 
-# Logging configuration
 logging:
   level:
     root: INFO
     org.springframework.ai: DEBUG
+    com.moguyn.deepdesk: DEBUG
 
 core:
   llm:
     prompt:
-      system: 你是企业级AI助手, 请说中文, 请使用markdown格式输出
+      system: 你是企业级AI助手, 请只说中文, 使用markdown格式输出。
     max-tokens: 20000
     history-window-size: 5
 
   ui:
-    type: cli
+    type: web
+    
+  advisors:
+    plan-advisor-enabled: true
+    next-step-advisor-enabled: false
+    critical-thinker-enabled: false
+    chat-memory-advisor-enabled: true

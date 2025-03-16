@@ -1,35 +1,13 @@
 {
     "mcpServers": {
-        "filesystem": {
-            "command": "npx",
-            "args": [
-                "-y",
-                "supergateway",
-                "--sse",
-                "http://0.0.0.0:38085/sse"
-            ]
-        },
-        "fetch": {
-            "command": "uvx",
-            "args": [
-                "mcp-server-fetch"
-            ]
-        },
         "search": {
-            "command": ".vscode/mcp-search-server",
+            "command": "/Users/verrerie/git/deepdesk/.vscode/mcp-search-server",
             "args": []
         },
         "time": {
             "command": "uvx",
             "args": [
                 "mcp-server-time"
-            ]
-        },
-        "memory": {
-            "command": "npx",
-            "args": [
-                "-y",
-                "@modelcontextprotocol/server-memory"
             ]
         },
         "mysql": {

@@ -15,13 +15,13 @@ import lombok.extern.slf4j.Slf4j;
  * count of the datum.
  */
 @Slf4j
-public class MaxTokenSizeContenTruncator<T extends Content> implements ExcessiveContentTruncator<T> {
+public class MaxTokenSizeContentLimiter<T extends Content> implements ContextLimiter<T> {
 
     protected final TokenCountEstimator tokenCountEstimator;
 
     protected final int maxTokenSize;
 
-    public MaxTokenSizeContenTruncator(TokenCountEstimator tokenCountEstimator, int maxTokenSize) {
+    public MaxTokenSizeContentLimiter(TokenCountEstimator tokenCountEstimator, int maxTokenSize) {
         this.tokenCountEstimator = tokenCountEstimator;
         this.maxTokenSize = maxTokenSize;
     }
