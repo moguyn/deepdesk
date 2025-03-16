@@ -77,11 +77,11 @@ class PlanAdvisorTest {
         String actionableSteps = "Step 1: Do this\nStep 2: Do that";
         String clarificationQuestions = "Any clarification needed?";
         String additionalConsiderations = "Additional considerations";
-        String context = "Context info";
+        String allowedDirectories = "path/to/allowed/directories";
         
         // Act
         PlanAdvisor.QueryPlan queryPlan = new PlanAdvisor.QueryPlan(
-                summary, actionableSteps, clarificationQuestions, additionalConsiderations, context);
+                summary, actionableSteps, clarificationQuestions, additionalConsiderations, allowedDirectories);
         
         // Assert
         assertNotNull(queryPlan);
@@ -89,6 +89,6 @@ class PlanAdvisorTest {
         assertEquals(actionableSteps, queryPlan.actionableSteps());
         assertEquals(clarificationQuestions, queryPlan.clarificationQuestions());
         assertEquals(additionalConsiderations, queryPlan.additionalConsiderations());
-        assertEquals(context, queryPlan.context());
+        assertEquals(allowedDirectories, queryPlan.allowedDirectories());
     }
 }

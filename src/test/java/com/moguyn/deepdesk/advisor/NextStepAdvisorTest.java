@@ -77,7 +77,7 @@ class NextStepAdvisorTest {
                 "Step 1: Do this\nStep 2: Do that",
                 "Any clarification needed?",
                 "Additional considerations",
-                "Context information"
+                "allowed/directories"
         );
 
         // Mock the toolCallbackProvider to return an empty array
@@ -96,6 +96,6 @@ class NextStepAdvisorTest {
         assertEquals("", result.tool());
         assertEquals("", result.parameters());
         assertEquals("", result.question());
-        assertEquals("", result.allowedDirectories());
+        assertEquals("allowed/directories", result.allowedDirectories());
     }
 }
