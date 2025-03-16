@@ -60,7 +60,7 @@ public class PlanAdvisor extends AbstractAdvisor {
                 getContext(ac)
         ));
         messages = appendAdvice(messages, queryAnalysis, MessageType.SYSTEM);
-        builder.userText(queryAnalysis.summary());
+        builder.systemText(queryAnalysis.toString());
         ac.put(QUERY_PLAN_KEY, queryAnalysis);
 
         var newRequest = builder
@@ -95,8 +95,6 @@ public class PlanAdvisor extends AbstractAdvisor {
             You are a senior project manager.
             Task: Analyze the given query with accompanying inputs and determine the steps (max {maxSteps}) to address it effectively.
 
-            Context: {context}
-
             Available tools with metadata: {availableTools}
 
             Query: {query}
@@ -106,13 +104,13 @@ public class PlanAdvisor extends AbstractAdvisor {
             2. Identify the main objectives and rephrase them in a way that is clear and as less ambiguous as possible.
             3. Divide the main objectives into actionable steps, given the available tools and their metadata.
             4. Provide a brief explanation for each step, describing how it would contribute to answering the query.
-            5. Identify areas of ambiguity and uncertainty in the query and provide a plan to address them.
 
             Your response should include:
             1. A clear summary of the query's main points and objectives.
             2. A list of comprehensive steps, with a brief reasoning for each, and how they connect to each other.
             3. A short list of clarification questions (max {maxClarificationQuestions}) that might need to be further addressed, leave blank if none.
             4. Any additional considerations that might be important for addressing the query effectively, leave blank if none.
+            5. A list of allowed directories if any file system access is required
                         
             Present your response in the following JSON format with values in Chinese:
             ```
@@ -122,10 +120,10 @@ public class PlanAdvisor extends AbstractAdvisor {
 
         try {
             //  all the LLM using the prompt variable directly
-            var response = chatClient.prompt()
+            QueryPlan response = chatClient.prompt()
                     .user(u -> u.text(promptTemplate)
                     .param("query", request.query())
-                    .param("maxSteps", 5)
+                    .param("maxSteps", 4)
                     .param("maxClarificationQuestions", 3)
                     .param("availableTools", request.availableTools())
                     .param("format", outputConverter.getFormat())
@@ -162,7 +160,7 @@ public class PlanAdvisor extends AbstractAdvisor {
     /**
      * Response object for the think tool.
      */
-    public record QueryPlan(String summary, String actionableSteps, String clarificationQuestions, String additionalConsiderations, String context) {
+    public record QueryPlan(String summary, String actionableSteps, String clarificationQuestions, String additionalConsiderations, String allowedDirectories) {
 
     }
 

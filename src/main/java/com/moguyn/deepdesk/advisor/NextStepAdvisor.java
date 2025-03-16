@@ -94,10 +94,10 @@ public class NextStepAdvisor extends AbstractAdvisor {
             Query: {query}
 
             Context: 
-             - previous conversations: {context}
              - actionable steps: {actionableSteps}
              - clarification questions: {clarificationQuestions}
              - additional considerations: {additionalConsiderations}
+             - allowed directories: {allowedDirectories}
 
             Instructions:
             1. Identify the most important next step to take, among the actionable steps and clarification questions to ask.
@@ -132,7 +132,7 @@ public class NextStepAdvisor extends AbstractAdvisor {
                     .param("actionableSteps", queryPlan.actionableSteps())
                     .param("clarificationQuestions", queryPlan.clarificationQuestions())
                     .param("additionalConsiderations", queryPlan.additionalConsiderations())
-                    .param("context", queryPlan.context())
+                    .param("allowedDirectories", queryPlan.allowedDirectories())
                     .param("format", outputConverter.getFormat())
                     )
                     .call()
@@ -142,7 +142,7 @@ public class NextStepAdvisor extends AbstractAdvisor {
         } catch (Exception e) {
             log.error("error calling next step", e);
             // Handle LLM API errors
-            return new NextStep(queryPlan.summary(), "", "", "", "");
+            return new NextStep(queryPlan.summary(), "", "", "", queryPlan.allowedDirectories());
         }
     }
 

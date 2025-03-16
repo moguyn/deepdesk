@@ -13,7 +13,6 @@ import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.MessageType;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.model.MessageAggregator;
 import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.ai.converter.StructuredOutputConverter;
 import org.springframework.ai.model.function.FunctionCallback;
@@ -106,6 +105,6 @@ public abstract class AbstractAdvisor implements CallAroundAdvisor, StreamAround
     Flux<AdvisedResponse> aroundStream(@NonNull AdvisedRequest advisedRequest, @NonNull StreamAroundAdvisorChain chain) {
         AdvisedRequest advise = before(advisedRequest);
         Flux<AdvisedResponse> advisedResponses = chain.nextAroundStream(advise).map(this::after);
-        return new MessageAggregator().aggregateAdvisedResponse(advisedResponses, this::observeAfter);
+        return advisedResponses;
     }
 }
