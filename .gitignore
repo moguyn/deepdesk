@@ -48,4 +48,4 @@ node_modules
 .env.development.local
 .env.test.local
 .env.production.local
-..webui_secret_key
+.webui_secret_key
