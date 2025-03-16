@@ -11,11 +11,11 @@ import lombok.extern.slf4j.Slf4j;
  * required for MCP functionality.
  */
 @Slf4j
-public class McpDependencyValidator implements DependencyValidator {
+public class SoftwareDependencyValidator implements DependencyValidator {
 
     private final List<String> softwares;
 
-    public McpDependencyValidator(String... softwares) {
+    public SoftwareDependencyValidator(String... softwares) {
         this.softwares = Arrays.asList(softwares);
     }
 

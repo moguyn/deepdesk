@@ -38,12 +38,7 @@ spring:
           connections:
             code-filesystem:
               url: http://0.0.0.0:38085
-      server:
-        name: think-mcp-server
-        version: 1.0.0
-        type: SYNC
-        sse-message-endpoint: /mcp/messages
-# Logging configuration
+
 logging:
   level:
     root: INFO
@@ -58,4 +53,10 @@ core:
     history-window-size: 5
 
   ui:
-    type: cli
+    type: web
+    
+  advisors:
+    plan-advisor-enabled: true
+    next-step-advisor-enabled: true
+    critical-thinker-enabled: true
+    chat-memory-advisor-enabled: true

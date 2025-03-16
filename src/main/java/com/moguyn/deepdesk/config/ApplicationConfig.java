@@ -1,6 +1,10 @@
 package com.moguyn.deepdesk.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.InMemoryChatMemory;
 import org.springframework.ai.chat.messages.Message;
@@ -24,7 +28,7 @@ import com.moguyn.deepdesk.advisor.NextStepAdvisor;
 import com.moguyn.deepdesk.advisor.PlanAdvisor;
 import com.moguyn.deepdesk.chat.ChatRunner;
 import com.moguyn.deepdesk.chat.CommandlineChatRunner;
-import com.moguyn.deepdesk.dependency.McpDependencyValidator;
+import com.moguyn.deepdesk.dependency.SoftwareDependencyValidator;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -60,8 +64,8 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public ContextLimiter<Message> contextLimiter(TokenCountEstimator tokenCountEstimator, @Value("${core.llm.max-tokens}") int maxTokens) {
-        return new MaxTokenSizeContentLimiter<>(tokenCountEstimator, maxTokens);
+    public ContextLimiter<Message> contextLimiter(TokenCountEstimator tokenCountEstimator, CoreSettings coreSettings) {
+        return new MaxTokenSizeContentLimiter<>(tokenCountEstimator, coreSettings.getLlm().getMaxTokens());
     }
 
     @Bean
@@ -73,11 +77,11 @@ public class ApplicationConfig {
     public ChatMemoryAdvisor tokenLimitedChatMemoryAdvisor(
             ChatMemory chatMemory,
             ContextLimiter<Message> contextLimiter,
-            @Value("${core.llm.history-window-size}") int historyWindowSize) {
+            CoreSettings coreSettings) {
         return new ChatMemoryAdvisor(
                 chatMemory,
                 DEFAULT_CONVERSATION_ID,
-                historyWindowSize,
+                coreSettings.getLlm().getHistoryWindowSize(),
                 contextLimiter,
                 1000);
     }
@@ -104,7 +108,7 @@ public class ApplicationConfig {
 
     @PostConstruct
     public void dependencyValidation() {
-        var validator = new McpDependencyValidator("npx", "uvx");
+        var validator = new SoftwareDependencyValidator("npx", "uvx");
         validator.verifyDependencies();
     }
 
@@ -115,14 +119,53 @@ public class ApplicationConfig {
             NextStepAdvisor nextStepAdvisor,
             CriticalThinker criticalThinker,
             ChatMemoryAdvisor tokenLimitedChatMemoryAdvisor,
+            CoreSettings coreSettings,
             @Value("${core.llm.prompt.system}") String systemPrompt) {
 
-        var chatClient = chatClientBuilder
+        var builder = chatClientBuilder
                 .defaultSystem(systemPrompt)
-                .defaultTools(toolCallbackProvider)
-                .defaultAdvisors(planAdvisor, nextStepAdvisor, criticalThinker, tokenLimitedChatMemoryAdvisor)
-                .build();
+                .defaultTools(toolCallbackProvider);
 
-        return chatClient;
+        // Dynamically add advisors based on configuration
+        List<Advisor> enabledAdvisors = new ArrayList<>();
+
+        CoreSettings.Advisors advisorSettings = coreSettings.getAdvisors();
+        if (advisorSettings != null) {
+            if (advisorSettings.isPlanAdvisorEnabled()) {
+                log.info("Enabling Plan Advisor");
+                enabledAdvisors.add(planAdvisor);
+            }
+
+            if (advisorSettings.isNextStepAdvisorEnabled()) {
+                log.info("Enabling Next Step Advisor");
+                enabledAdvisors.add(nextStepAdvisor);
+            }
+
+            if (advisorSettings.isCriticalThinkerEnabled()) {
+                log.info("Enabling Critical Thinker");
+                enabledAdvisors.add(criticalThinker);
+            }
+
+            if (advisorSettings.isChatMemoryAdvisorEnabled()) {
+                log.info("Enabling Chat Memory Advisor");
+                enabledAdvisors.add(tokenLimitedChatMemoryAdvisor);
+            }
+        } else {
+            // Fallback to enable all advisors if configuration is missing
+            log.warn("No advisor configuration found, enabling all advisors by default");
+            enabledAdvisors.add(planAdvisor);
+            enabledAdvisors.add(nextStepAdvisor);
+            enabledAdvisors.add(criticalThinker);
+            enabledAdvisors.add(tokenLimitedChatMemoryAdvisor);
+        }
+
+        // Apply the enabled advisors
+        if (!enabledAdvisors.isEmpty()) {
+            builder.defaultAdvisors(enabledAdvisors.toArray(Advisor[]::new));
+        } else {
+            log.warn("No advisors enabled, chat client will operate without advisors");
+        }
+
+        return builder.build();
     }
 }
