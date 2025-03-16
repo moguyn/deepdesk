@@ -20,6 +20,7 @@ import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.model.MessageAggregator;
 import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.ai.converter.StructuredOutputConverter;
+import org.springframework.ai.model.function.FunctionCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.lang.NonNull;
 
@@ -42,11 +43,14 @@ public class ThinkAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
     private final ToolCallbackProvider toolCallbackProvider;
     private static final String DEFAULT_CONVERSATION_ID = "think-advisor";
     private static final String ACTIONS_KEY = "actions";
+    private static final String INITIALLY_ANALYZED_KEY = "initially_analyzed";
     private static final String FORMAT_PROMPT = """
+        - Make sure you only access the allowed directories. Don't guess or make up directories.
         - Your response should be in JSON format.
         - The data structure for the JSON should match this Java class: java.util.HashMap
         - Do not include any explanations, only provide a RFC8259 compliant JSON response following this format without deviation.
         """;
+    private static final int MAX_ITERATIONS = 4;
 
     public ThinkAdvisor(ChatClient.Builder chatClientBuilder, ChatMemory chatMemory, ToolCallbackProvider toolCallbackProvider, ObjectMapper objectMapper, int order) {
         super(chatMemory, DEFAULT_CONVERSATION_ID, 2, true, order);
@@ -61,7 +65,7 @@ public class ThinkAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
     @Override
     public @NonNull
     AdvisedResponse aroundCall(@NonNull AdvisedRequest advisedRequest, @NonNull CallAroundAdvisorChain chain) {
-        var newRequest = before(advisedRequest);
+        var newRequest = iterate(advisedRequest, 0);
 
         AdvisedResponse advisedResponse = chain.nextAroundCall(newRequest);
 
@@ -70,7 +74,12 @@ public class ThinkAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
         return advisedResponse;
     }
 
-    private AdvisedRequest before(AdvisedRequest advisedRequest) {
+    private AdvisedRequest iterate(AdvisedRequest advisedRequest, int iteration) {
+        if (iteration >= MAX_ITERATIONS) {
+            return AdvisedRequest.from(advisedRequest)
+                    .userText(advisedRequest.userText() + "\n\n" + "请保持说中文")
+                    .build();
+        }
         log.debug("query received: {}", advisedRequest.userText());
         ContextVerification contextVerification = verifyContext(new ContextVerificationRequest(
                 advisedRequest.adviseContext().toString(),
@@ -81,38 +90,62 @@ public class ThinkAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
             return advisedRequest;
         }
 
-        var messages = new ArrayList<Message>(advisedRequest.messages());
-        Map<String, Object> adviseContext = new HashMap<>(advisedRequest.adviseContext());
-        adviseContext.putAll(Map.of(
+        AdvisedRequest.Builder builder = AdvisedRequest
+                .from(advisedRequest);
+        List<Message> messages = new ArrayList<>(advisedRequest.messages());
+        Map<String, Object> ac = new HashMap<>(advisedRequest.adviseContext());
+        if (!ac.containsKey(INITIALLY_ANALYZED_KEY)) {
+            log.debug("initially analyzing query");
+            @SuppressWarnings("deprecation")
+            QueryAnalysis queryAnalysis = identifyTools(new AnalysisRequest(
+                    advisedRequest.userText(),
+                    Stream.of(this.toolCallbackProvider.getToolCallbacks())
+                            .map(f -> f.getName())
+                            .collect(Collectors.toList()),
+                    Stream.of(this.toolCallbackProvider.getToolCallbacks())
+                            .map(this::toolMeta)
+                            .collect(Collectors.joining(", "))
+            ));
+            messages = appendAdvice(messages, queryAnalysis);
+            builder.userText(queryAnalysis.conciseSummary());
+            ac.put(INITIALLY_ANALYZED_KEY, queryAnalysis.toString());
+        }
+
+        ac.putAll(Map.of(
                 "recommendations", Optional.ofNullable(contextVerification.recommendations()).orElse("No recommendations"),
                 "missing_information", Optional.ofNullable(contextVerification.missingInformation()).orElse("No missing information"),
                 "ambiguities", Optional.ofNullable(contextVerification.ambiguities()).orElse("No ambiguities"),
                 "confidence_level", Optional.ofNullable(contextVerification.confidenceLevel()).orElse("Low")
         ));
         @SuppressWarnings("unchecked")
-        List<String> lastActions = (List<String>) adviseContext.getOrDefault(ACTIONS_KEY, new ArrayList<String>());
+        List<String> lastActions = (List<String>) ac.getOrDefault(ACTIONS_KEY, new ArrayList<String>());
 
-        @SuppressWarnings("deprecation")
         NextStepPlan nextStepPlan = nextStep(new NextStepRequest(
-                adviseContext.toString(),
+                ac.toString(),
                 Stream.of(this.toolCallbackProvider.getToolCallbacks())
-                        .map(f -> f.getName() + "(" + f.getDescription() + ")")
+                        .map(this::toolMeta)
                         .collect(Collectors.toList()),
                 lastActions.toString()
         ));
 
         lastActions.add(nextStepPlan.nextAction());
-        adviseContext.put(ACTIONS_KEY, lastActions);
+        ac.put(ACTIONS_KEY, lastActions);
+        messages = appendAdvice(messages, nextStepPlan);
+        builder.systemText(nextStepPlan.toString());
 
-        var newRequest = AdvisedRequest
-                .from(advisedRequest)
-                .messages(appendAdvice(messages, nextStepPlan))
-                .adviseContext(adviseContext)
+        var newRequest = builder
+                .messages(messages)
+                .adviseContext(ac)
                 .build();
-        return newRequest;
+        return iterate(newRequest, iteration + 1);
     }
 
-    private ArrayList<Message> appendAdvice(ArrayList<Message> messages, Object... advices) {
+    @SuppressWarnings("deprecation")
+    private String toolMeta(FunctionCallback f) {
+        return f.getName() + "(description: " + f.getDescription() + ", input schema: " + f.getInputTypeSchema() + ")";
+    }
+
+    private List<Message> appendAdvice(List<Message> messages, Object... advices) {
         for (Object advice : advices) {
             try {
                 messages.add(new SystemMessage(objectMapper.writeValueAsString(advice)));
@@ -162,7 +195,7 @@ public class ThinkAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
             1. A concise summary of the query's main points and objectives.
             2. A list of required skills, with a brief explanation for each.
             3. A list of relevant tools from the toolbox, with a brief explanation of how each tool would be utilized.
-            4. Any additional considerations that might be important for addressing the query effectively.
+            4. Any additional considerations that might be important for addressing the query effectively, such as the allowed directories.
             
             Return JSON structure with the following format:
             ```
@@ -183,7 +216,7 @@ public class ThinkAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
                     .entity(outputConverter);
             log.debug("query analysis response: {}", response);
             return response;
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             // Handle LLM API errors
             return new QueryAnalysis(
                     "Analysis of: " + request.query(),
@@ -223,7 +256,7 @@ public class ThinkAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
                - Outcomes from previous steps
             3. Select the tool best suited for the next step.
             4. Formulate a specific, achievable action for the selected tool that maximizes progress towards addressing the query.
-            
+            5. If the tool requires a directory, provide the allowed directories.
             Return JSON structure with the following format:
             ```
             {format}
@@ -243,14 +276,15 @@ public class ThinkAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
                     .entity(outputConverter);
             log.debug("next step plan response: {}", response);
             return response;
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             // Handle LLM API errors
             return new NextStepPlan(
                     "Error determining next step",
                     "Next step could not be determined due to error",
                     "Error occurred: " + e.getMessage(),
                     "Error from LLM: " + e.getMessage(),
-                    "Try again with a clearer context or check API connectivity"
+                    "Try again with a clearer context or check API connectivity",
+                    "No allowed directories"
             );
         }
     }
@@ -302,8 +336,8 @@ public class ThinkAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
             //  all the LLM using the prompt
             var response = chatClient.prompt()
                     .user(u -> u.text(promptTemplate)
-                    .param("context", request.context())
-                    .param("objective", request.objective())
+                    .param("context", request.context() != null ? request.context() : "No context provided")
+                    .param("objective", request.objective() != null ? request.objective() : "No objective provided")
                     .param("requiredInfo", request.requiredInfo() != null ? request.requiredInfo() : "No specific requirements provided")
                     .param("format", outputConverter.getFormat())
                     )
@@ -311,7 +345,7 @@ public class ThinkAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
                     .entity(outputConverter);
             log.debug("context verification response: {}", response);
             return response;
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             // Handle LLM API errors
             log.error("Error verifying context", e);
             return new ContextVerification(
@@ -329,6 +363,12 @@ public class ThinkAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
      */
     public record AnalysisRequest(String query, List<String> availableTools, String toolboxMetadata) {
 
+        @Override
+        public String toString() {
+            return "AnalysisRequest{"
+                    + "query='" + query + '\''
+                    + '}';
+        }
     }
 
     /**
@@ -343,12 +383,19 @@ public class ThinkAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
      */
     public record NextStepRequest(String context, List<String> availableTools, String previousActions) {
 
+        @Override
+        public String toString() {
+            return "NextStepRequest{"
+                    + "context='" + context + '\''
+                    + ", previousActions='" + previousActions + '\''
+                    + '}';
+        }
     }
 
     /**
      * Response object for the next step thinking tool.
      */
-    public record NextStepPlan(String nextAction, String toolsToUse, String expectedOutcome, String reasoning, String alternatives) {
+    public record NextStepPlan(String nextAction, String toolsToUse, String expectedOutcome, String reasoning, String alternatives, String allowedDirectories) {
 
     }
 
@@ -357,6 +404,14 @@ public class ThinkAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
      */
     public record ContextVerificationRequest(String context, String objective, String requiredInfo) {
 
+        @Override
+        public String toString() {
+            return "ContextVerificationRequest{"
+                    + "context='" + context + '\''
+                    + ", objective='" + objective + '\''
+                    + ", requiredInfo='" + requiredInfo + '\''
+                    + '}';
+        }
     }
 
     /**
@@ -374,14 +429,14 @@ public class ThinkAdvisor extends AbstractChatMemoryAdvisor<ChatMemory> {
 
     @Override
     public int getOrder() {
-        return 0;
+        return super.getOrder();
     }
 
     @Override
     public @NonNull
     Flux<AdvisedResponse> aroundStream(@NonNull AdvisedRequest advisedRequest, @NonNull StreamAroundAdvisorChain chain) {
         Flux<AdvisedResponse> advisedResponses = this.doNextWithProtectFromBlockingBefore(advisedRequest, chain,
-                this::before);
+                r -> iterate(r, 0));
         return new MessageAggregator().aggregateAdvisedResponse(advisedResponses, this::observeAfter);
     }
 }

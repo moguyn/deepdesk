@@ -53,7 +53,7 @@ logging:
 core:
   llm:
     prompt:
-      system: 你是企业级AI助手, 请说中文, 请使用markdown格式输出。优先选择<think>标签的工具。
+      system: 你是企业级AI助手, 请只说中文, 使用markdown格式输出。
     max-tokens: 20000
     history-window-size: 5
 
