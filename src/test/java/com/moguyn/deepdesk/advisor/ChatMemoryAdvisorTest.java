@@ -18,10 +18,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.client.advisor.api.AdvisedRequest;
+import org.springframework.ai.chat.client.advisor.api.AdvisedResponse;
+import org.springframework.ai.chat.client.advisor.api.CallAroundAdvisorChain;
 import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.chat.model.Generation;
 
 @ExtendWith(MockitoExtension.class)
 class ChatMemoryAdvisorTest {
@@ -34,6 +39,9 @@ class ChatMemoryAdvisorTest {
 
     @Mock
     private ChatModel chatModel;
+
+    @Mock
+    private CallAroundAdvisorChain chain;
 
     private ChatMemoryAdvisor chatMemoryAdvisor;
     private static final String DEFAULT_CONVERSATION_ID = "test-conversation";
@@ -81,6 +89,57 @@ class ChatMemoryAdvisorTest {
         assertNotNull(result);
         assertEquals(combinedMessages.size(), result.messages().size());
         verify(chatMemory).add(anyString(), any(UserMessage.class));
+    }
+
+    @Test
+    void testAroundCall() {
+        // Arrange
+        Map<String, Object> adviseContext = new HashMap<>();
+        adviseContext.put("key", "value");
+
+        AdvisedRequest request = AdvisedRequest.builder()
+                .userText("test query")
+                .adviseContext(adviseContext)
+                .chatModel(chatModel)
+                .build();
+
+        List<Message> memoryMessages = new ArrayList<>();
+        memoryMessages.add(new UserMessage("Previous message 1"));
+        memoryMessages.add(new UserMessage("Previous message 2"));
+
+        when(chatMemory.get(anyString(), anyInt())).thenReturn(memoryMessages);
+
+        List<Message> combinedMessages = new ArrayList<>();
+        combinedMessages.addAll(request.messages());
+        combinedMessages.addAll(memoryMessages);
+
+        when(contextLimiter.truncate(any())).thenReturn(combinedMessages);
+
+        // Create a mock response
+        AssistantMessage assistantMessage = new AssistantMessage("Test response");
+        Generation generation = new Generation(assistantMessage);
+        List<Generation> generations = List.of(generation);
+        ChatResponse chatResponse = new ChatResponse(generations);
+
+        AdvisedResponse mockResponse = AdvisedResponse.builder()
+                .adviseContext(adviseContext)
+                .response(chatResponse)
+                .build();
+
+        when(chain.nextAroundCall(any())).thenReturn(mockResponse);
+
+        // Act
+        AdvisedResponse result = chatMemoryAdvisor.aroundCall(request, chain);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(mockResponse, result);
+
+        // Verify that chatMemory.add was called twice
+        // Once in before() for the user message
+        // Once in observeAfter() for the assistant message
+        verify(chatMemory).add(anyString(), any(UserMessage.class));
+        verify(chatMemory).add(anyString(), any(List.class));
     }
 
     @Test
