@@ -151,7 +151,6 @@ public class ApplicationConfig {
                 enabledAdvisors.add(tokenLimitedChatMemoryAdvisor);
             }
         } else {
-            // Fallback to enable all advisors if configuration is missing
             log.warn("No advisor configuration found, enabling all advisors by default");
             enabledAdvisors.add(planAdvisor);
             enabledAdvisors.add(nextStepAdvisor);
@@ -161,7 +160,7 @@ public class ApplicationConfig {
 
         // Apply the enabled advisors
         if (!enabledAdvisors.isEmpty()) {
-            builder.defaultAdvisors(enabledAdvisors.toArray(new Advisor[0]));
+            builder.defaultAdvisors(enabledAdvisors.toArray(Advisor[]::new));
         } else {
             log.warn("No advisors enabled, chat client will operate without advisors");
         }
