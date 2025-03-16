@@ -1,7 +1,7 @@
 {
     "mcpServers": {
         "search": {
-            "command": ".vscode/mcp-search-server",
+            "command": "/Users/verrerie/git/deepdesk/.vscode/mcp-search-server",
             "args": []
         },
         "time": {
