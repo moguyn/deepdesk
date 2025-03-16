@@ -48,7 +48,7 @@ class ChatMemoryAdvisorTest {
     private static final int CHAT_HISTORY_WINDOW_SIZE = 10;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         chatMemoryAdvisor = new ChatMemoryAdvisor(
                 chatMemory,
                 DEFAULT_CONVERSATION_ID,
@@ -92,6 +92,7 @@ class ChatMemoryAdvisorTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void testAroundCall() {
         // Arrange
         Map<String, Object> adviseContext = new HashMap<>();

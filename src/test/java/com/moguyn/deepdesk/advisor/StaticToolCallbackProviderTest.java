@@ -12,6 +12,7 @@ import org.springframework.ai.model.function.FunctionCallback;
 import org.springframework.ai.tool.StaticToolCallbackProvider;
 import org.springframework.ai.tool.ToolCallbackProvider;
 
+@SuppressWarnings("deprecation")
 class StaticToolCallbackProviderTest {
 
     @Test
@@ -67,14 +68,20 @@ class StaticToolCallbackProviderTest {
     }
 
     @Test
+    @SuppressWarnings("null")
     void testConstructorWithNullList() {
         // Act & Assert
-        assertThrows(NullPointerException.class, () -> new StaticToolCallbackProvider((List<FunctionCallback>) null));
+        Exception exception = assertThrows(NullPointerException.class,
+                () -> new StaticToolCallbackProvider((List<FunctionCallback>) null));
+        assertNotNull(exception);
     }
 
     @Test
+    @SuppressWarnings("null")
     void testConstructorWithNullVarargs() {
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> new StaticToolCallbackProvider((FunctionCallback[]) null));
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> new StaticToolCallbackProvider((FunctionCallback[]) null));
+        assertNotNull(exception);
     }
 }

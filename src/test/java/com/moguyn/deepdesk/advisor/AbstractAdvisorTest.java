@@ -25,6 +25,7 @@ import org.springframework.ai.chat.messages.MessageType;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.model.function.FunctionCallback;
+import org.springframework.lang.NonNull;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,7 +50,7 @@ class AbstractAdvisorTest {
     private TestAdvisor advisor;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         advisor = new TestAdvisor(objectMapper, 100);
     }
 
@@ -101,7 +102,9 @@ class AbstractAdvisorTest {
 
         // Assert
         // Using simple assertions instead of StepVerifier
-        assertEquals(1, responseFlux.collectList().block().size());
+        List<AdvisedResponse> responses = responseFlux.collectList().block();
+        assertNotNull(responses);
+        assertEquals(1, responses.size());
         verify(streamChain).nextAroundStream(request);
     }
 
@@ -111,6 +114,7 @@ class AbstractAdvisorTest {
         assertEquals(100, advisor.getOrder());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     void testDescribeTool() {
         // Arrange
@@ -152,10 +156,12 @@ class AbstractAdvisorTest {
         }
 
         @Override
+        @NonNull
         public String getName() {
             return "test-advisor";
         }
 
+        @SuppressWarnings("deprecation")
         public String testDescribeTool(FunctionCallback f) {
             return describeTool(f);
         }
