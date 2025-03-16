@@ -26,7 +26,7 @@ class MaxTokenSizeContentLimiterTest {
     private static final int MAX_TOKEN_SIZE = 100;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         limiter = new MaxTokenSizeContentLimiter<>(tokenCountEstimator, MAX_TOKEN_SIZE);
     }
 

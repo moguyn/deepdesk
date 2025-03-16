@@ -36,7 +36,7 @@ class NextStepAdvisorTest {
     private NextStepAdvisor nextStepAdvisor;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         when(chatClientBuilder.defaultSystem(anyString())).thenReturn(chatClientBuilder);
         when(chatClientBuilder.defaultTools(any(ToolCallbackProvider[].class))).thenReturn(chatClientBuilder);
         when(chatClientBuilder.build()).thenReturn(chatClient);
@@ -81,6 +81,7 @@ class NextStepAdvisorTest {
         );
 
         // Mock the toolCallbackProvider to return an empty array
+        @SuppressWarnings("deprecation")
         FunctionCallback[] emptyCallbacks = new FunctionCallback[0];
         when(toolCallbackProvider.getToolCallbacks()).thenReturn(emptyCallbacks);
 

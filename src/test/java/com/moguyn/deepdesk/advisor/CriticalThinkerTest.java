@@ -37,7 +37,7 @@ class CriticalThinkerTest {
     private CriticalThinker criticalThinker;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         when(chatClientBuilder.defaultSystem(anyString())).thenReturn(chatClientBuilder);
         when(chatClientBuilder.defaultTools(any(ToolCallbackProvider.class))).thenReturn(chatClientBuilder);
         when(chatClientBuilder.build()).thenReturn(chatClient);
