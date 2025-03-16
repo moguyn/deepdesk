@@ -25,13 +25,13 @@ class MaxTokenSizeContenTruncatorTest {
     @Mock
     private TokenCountEstimator tokenCountEstimator;
 
-    private MaxTokenSizeContenTruncator<TestContent> truncator;
+    private MaxTokenSizeContentLimiter<TestContent> truncator;
 
     private static final int MAX_TOKEN_SIZE = 100;
 
     @BeforeEach
     public void setUp() {
-        truncator = new MaxTokenSizeContenTruncator<>(tokenCountEstimator, MAX_TOKEN_SIZE);
+        truncator = new MaxTokenSizeContentLimiter<>(tokenCountEstimator, MAX_TOKEN_SIZE);
     }
 
     @Test

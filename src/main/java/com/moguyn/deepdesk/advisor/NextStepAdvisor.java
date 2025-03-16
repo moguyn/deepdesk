@@ -42,7 +42,7 @@ public class NextStepAdvisor extends AbstractAdvisor {
     }
 
     @Override
-    protected AdvisedRequest advise(AdvisedRequest advisedRequest) {
+    protected AdvisedRequest before(AdvisedRequest advisedRequest) {
         log.debug("query received: {}", advisedRequest.userText());
         AdvisedRequest.Builder builder = AdvisedRequest
                 .from(advisedRequest);
@@ -52,6 +52,7 @@ public class NextStepAdvisor extends AbstractAdvisor {
         if (queryPlan == null) {
             queryPlan = new QueryPlan(
                     advisedRequest.systemText(),
+                    "",
                     "",
                     "",
                     ""
@@ -93,6 +94,7 @@ public class NextStepAdvisor extends AbstractAdvisor {
             Query: {query}
 
             Context: 
+             - previous conversations: {context}
              - actionable steps: {actionableSteps}
              - clarification questions: {clarificationQuestions}
              - additional considerations: {additionalConsiderations}
@@ -116,20 +118,21 @@ public class NextStepAdvisor extends AbstractAdvisor {
             ```
             {format}
             ```
-            """.trim();
+            """;
 
         try {
             //  all the LLM using the prompt variable directly
             String availableTools = Stream.of(toolCallbackProvider.getToolCallbacks())
                     .map(this::describeTool)
                     .collect(Collectors.joining("\n"));
-            var response = chatClient.prompt()
+            NextStep response = chatClient.prompt()
                     .user(u -> u.text(promptTemplate)
                     .param("query", queryPlan.summary())
                     .param("availableTools", availableTools)
                     .param("actionableSteps", queryPlan.actionableSteps())
                     .param("clarificationQuestions", queryPlan.clarificationQuestions())
                     .param("additionalConsiderations", queryPlan.additionalConsiderations())
+                    .param("context", queryPlan.context())
                     .param("format", outputConverter.getFormat())
                     )
                     .call()
@@ -137,6 +140,7 @@ public class NextStepAdvisor extends AbstractAdvisor {
             log.debug("next step response: {}", response);
             return response;
         } catch (Exception e) {
+            log.error("error calling next step", e);
             // Handle LLM API errors
             return new NextStep(queryPlan.summary(), "", "", "", "");
         }

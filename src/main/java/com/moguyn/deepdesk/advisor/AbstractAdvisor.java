@@ -50,16 +50,21 @@ public abstract class AbstractAdvisor implements CallAroundAdvisor, StreamAround
     @Override
     public @NonNull
     AdvisedResponse aroundCall(@NonNull AdvisedRequest advisedRequest, @NonNull CallAroundAdvisorChain chain) {
-        var newRequest = advise(advisedRequest);
+        var newRequest = before(advisedRequest);
 
         AdvisedResponse advisedResponse = chain.nextAroundCall(newRequest);
 
-        this.observeAfter(advisedResponse);
-
-        return advisedResponse;
+        return this.after(advisedResponse);
     }
 
-    abstract AdvisedRequest advise(AdvisedRequest advisedRequest);
+    protected AdvisedRequest before(AdvisedRequest advisedRequest) {
+        return advisedRequest;
+    }
+
+    protected AdvisedResponse after(AdvisedResponse advisedResponse) {
+        this.observeAfter(advisedResponse);
+        return advisedResponse;
+    }
 
     @SuppressWarnings("deprecation")
     protected String describeTool(FunctionCallback f) {
@@ -85,7 +90,6 @@ public abstract class AbstractAdvisor implements CallAroundAdvisor, StreamAround
     }
 
     protected void observeAfter(AdvisedResponse advisedResponse) {
-        log.debug("LLM response: {}", advisedResponse.response());
     }
 
     protected <T> StructuredOutputConverter<T> createOutputConverter(Class<T> type) {
@@ -100,8 +104,8 @@ public abstract class AbstractAdvisor implements CallAroundAdvisor, StreamAround
     @Override
     public @NonNull
     Flux<AdvisedResponse> aroundStream(@NonNull AdvisedRequest advisedRequest, @NonNull StreamAroundAdvisorChain chain) {
-        AdvisedRequest advise = advise(advisedRequest);
-        Flux<AdvisedResponse> advisedResponses = chain.nextAroundStream(advise);
+        AdvisedRequest advise = before(advisedRequest);
+        Flux<AdvisedResponse> advisedResponses = chain.nextAroundStream(advise).map(this::after);
         return new MessageAggregator().aggregateAdvisedResponse(advisedResponses, this::observeAfter);
     }
 }

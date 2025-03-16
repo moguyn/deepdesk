@@ -17,8 +17,9 @@ import org.springframework.context.annotation.Configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moguyn.deepdesk.advisor.ChatMemoryAdvisor;
-import com.moguyn.deepdesk.advisor.ExcessiveContentTruncator;
-import com.moguyn.deepdesk.advisor.MaxTokenSizeContenTruncator;
+import com.moguyn.deepdesk.advisor.ContextLimiter;
+import com.moguyn.deepdesk.advisor.CriticalThinker;
+import com.moguyn.deepdesk.advisor.MaxTokenSizeContentLimiter;
 import com.moguyn.deepdesk.advisor.NextStepAdvisor;
 import com.moguyn.deepdesk.advisor.PlanAdvisor;
 import com.moguyn.deepdesk.chat.ChatRunner;
@@ -59,8 +60,8 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public ExcessiveContentTruncator<Message> excessiveContentTruncator(TokenCountEstimator tokenCountEstimator, @Value("${core.llm.max-tokens}") int maxTokens) {
-        return new MaxTokenSizeContenTruncator<>(tokenCountEstimator, maxTokens);
+    public ContextLimiter<Message> contextLimiter(TokenCountEstimator tokenCountEstimator, @Value("${core.llm.max-tokens}") int maxTokens) {
+        return new MaxTokenSizeContentLimiter<>(tokenCountEstimator, maxTokens);
     }
 
     @Bean
@@ -71,24 +72,29 @@ public class ApplicationConfig {
     @Bean
     public ChatMemoryAdvisor tokenLimitedChatMemoryAdvisor(
             ChatMemory chatMemory,
-            ExcessiveContentTruncator<Message> excessiveContentTruncator,
+            ContextLimiter<Message> contextLimiter,
             @Value("${core.llm.history-window-size}") int historyWindowSize) {
         return new ChatMemoryAdvisor(
                 chatMemory,
                 DEFAULT_CONVERSATION_ID,
                 historyWindowSize,
-                excessiveContentTruncator,
-                50);
+                contextLimiter,
+                1000);
     }
 
     @Bean
-    public PlanAdvisor planAdvisor(ChatClient.Builder chatClientBuilder, ToolCallbackProvider toolCallbackProvider, ObjectMapper objectMapper) {
-        return new PlanAdvisor(chatClientBuilder, toolCallbackProvider, objectMapper, 10);
+    public PlanAdvisor planAdvisor(ChatClient.Builder chatClientBuilder, ToolCallbackProvider toolCallbackProvider, ObjectMapper objectMapper, ChatMemory chatMemory) {
+        return new PlanAdvisor(chatClientBuilder, chatMemory, toolCallbackProvider, objectMapper, 10);
     }
 
     @Bean
     public NextStepAdvisor nextStepAdvisor(ChatClient.Builder chatClientBuilder, ToolCallbackProvider toolCallbackProvider, ObjectMapper objectMapper) {
         return new NextStepAdvisor(chatClientBuilder, toolCallbackProvider, objectMapper, 20);
+    }
+
+    @Bean
+    public CriticalThinker criticalThinker(ChatClient.Builder chatClientBuilder, ToolCallbackProvider toolCallbackProvider, ObjectMapper objectMapper) {
+        return new CriticalThinker(chatClientBuilder, toolCallbackProvider, objectMapper, 30);
     }
 
     @Bean
@@ -107,13 +113,14 @@ public class ApplicationConfig {
             ToolCallbackProvider toolCallbackProvider,
             PlanAdvisor planAdvisor,
             NextStepAdvisor nextStepAdvisor,
+            CriticalThinker criticalThinker,
             ChatMemoryAdvisor tokenLimitedChatMemoryAdvisor,
             @Value("${core.llm.prompt.system}") String systemPrompt) {
 
         var chatClient = chatClientBuilder
                 .defaultSystem(systemPrompt)
                 .defaultTools(toolCallbackProvider)
-                .defaultAdvisors(planAdvisor, nextStepAdvisor, tokenLimitedChatMemoryAdvisor)
+                .defaultAdvisors(planAdvisor, nextStepAdvisor, criticalThinker, tokenLimitedChatMemoryAdvisor)
                 .build();
 
         return chatClient;
