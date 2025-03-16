@@ -161,7 +161,7 @@ public class ApplicationConfig {
 
         // Apply the enabled advisors
         if (!enabledAdvisors.isEmpty()) {
-            builder.defaultAdvisors(enabledAdvisors.toArray(Advisor[]::new));
+            builder.defaultAdvisors(enabledAdvisors.toArray(new Advisor[0]));
         } else {
             log.warn("No advisors enabled, chat client will operate without advisors");
         }
