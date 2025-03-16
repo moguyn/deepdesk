@@ -19,7 +19,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moguyn.deepdesk.advisor.ChatMemoryAdvisor;
 import com.moguyn.deepdesk.advisor.ExcessiveContentTruncator;
 import com.moguyn.deepdesk.advisor.MaxTokenSizeContenTruncator;
-import com.moguyn.deepdesk.advisor.ThinkAdvisor;
+import com.moguyn.deepdesk.advisor.NextStepAdvisor;
+import com.moguyn.deepdesk.advisor.PlanAdvisor;
 import com.moguyn.deepdesk.chat.ChatRunner;
 import com.moguyn.deepdesk.chat.CommandlineChatRunner;
 import com.moguyn.deepdesk.dependency.McpDependencyValidator;
@@ -77,12 +78,17 @@ public class ApplicationConfig {
                 DEFAULT_CONVERSATION_ID,
                 historyWindowSize,
                 excessiveContentTruncator,
-                2);
+                50);
     }
 
     @Bean
-    public ThinkAdvisor thinkAdvisor(ChatClient.Builder chatClientBuilder, ChatMemory chatMemory, ToolCallbackProvider toolCallbackProvider, ObjectMapper objectMapper) {
-        return new ThinkAdvisor(chatClientBuilder, chatMemory, toolCallbackProvider, objectMapper, 1);
+    public PlanAdvisor planAdvisor(ChatClient.Builder chatClientBuilder, ToolCallbackProvider toolCallbackProvider, ObjectMapper objectMapper) {
+        return new PlanAdvisor(chatClientBuilder, toolCallbackProvider, objectMapper, 10);
+    }
+
+    @Bean
+    public NextStepAdvisor nextStepAdvisor(ChatClient.Builder chatClientBuilder, ToolCallbackProvider toolCallbackProvider, ObjectMapper objectMapper) {
+        return new NextStepAdvisor(chatClientBuilder, toolCallbackProvider, objectMapper, 20);
     }
 
     @Bean
@@ -99,14 +105,15 @@ public class ApplicationConfig {
     @Bean
     public ChatClient chatClient(ChatClient.Builder chatClientBuilder,
             ToolCallbackProvider toolCallbackProvider,
-            ThinkAdvisor thinkAdvisor,
+            PlanAdvisor planAdvisor,
+            NextStepAdvisor nextStepAdvisor,
             ChatMemoryAdvisor tokenLimitedChatMemoryAdvisor,
             @Value("${core.llm.prompt.system}") String systemPrompt) {
 
         var chatClient = chatClientBuilder
                 .defaultSystem(systemPrompt)
                 .defaultTools(toolCallbackProvider)
-                .defaultAdvisors(thinkAdvisor, tokenLimitedChatMemoryAdvisor)
+                .defaultAdvisors(planAdvisor, nextStepAdvisor, tokenLimitedChatMemoryAdvisor)
                 .build();
 
         return chatClient;
