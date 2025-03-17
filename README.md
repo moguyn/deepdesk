@@ -25,146 +25,83 @@ Deepdesk addresses several key challenges in enterprise AI adoption:
 - 🏢 **On-Premises LLM Support**: Run open-source LLMs within your company VPC
 - 🔓 **Vendor Independence**: No vendor lock-in
 
-## Architecture Highlights
+## Architecture Principles
 
-- **Standardized Communication**: MCP (Model Control Protocol) for consistent agent interactions
-- **Modular Design**: Adapter system for connecting to various LLM providers
-- **Enterprise Security**: Infrastructure design that keeps business data within your control
+Inspired by [Anthropic's approach to building effective agents](https://www.anthropic.com/engineering/building-effective-agents), Deepdesk follows these core principles:
+
+- **Simplicity**: Building the right system rather than the most sophisticated one
+- **Transparency**: Making agent planning steps explicit and visible
+- **Well-designed Tools**: Providing clear, well-documented interfaces between agents and systems
+- **Standardized Communication**: Using MCP (Model Control Protocol) for consistent agent interactions
+- **Modularity**: Adapter system for connecting to various LLM providers
+- **Enterprise Security**: Infrastructure designed to keep business data within your control
 
 ## System Architecture
 
 ![System Architecture](images/archi.png)
 
-This diagram illustrates the **enterprise application** ("MCP Host") that coordinates:
+The architecture consists of:
 
-1. **User**  
-   - Accesses the system through an intuitive **UI**  
-   - Passes through **Authentication & Authorization** to ensure proper permissions
-
-2. **MCP Host**  
-   - **Permissions Manager**: Enforces role-based access controls
-   - **Interaction Layer**: Handles communication between LLMs and enterprise resources
-   - **MCP Client**: Establishes HTTP-based communication with backend services
-   - **Configuration System**: Manages application settings and preferences
-
-3. **LLM Engine**  
-   - Performs language processing and generation tasks as needed
-
-4. **Enterprise Services**  
-   - **Document Service**: Processes PDFs, Word docs, TXT files, and more
-   - **Database Service**: Connects to MySQL, PostgreSQL, and other datastores
-   - **API Service**: Interfaces with internal enterprise APIs
-   - **Additional Services**: Extends to other enterprise capabilities
+1. **User Interface Layer**: Intuitive UI with authentication and authorization
+2. **MCP Host**: Core component with permissions management, interaction layer, MCP client, and configuration system
+3. **LLM Engine**: Handles language processing tasks
+4. **Enterprise Services**: Document, database, API and other enterprise service integrations
 
 **Data Flow**:  
-User → UI → MCP Host (permissions verification) → MCP Client → Enterprise Services (via HTTP)  
-The LLM is invoked through the MCP Host for all language model operations.
+User → UI → MCP Host → MCP Client → Enterprise Services (via HTTP)  
+LLM invocation occurs through the MCP Host.
 
 ## Getting Started
 
 ### Prerequisites
 
-- Java Development Kit (JDK) 21 or higher
+- Java Development Kit (JDK) 21+
 - Maven (included via Maven Wrapper)
-- Node.js with `npx` (required for MCP server)
-- Python 3.13.x with uv package manager (required for MCP server)
-- API keys configured as environment variables:
+- Node.js with `npx` (for MCP server)
+- Python 3.13.x with uv package manager (for MCP server)
+- API keys as environment variables:
 
 ```shell
 export OPENAI_API_KEY='your-openai-api-key'
+# optionally depending on your needs
 export ANTHROPIC_API_KEY='your-anthropic-api-key'
 export BRAVE_API_KEY="your-brave-api-key"
 ```
 
-### Running the Application
-
-Start the application locally:
+### Quick Start
 
 ```bash
+# Run the application
 ./mvnw spring-boot:run
-```
 
-### Building the Executable JAR
-
-Create an executable JAR file with SpringBoot:
-
-```bash
+# Build executable JAR
 ./mvnw clean package
-```
 
-The executable JAR will be created in the `target` directory as `deepdesk-<version>.jar`.
-
-To run the executable:
-
-```bash
-java -jar target/deepdesk-<version>.jar
-```
-
-### Running Tests
-
-Execute the test suite:
-
-```bash
+# Run tests
 ./mvnw test
 ```
 
 ## Native Builds
 
-Deepdesk supports native executable generation that can run without a JVM on Linux, macOS, and Windows.
-
-### Building Native Executables Locally
-
-#### Linux/macOS
+Deepdesk supports native executable generation for Linux, macOS, and Windows.
 
 ```bash
-# Make the script executable (first time only)
+# Linux/macOS
 chmod +x build-native.sh
-
-# Build the native executable
 ./build-native.sh
-```
 
-#### Windows
-
-```batch
-# Build the native executable
+# Windows
 build-native.bat
 ```
 
-The native executable will be created in the `target` directory as `deepdesk`.
-
-### Automated Multi-Platform Builds
-
-Native executables for all supported platforms are automatically built via GitHub Actions. Download the latest releases from the GitHub Releases section of this repository.
-
-### Requirements for Native Builds
-
-To build native executables locally:
-
-- GraalVM installation with native-image utility
-- Java 17 or newer (Java 23 recommended)
-- Maven 3.8+
-
-## Known issues
-
-- streaming mode is not yet supported (due to [this issue in Spring](https://github.com/spring-projects/spring-ai/issues/2341))
-   - reproducible by [src/test/resources/chat.http]
+Native executables for all platforms are also available in GitHub Releases.
 
 ## Security & Privacy
 
-Deepdesk is architected with enterprise security as a foundation:
-
-- **Data Sovereignty**: Business data remains within your company's infrastructure
+- **Data Sovereignty**: Business data remains within your infrastructure
 - **Private Deployment**: Support for local LLM hosting in private VPCs
-- **Zero Data Leakage**: No external data transmission required when using local models
+- **Zero Data Leakage**: No external data transmission required with local models
 
 ## License
 
-This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0). This license ensures:
-
-- Free use, modification, and distribution of the software
-- Any modifications must be made available under the same license
-- Network use is considered distribution, requiring source code availability
-- Complete license text can be found in the LICENSE file
-
-For more information, visit: https://www.gnu.org/licenses/agpl-3.0.en.html
+This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0). See the LICENSE file or visit: https://www.gnu.org/licenses/agpl-3.0.en.html

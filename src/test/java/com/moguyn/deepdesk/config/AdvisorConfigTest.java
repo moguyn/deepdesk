@@ -15,9 +15,9 @@ import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.tool.ToolCallbackProvider;
 
 import com.moguyn.deepdesk.advisor.ChatMemoryAdvisor;
-import com.moguyn.deepdesk.advisor.CriticalThinker;
-import com.moguyn.deepdesk.advisor.NextStepAdvisor;
-import com.moguyn.deepdesk.advisor.PlanAdvisor;
+import com.moguyn.deepdesk.config.CoreSettings.LLM;
+import com.moguyn.deepdesk.config.CoreSettings.Prompt;
+import com.moguyn.deepdesk.config.CoreSettings.UI;
 
 public class AdvisorConfigTest {
 
@@ -29,20 +29,18 @@ public class AdvisorConfigTest {
         // Mock dependencies
         ChatClient.Builder chatClientBuilder = mock(ChatClient.Builder.class);
         ToolCallbackProvider toolCallbackProvider = mock(ToolCallbackProvider.class);
-        PlanAdvisor planAdvisor = mock(PlanAdvisor.class);
-        NextStepAdvisor nextStepAdvisor = mock(NextStepAdvisor.class);
-        CriticalThinker criticalThinker = mock(CriticalThinker.class);
         ChatMemoryAdvisor chatMemoryAdvisor = mock(ChatMemoryAdvisor.class);
         ChatClient chatClient = mock(ChatClient.class);
 
         // Setup CoreSettings with all advisors enabled
-        CoreSettings coreSettings = new CoreSettings();
-        CoreSettings.Advisors advisors = new CoreSettings.Advisors();
-        advisors.setPlanAdvisorEnabled(true);
-        advisors.setNextStepAdvisorEnabled(true);
-        advisors.setCriticalThinkerEnabled(true);
-        advisors.setChatMemoryAdvisorEnabled(true);
-        coreSettings.setAdvisors(advisors);
+        CoreSettings coreSettings = new CoreSettings(
+                List.of(),
+                new UI(""),
+                new LLM(new Prompt(""),
+                        1000,
+                        1000
+                ),
+                new CoreSettings.Advisors(true));
 
         // Setup builder mock to capture advisors
         List<Advisor> capturedAdvisors = new ArrayList<>();
@@ -59,9 +57,6 @@ public class AdvisorConfigTest {
         ChatClient result = config.chatClient(
                 chatClientBuilder,
                 toolCallbackProvider,
-                planAdvisor,
-                nextStepAdvisor,
-                criticalThinker,
                 chatMemoryAdvisor,
                 coreSettings,
                 "system prompt"
@@ -69,7 +64,7 @@ public class AdvisorConfigTest {
 
         // Assert
         assertNotNull(result);
-        assertEquals(4, capturedAdvisors.size());
+        assertEquals(1, capturedAdvisors.size());
     }
 
     @Test
@@ -80,20 +75,18 @@ public class AdvisorConfigTest {
         // Mock dependencies
         ChatClient.Builder chatClientBuilder = mock(ChatClient.Builder.class);
         ToolCallbackProvider toolCallbackProvider = mock(ToolCallbackProvider.class);
-        PlanAdvisor planAdvisor = mock(PlanAdvisor.class);
-        NextStepAdvisor nextStepAdvisor = mock(NextStepAdvisor.class);
-        CriticalThinker criticalThinker = mock(CriticalThinker.class);
         ChatMemoryAdvisor chatMemoryAdvisor = mock(ChatMemoryAdvisor.class);
         ChatClient chatClient = mock(ChatClient.class);
 
         // Setup CoreSettings with some advisors disabled
-        CoreSettings coreSettings = new CoreSettings();
-        CoreSettings.Advisors advisors = new CoreSettings.Advisors();
-        advisors.setPlanAdvisorEnabled(true);
-        advisors.setNextStepAdvisorEnabled(false);
-        advisors.setCriticalThinkerEnabled(true);
-        advisors.setChatMemoryAdvisorEnabled(false);
-        coreSettings.setAdvisors(advisors);
+        CoreSettings coreSettings = new CoreSettings(
+                List.of(),
+                new UI(""),
+                new LLM(new Prompt(""),
+                        1000,
+                        1000
+                ),
+                new CoreSettings.Advisors(false));
 
         // Setup builder mock to capture advisors
         List<Advisor> capturedAdvisors = new ArrayList<>();
@@ -110,9 +103,6 @@ public class AdvisorConfigTest {
         ChatClient result = config.chatClient(
                 chatClientBuilder,
                 toolCallbackProvider,
-                planAdvisor,
-                nextStepAdvisor,
-                criticalThinker,
                 chatMemoryAdvisor,
                 coreSettings,
                 "system prompt"
@@ -120,6 +110,6 @@ public class AdvisorConfigTest {
 
         // Assert
         assertNotNull(result);
-        assertEquals(2, capturedAdvisors.size());
+        assertEquals(0, capturedAdvisors.size());
     }
 }

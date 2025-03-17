@@ -82,19 +82,11 @@ public class OpenAiChatControllerTest {
                 .build();
 
         // Set up reusable objects
-        ChatMessage assistantMessage = new ChatMessage();
-        assistantMessage.setRole("assistant");
-        assistantMessage.setContent(TEST_AI_RESPONSE);
+        ChatMessage assistantMessage = new ChatMessage("assistant", TEST_AI_RESPONSE);
 
-        Choice choice = new Choice();
-        choice.setIndex(0);
-        choice.setMessage(assistantMessage);
-        choice.setFinishReason("stop");
+        Choice choice = new Choice(0, assistantMessage, "stop", null);
 
-        OpenAiUsage usage = new OpenAiUsage();
-        usage.setPromptTokens(10);
-        usage.setCompletionTokens(20);
-        usage.setTotalTokens(30);
+        OpenAiUsage usage = new OpenAiUsage(10, 20, 30);
 
         defaultResponse = new ChatCompletionResponse();
         defaultResponse.setId(TEST_RESPONSE_ID);
@@ -108,9 +100,7 @@ public class OpenAiChatControllerTest {
     @Test
     void chat_shouldReturnValidResponse() throws Exception {
         // Arrange
-        ChatMessage message = new ChatMessage();
-        message.setRole("user");
-        message.setContent(TEST_USER_MESSAGE);
+        ChatMessage message = new ChatMessage("user", TEST_USER_MESSAGE);
 
         ChatCompletionRequest request = new ChatCompletionRequest();
         request.setModel(TEST_MODEL);
@@ -132,16 +122,14 @@ public class OpenAiChatControllerTest {
         ChatCompletionRequest capturedRequest = chatRequestCaptor.getValue();
         assertEquals(TEST_MODEL, capturedRequest.getModel());
         assertEquals(1, capturedRequest.getMessages().size());
-        assertEquals("user", capturedRequest.getMessages().get(0).getRole());
-        assertEquals(TEST_USER_MESSAGE, capturedRequest.getMessages().get(0).getContent());
+        assertEquals("user", capturedRequest.getMessages().get(0).role());
+        assertEquals(TEST_USER_MESSAGE, capturedRequest.getMessages().get(0).content());
     }
 
     @Test
     void chat_shouldReturnStreamResponse_whenStreaming() throws Exception {
         // Arrange
-        ChatMessage message = new ChatMessage();
-        message.setRole("user");
-        message.setContent(TEST_USER_MESSAGE);
+        ChatMessage message = new ChatMessage("user", TEST_USER_MESSAGE);
 
         ChatCompletionRequest request = new ChatCompletionRequest();
         request.setModel(TEST_MODEL);
@@ -176,17 +164,15 @@ public class OpenAiChatControllerTest {
         ChatCompletionRequest capturedRequest = chatRequestCaptor.getValue();
         assertEquals(TEST_MODEL, capturedRequest.getModel());
         assertEquals(1, capturedRequest.getMessages().size());
-        assertEquals("user", capturedRequest.getMessages().get(0).getRole());
-        assertEquals(TEST_USER_MESSAGE, capturedRequest.getMessages().get(0).getContent());
+        assertEquals("user", capturedRequest.getMessages().get(0).role());
+        assertEquals(TEST_USER_MESSAGE, capturedRequest.getMessages().get(0).content());
         assertTrue(capturedRequest.isStream());
     }
 
     @Test
     void chatStream_shouldHandleErrorsGracefully() throws Exception {
         // Arrange
-        ChatMessage message = new ChatMessage();
-        message.setRole("user");
-        message.setContent(TEST_USER_MESSAGE);
+        ChatMessage message = new ChatMessage("user", TEST_USER_MESSAGE);
 
         ChatCompletionRequest request = new ChatCompletionRequest();
         request.setModel(TEST_MODEL);
@@ -212,9 +198,7 @@ public class OpenAiChatControllerTest {
     @Test
     void chatStream_shouldHandleNonStreamingRequestCorrectly() throws Exception {
         // Arrange
-        ChatMessage message = new ChatMessage();
-        message.setRole("user");
-        message.setContent(TEST_USER_MESSAGE);
+        ChatMessage message = new ChatMessage("user", TEST_USER_MESSAGE);
 
         // Create a request with stream=false
         ChatCompletionRequest request = new ChatCompletionRequest();

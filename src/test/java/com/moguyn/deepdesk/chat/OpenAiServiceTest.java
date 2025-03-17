@@ -107,7 +107,7 @@ class OpenAiServiceTest {
         assertNotNull(response);
         assertEquals("gpt-3.5-turbo", response.getModel());
         assertEquals(1, response.getChoices().size());
-        assertEquals("Hello, how can I help you?", response.getChoices().get(0).getMessage().getContent());
+        assertEquals("Hello, how can I help you?", response.getChoices().get(0).message().content());
     }
 
     @Test
@@ -123,7 +123,7 @@ class OpenAiServiceTest {
 
         // Act
         ChatCompletionResponse response = openAiService.processChat(request);
-        String content = response.getChoices().get(0).getMessage().getContent();
+        String content = response.getChoices().get(0).message().content();
         assertNotNull(content);
         assertEquals("Hello, how can I help you?", content);
 
@@ -172,9 +172,9 @@ class OpenAiServiceTest {
         ChatCompletionResponse response = openAiService.processChat(request);
 
         // Assert
-        assertEquals(5, response.getUsage().getPromptTokens());
-        assertEquals(15, response.getUsage().getCompletionTokens());
-        assertEquals(20, response.getUsage().getTotalTokens());
+        assertEquals(5, response.getUsage().promptTokens());
+        assertEquals(15, response.getUsage().completionTokens());
+        assertEquals(20, response.getUsage().totalTokens());
     }
 
     @Test
@@ -308,7 +308,7 @@ class OpenAiServiceTest {
 
         // Assert
         assertNotNull(response);
-        assertEquals("", response.getChoices().get(0).getMessage().getContent());
+        assertEquals("", response.getChoices().get(0).message().content());
     }
 
     @Test
@@ -326,7 +326,7 @@ class OpenAiServiceTest {
 
         // Assert
         assertNotNull(response);
-        assertEquals("", response.getChoices().get(0).getMessage().getContent());
+        assertEquals("", response.getChoices().get(0).message().content());
     }
 
     @Test

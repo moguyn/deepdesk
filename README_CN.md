@@ -25,50 +25,41 @@
 - 🏢 **本地LLM支持**：在企业VPC内运行开源LLM
 - 🔓 **供应商独立性**：无供应商锁定
 
-## 架构亮点
+## 架构原则
 
-- **标准化通信**：MCP（模型控制协议）确保一致的代理交互
-- **模块化设计**：适配器系统用于连接各种LLM提供商
+受[Anthropic构建高效代理方法](https://www.anthropic.com/engineering/building-effective-agents)的启发，深知遵循以下核心原则：
+
+- **简洁性**：构建适当的系统，而非过度复杂的系统
+- **透明性**：使代理规划步骤明确可见
+- **良好设计的工具**：为代理和系统之间提供清晰、文档完善的接口
+- **标准化通信**：使用MCP（模型控制协议）确保一致的代理交互
+- **模块化**：适配器系统用于连接各种LLM提供商
 - **企业级安全**：基础设施设计确保业务数据在您的控制之下
 
 ## 系统架构
 
 ![系统架构图](images/archi.png)
 
-该图说明了**企业应用程序**（"MCP宿主"）协调以下组件：
+架构包括：
 
-1. **用户**  
-   - 通过直观的**用户界面**访问系统
-   - 通过**身份验证与授权**确保适当的权限
-
-2. **MCP宿主**  
-   - **权限管理器**：执行基于角色的访问控制
-   - **交互层**：处理LLM和企业资源之间的通信
-   - **MCP客户端**：建立与后端服务的HTTP通信
-   - **配置系统**：管理应用程序设置和偏好
-
-3. **LLM引擎**  
-   - 根据需要执行语言处理和生成任务
-
-4. **企业服务**  
-   - **文档服务**：处理PDF、Word文档、TXT文件等
-   - **数据库服务**：连接MySQL、PostgreSQL等数据存储
-   - **API服务**：对接内部企业API
-   - **附加服务**：扩展到其他企业功能
+1. **用户界面层**：直观的UI，具备身份验证与授权功能
+2. **MCP宿主**：核心组件，包含权限管理、交互层、MCP客户端和配置系统
+3. **LLM引擎**：处理语言处理任务
+4. **企业服务**：文档、数据库、API及其他企业服务集成
 
 **数据流**：  
-用户 → 用户界面 → MCP宿主（权限验证）→ MCP客户端 → 企业服务（通过HTTP）  
-LLM通过MCP宿主调用以执行所有语言模型操作。
+用户 → 用户界面 → MCP宿主 → MCP客户端 → 企业服务（通过HTTP）  
+LLM通过MCP宿主调用执行。
 
 ## 快速开始
 
 ### 前置要求
 
-- Java开发工具包 (JDK) 21或更高版本
+- Java开发工具包 (JDK) 21+
 - Maven（通过Maven Wrapper提供）
 - Node.js和`npx`（MCP服务器所需）
 - Python 3.13.x和uv包管理器（MCP服务器所需）
-- 配置为环境变量的API密钥：
+- 配置环境变量的API密钥：
 
 ```shell
 export OPENAI_API_KEY='your-openai-api-key'
@@ -76,95 +67,44 @@ export ANTHROPIC_API_KEY='your-anthropic-api-key'
 export BRAVE_API_KEY="your-brave-api-key"
 ```
 
-### 运行应用
-
-在本地启动应用：
+### 快速命令
 
 ```bash
+# 运行应用
 ./mvnw spring-boot:run
-```
 
-### 构建可执行JAR
-
-使用SpringBoot创建可执行JAR文件：
-
-```bash
+# 构建可执行JAR
 ./mvnw clean package
-```
 
-可执行JAR将在`target`目录中创建为`deepdesk-<version>.jar`。
-
-运行可执行文件：
-
-```bash
-java -jar target/deepdesk-<version>.jar
-```
-
-### 运行测试
-
-执行测试套件：
-
-```bash
+# 运行测试
 ./mvnw test
 ```
 
 ## 原生构建
 
-深知支持生成可在Linux、macOS和Windows上不需要JVM运行的原生可执行文件。
-
-### 本地构建原生可执行文件
-
-#### Linux/macOS
+深知支持为Linux、macOS和Windows生成原生可执行文件。
 
 ```bash
-# 使脚本可执行（仅首次）
+# Linux/macOS
 chmod +x build-native.sh
-
-# 构建原生可执行文件
 ./build-native.sh
-```
 
-#### Windows
-
-```batch
-# 构建原生可执行文件
+# Windows
 build-native.bat
 ```
 
-原生可执行文件将在`target`目录中创建为`deepdesk`。
-
-### 自动化多平台构建
-
-所有支持平台的原生可执行文件都通过GitHub Actions自动构建。从本仓库的GitHub Releases部分下载最新版本。
-
-### 原生构建的要求
-
-要在本地构建原生可执行文件：
-
-- GraalVM安装，含native-image工具
-- Java 17或更新版本（推荐Java 23）
-- Maven 3.8+
+所有平台的原生可执行文件也可在GitHub Releases中获取。
 
 ## 已知问题
 
-- 流式模式尚不支持（由于[Spring中的这个问题](https://github.com/spring-projects/spring-ai/issues/2341)）
-   - 可通过[src/test/resources/chat.http]复现
+- 流式模式尚不支持（由于[Spring问题#2341](https://github.com/spring-projects/spring-ai/issues/2341)）
 
 ## 安全与隐私
 
-深知以企业安全为基础进行架构设计：
-
-- **数据主权**：业务数据保持在企业基础设施内
+- **数据主权**：业务数据保持在您的基础设施内
 - **私有部署**：支持在私有VPC中托管本地LLM
 - **零数据泄漏**：使用本地模型时无需外部数据传输
 
 ## 许可证
 
-本项目采用GNU Affero通用公共许可证v3.0（AGPL-3.0）授权。该许可证确保：
-
-- 软件可以自由使用、修改和分发
-- 任何修改都必须以相同的许可证提供
-- 网络使用被视为分发，要求提供源代码
-- 完整许可证文本可在LICENSE文件中找到
-
-更多信息，请访问：https://www.gnu.org/licenses/agpl-3.0.en.html
+本项目采用GNU Affero通用公共许可证v3.0（AGPL-3.0）授权。详见LICENSE文件或访问：https://www.gnu.org/licenses/agpl-3.0.en.html

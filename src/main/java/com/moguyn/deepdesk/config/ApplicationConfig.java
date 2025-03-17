@@ -19,13 +19,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moguyn.deepdesk.advisor.ChatMemoryAdvisor;
 import com.moguyn.deepdesk.advisor.ContextLimiter;
-import com.moguyn.deepdesk.advisor.CriticalThinker;
 import com.moguyn.deepdesk.advisor.MaxTokenSizeContentLimiter;
-import com.moguyn.deepdesk.advisor.NextStepAdvisor;
-import com.moguyn.deepdesk.advisor.PlanAdvisor;
 import com.moguyn.deepdesk.chat.ChatRunner;
 import com.moguyn.deepdesk.chat.CommandlineChatRunner;
 import com.moguyn.deepdesk.dependency.SoftwareDependencyValidator;
@@ -65,7 +61,7 @@ public class ApplicationConfig {
 
     @Bean
     public ContextLimiter<Message> contextLimiter(TokenCountEstimator tokenCountEstimator, CoreSettings coreSettings) {
-        return new MaxTokenSizeContentLimiter<>(tokenCountEstimator, coreSettings.getLlm().getMaxTokens());
+        return new MaxTokenSizeContentLimiter<>(tokenCountEstimator, coreSettings.llm().maxTokens());
     }
 
     @Bean
@@ -81,24 +77,9 @@ public class ApplicationConfig {
         return new ChatMemoryAdvisor(
                 chatMemory,
                 DEFAULT_CONVERSATION_ID,
-                coreSettings.getLlm().getHistoryWindowSize(),
+                coreSettings.llm().historyWindowSize(),
                 contextLimiter,
                 1000);
-    }
-
-    @Bean
-    public PlanAdvisor planAdvisor(ChatClient.Builder chatClientBuilder, ToolCallbackProvider toolCallbackProvider, ObjectMapper objectMapper, ChatMemory chatMemory) {
-        return new PlanAdvisor(chatClientBuilder, chatMemory, toolCallbackProvider, objectMapper, 10);
-    }
-
-    @Bean
-    public NextStepAdvisor nextStepAdvisor(ChatClient.Builder chatClientBuilder, ToolCallbackProvider toolCallbackProvider, ObjectMapper objectMapper) {
-        return new NextStepAdvisor(chatClientBuilder, toolCallbackProvider, objectMapper, 20);
-    }
-
-    @Bean
-    public CriticalThinker criticalThinker(ChatClient.Builder chatClientBuilder, ToolCallbackProvider toolCallbackProvider, ObjectMapper objectMapper) {
-        return new CriticalThinker(chatClientBuilder, toolCallbackProvider, objectMapper, 30);
     }
 
     @Bean
@@ -115,9 +96,6 @@ public class ApplicationConfig {
     @Bean
     public ChatClient chatClient(ChatClient.Builder chatClientBuilder,
             ToolCallbackProvider toolCallbackProvider,
-            PlanAdvisor planAdvisor,
-            NextStepAdvisor nextStepAdvisor,
-            CriticalThinker criticalThinker,
             ChatMemoryAdvisor tokenLimitedChatMemoryAdvisor,
             CoreSettings coreSettings,
             @Value("${core.llm.prompt.system}") String systemPrompt) {
@@ -129,22 +107,8 @@ public class ApplicationConfig {
         // Dynamically add advisors based on configuration
         List<Advisor> enabledAdvisors = new ArrayList<>();
 
-        CoreSettings.Advisors advisorSettings = coreSettings.getAdvisors();
+        CoreSettings.Advisors advisorSettings = coreSettings.advisors();
         if (advisorSettings != null) {
-            if (advisorSettings.isPlanAdvisorEnabled()) {
-                log.info("Enabling Plan Advisor");
-                enabledAdvisors.add(planAdvisor);
-            }
-
-            if (advisorSettings.isNextStepAdvisorEnabled()) {
-                log.info("Enabling Next Step Advisor");
-                enabledAdvisors.add(nextStepAdvisor);
-            }
-
-            if (advisorSettings.isCriticalThinkerEnabled()) {
-                log.info("Enabling Critical Thinker");
-                enabledAdvisors.add(criticalThinker);
-            }
 
             if (advisorSettings.isChatMemoryAdvisorEnabled()) {
                 log.info("Enabling Chat Memory Advisor");
@@ -152,9 +116,6 @@ public class ApplicationConfig {
             }
         } else {
             log.warn("No advisor configuration found, enabling all advisors by default");
-            enabledAdvisors.add(planAdvisor);
-            enabledAdvisors.add(nextStepAdvisor);
-            enabledAdvisors.add(criticalThinker);
             enabledAdvisors.add(tokenLimitedChatMemoryAdvisor);
         }
 
