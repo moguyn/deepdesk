@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/moguyn/deepdesk/compare/v0.4.1...v0.4.2) (2025-03-17)
+
+
+### Bug Fixes
+
+* add CustomMcpAsyncClientCustomizer with tests ([#118](https://github.com/moguyn/deepdesk/issues/118)) ([31e6c1e](https://github.com/moguyn/deepdesk/commit/31e6c1e9843123637c10b44462d311d801030fe0))
+
 ## [0.4.1](https://github.com/moguyn/deepdesk/compare/v0.4.0...v0.4.1) (2025-03-17)
 
 
