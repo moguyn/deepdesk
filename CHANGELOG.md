@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/moguyn/deepdesk/compare/v0.4.0...v0.4.1) (2025-03-17)
+
+
+### Documentation
+
+* add comparison of Spring AI vs OctoTools ([#114](https://github.com/moguyn/deepdesk/issues/114)) ([347b3be](https://github.com/moguyn/deepdesk/commit/347b3be8dc36a249f66cd56de0bbcaf643c8fd57))
+
 ## [0.4.0](https://github.com/moguyn/deepdesk/compare/v0.3.2...v0.4.0) (2025-03-16)
 
 
