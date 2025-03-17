@@ -10,147 +10,62 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * Configuration properties for core settings in application.yaml
  */
 @ConfigurationProperties(prefix = "core")
-public class CoreSettings {
+public record CoreSettings(
+        @NestedConfigurationProperty
+        List<CapabilitySettings> capabilities,
+        @NestedConfigurationProperty
+        UI ui,
+        @NestedConfigurationProperty
+        LLM llm,
+        @NestedConfigurationProperty
+        Advisors advisors) {
 
-    @NestedConfigurationProperty
-    private List<CapabilitySettings> capabilities;
+    /**
+     * Represents capability settings configuration
+     */
+    public record CapabilitySettings(
+            String type,
+            Map<String, Object> config) {
 
-    @NestedConfigurationProperty
-    private UI ui;
-
-    @NestedConfigurationProperty
-    private LLM llm;
-
-    @NestedConfigurationProperty
-    private Advisors advisors;
-
-    public LLM getLlm() {
-        return llm;
-    }
-
-    public void setLlm(LLM llm) {
-        this.llm = llm;
-    }
-
-    public List<CapabilitySettings> getCapabilities() {
-        return capabilities;
-    }
-
-    public void setCapabilities(List<CapabilitySettings> capabilities) {
-        this.capabilities = capabilities;
-    }
-
-    public UI getUi() {
-        return ui;
-    }
-
-    public void setUi(UI ui) {
-        this.ui = ui;
-    }
-
-    public Advisors getAdvisors() {
-        return advisors;
-    }
-
-    public void setAdvisors(Advisors advisors) {
-        this.advisors = advisors;
-    }
-
-    public static class CapabilitySettings {
-
-        private String type;
-        private Map<String, Object> config;
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public Map<String, Object> getConfig() {
-            return config;
-        }
-
-        public void setConfig(Map<String, Object> config) {
-            this.config = config;
-        }
     }
 
     /**
-     * Represents IO settings configuration
+     * Represents UI settings configuration
      */
-    public static class UI {
+    public record UI(
+            String type) {
 
-        private String type;
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
     }
 
-    public static class LLM {
+    /**
+     * Represents LLM settings configuration
+     */
+    public record LLM(
+            Prompt prompt,
+            int maxTokens,
+            int historyWindowSize) {
 
-        private Prompt prompt;
-        private int maxTokens;
-        private int historyWindowSize;
-
-        public int getMaxTokens() {
-            return maxTokens;
-        }
-
-        public void setMaxTokens(int maxTokens) {
-            this.maxTokens = maxTokens;
-        }
-
-        public int getHistoryWindowSize() {
-            return historyWindowSize;
-        }
-
-        public void setHistoryWindowSize(int historyWindowSize) {
-            this.historyWindowSize = historyWindowSize;
-        }
-
-        public Prompt getPrompt() {
-            return prompt;
-        }
-
-        public void setPrompt(Prompt prompt) {
-            this.prompt = prompt;
-        }
     }
 
-    public static class Prompt {
+    /**
+     * Represents prompt settings configuration
+     */
+    public record Prompt(
+            String system) {
 
-        private String system;
-
-        public String getSystem() {
-            return system;
-        }
-
-        public void setSystem(String system) {
-            this.system = system;
-        }
     }
 
     /**
      * Configuration for enabling/disabling advisors
      */
-    public static class Advisors {
+    public record Advisors(
+            boolean chatMemoryAdvisorEnabled) {
 
-        private boolean chatMemoryAdvisorEnabled = true;
-
+        /**
+         * Provides compatibility with isXxx pattern
+         */
         public boolean isChatMemoryAdvisorEnabled() {
             return chatMemoryAdvisorEnabled;
-        }
-
-        public void setChatMemoryAdvisorEnabled(boolean chatMemoryAdvisorEnabled) {
-            this.chatMemoryAdvisorEnabled = chatMemoryAdvisorEnabled;
         }
     }
 }

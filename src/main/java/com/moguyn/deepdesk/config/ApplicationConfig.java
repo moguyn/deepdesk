@@ -61,7 +61,7 @@ public class ApplicationConfig {
 
     @Bean
     public ContextLimiter<Message> contextLimiter(TokenCountEstimator tokenCountEstimator, CoreSettings coreSettings) {
-        return new MaxTokenSizeContentLimiter<>(tokenCountEstimator, coreSettings.getLlm().getMaxTokens());
+        return new MaxTokenSizeContentLimiter<>(tokenCountEstimator, coreSettings.llm().maxTokens());
     }
 
     @Bean
@@ -77,7 +77,7 @@ public class ApplicationConfig {
         return new ChatMemoryAdvisor(
                 chatMemory,
                 DEFAULT_CONVERSATION_ID,
-                coreSettings.getLlm().getHistoryWindowSize(),
+                coreSettings.llm().historyWindowSize(),
                 contextLimiter,
                 1000);
     }
@@ -107,7 +107,7 @@ public class ApplicationConfig {
         // Dynamically add advisors based on configuration
         List<Advisor> enabledAdvisors = new ArrayList<>();
 
-        CoreSettings.Advisors advisorSettings = coreSettings.getAdvisors();
+        CoreSettings.Advisors advisorSettings = coreSettings.advisors();
         if (advisorSettings != null) {
 
             if (advisorSettings.isChatMemoryAdvisorEnabled()) {
