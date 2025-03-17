@@ -143,34 +143,7 @@ public class CoreSettings {
      */
     public static class Advisors {
 
-        private boolean planAdvisorEnabled = true;
-        private boolean nextStepAdvisorEnabled = true;
-        private boolean criticalThinkerEnabled = true;
         private boolean chatMemoryAdvisorEnabled = true;
-
-        public boolean isPlanAdvisorEnabled() {
-            return planAdvisorEnabled;
-        }
-
-        public void setPlanAdvisorEnabled(boolean planAdvisorEnabled) {
-            this.planAdvisorEnabled = planAdvisorEnabled;
-        }
-
-        public boolean isNextStepAdvisorEnabled() {
-            return nextStepAdvisorEnabled;
-        }
-
-        public void setNextStepAdvisorEnabled(boolean nextStepAdvisorEnabled) {
-            this.nextStepAdvisorEnabled = nextStepAdvisorEnabled;
-        }
-
-        public boolean isCriticalThinkerEnabled() {
-            return criticalThinkerEnabled;
-        }
-
-        public void setCriticalThinkerEnabled(boolean criticalThinkerEnabled) {
-            this.criticalThinkerEnabled = criticalThinkerEnabled;
-        }
 
         public boolean isChatMemoryAdvisorEnabled() {
             return chatMemoryAdvisorEnabled;

@@ -56,7 +56,4 @@ core:
     type: web
     
   advisors:
-    plan-advisor-enabled: true
-    next-step-advisor-enabled: false
-    critical-thinker-enabled: false
     chat-memory-advisor-enabled: true
