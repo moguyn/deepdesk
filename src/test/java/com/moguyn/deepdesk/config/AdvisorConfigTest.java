@@ -4,9 +4,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.tool.ToolCallbackProvider;
@@ -20,19 +25,23 @@ import com.moguyn.deepdesk.config.CoreSettings.UI;
  * Tests for the advisor configuration in ApplicationConfig. These tests
  * complement the more focused AdvisorService tests.
  */
+@ExtendWith(MockitoExtension.class)
 public class AdvisorConfigTest {
+
+    @InjectMocks
+    private ApplicationConfig applicationConfig;
+
+    @Mock
+    private AdvisorService advisorService;
 
     @Test
     public void testAllAdvisorsEnabled() {
-        // Arrange
-        ApplicationConfig config = new ApplicationConfig();
-
-        // Mock dependencies
-        ChatClient.Builder chatClientBuilder = mock(ChatClient.Builder.class);
-        ToolCallbackProvider toolCallbackProvider = mock(ToolCallbackProvider.class);
-        AdvisorService advisorService = mock(AdvisorService.class);
+        // Mock builder
+        ChatClient.Builder chatClientBuilder = mock(ChatClient.Builder.class, Mockito.RETURNS_SELF);
         ChatClient chatClient = mock(ChatClient.class);
-        Advisor mockAdvisor = mock(Advisor.class);
+
+        // Setup mock to return the builder and finally return the client
+        when(chatClientBuilder.build()).thenReturn(chatClient);
 
         // Setup CoreSettings with all advisors enabled
         CoreSettings coreSettings = new CoreSettings(
@@ -44,18 +53,15 @@ public class AdvisorConfigTest {
                 ),
                 new CoreSettings.Advisors(true));
 
-        // Setup mocked chain
-        when(chatClientBuilder.defaultSystem(any(String.class))).thenReturn(chatClientBuilder);
-        when(chatClientBuilder.defaultTools(any(ToolCallbackProvider.class))).thenReturn(chatClientBuilder);
-        when(chatClientBuilder.defaultTools(any(Class.class))).thenReturn(chatClientBuilder);
-        when(chatClientBuilder.defaultAdvisors(any(Advisor[].class))).thenReturn(chatClientBuilder);
-        when(chatClientBuilder.build()).thenReturn(chatClient);
-
-        // Mock the advisor service to return an advisor
+        // Mock the advisor
+        Advisor mockAdvisor = mock(Advisor.class);
         when(advisorService.getEnabledAdvisors(any(CoreSettings.class))).thenReturn(List.of(mockAdvisor));
 
+        // Tool callback provider
+        ToolCallbackProvider toolCallbackProvider = mock(ToolCallbackProvider.class);
+
         // Act
-        ChatClient result = config.chatClient(
+        ChatClient result = applicationConfig.chatClient(
                 chatClientBuilder,
                 toolCallbackProvider,
                 advisorService,
@@ -69,14 +75,12 @@ public class AdvisorConfigTest {
 
     @Test
     public void testSomeAdvisorsDisabled() {
-        // Arrange
-        ApplicationConfig config = new ApplicationConfig();
-
-        // Mock dependencies
-        ChatClient.Builder chatClientBuilder = mock(ChatClient.Builder.class);
-        ToolCallbackProvider toolCallbackProvider = mock(ToolCallbackProvider.class);
-        AdvisorService advisorService = mock(AdvisorService.class);
+        // Mock builder
+        ChatClient.Builder chatClientBuilder = mock(ChatClient.Builder.class, Mockito.RETURNS_SELF);
         ChatClient chatClient = mock(ChatClient.class);
+
+        // Setup mock to return the builder and finally return the client
+        when(chatClientBuilder.build()).thenReturn(chatClient);
 
         // Setup CoreSettings with some advisors disabled
         CoreSettings coreSettings = new CoreSettings(
@@ -88,17 +92,14 @@ public class AdvisorConfigTest {
                 ),
                 new CoreSettings.Advisors(false));
 
-        // Setup mocked chain
-        when(chatClientBuilder.defaultSystem(any(String.class))).thenReturn(chatClientBuilder);
-        when(chatClientBuilder.defaultTools(any(ToolCallbackProvider.class))).thenReturn(chatClientBuilder);
-        when(chatClientBuilder.defaultTools(any(Class.class))).thenReturn(chatClientBuilder);
-        when(chatClientBuilder.build()).thenReturn(chatClient);
-
         // Mock the advisor service to return an empty list
         when(advisorService.getEnabledAdvisors(any(CoreSettings.class))).thenReturn(List.of());
 
+        // Tool callback provider
+        ToolCallbackProvider toolCallbackProvider = mock(ToolCallbackProvider.class);
+
         // Act
-        ChatClient result = config.chatClient(
+        ChatClient result = applicationConfig.chatClient(
                 chatClientBuilder,
                 toolCallbackProvider,
                 advisorService,

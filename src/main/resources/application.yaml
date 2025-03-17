@@ -48,16 +48,17 @@ logging:
 core:
   llm:
     prompt:
-      system: 你是企业级AI助手, 请只说中文, 使用markdown格式输出。
+      system: |
+        - 你是企业级AI助手, 请只说中文, 使用markdown格式输出。
+        - 如果有文件访问需要，请先确认允许访问的文件路径。所有文件访问请使用绝对路径。
     max-tokens: 20000
     history-window-size: 5
 
   ui:
-    type: web
+    type: cli
 
   mcp:
-    roots:
-      - "target"
+    roots: "."
 
   advisors:
     chat-memory-advisor-enabled: true

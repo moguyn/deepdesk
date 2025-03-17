@@ -28,6 +28,7 @@ import com.moguyn.deepdesk.chat.ChatRunner;
 import com.moguyn.deepdesk.chat.CommandlineChatRunner;
 import com.moguyn.deepdesk.dependency.SoftwareDependencyValidator;
 import com.moguyn.deepdesk.tools.DateTimeTools;
+import com.moguyn.deepdesk.tools.FilepathTools;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -106,7 +107,7 @@ public class ApplicationConfig {
         var builder = chatClientBuilder
                 .defaultSystem(systemPrompt)
                 .defaultTools(toolCallbackProvider)
-                .defaultTools(DateTimeTools.class);
+                .defaultTools(DateTimeTools.class, FilepathTools.class);
 
         // Get advisors from the service
         List<Advisor> enabledAdvisors = advisorService.getEnabledAdvisors(coreSettings);
@@ -131,7 +132,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public CustomMcpAsyncClientCustomizer customMcpAsyncClientCustomizer(@Value("${core.mcp.roots}") String[] roots) {
+    public CustomMcpAsyncClientCustomizer customMcpAsyncClientCustomizer(@Value("#{'${core.mcp.roots}'.split(',')}") String[] roots) {
         return new CustomMcpAsyncClientCustomizer(roots);
     }
 }
