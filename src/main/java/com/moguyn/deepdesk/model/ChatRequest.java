@@ -4,22 +4,12 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+public record ChatRequest(
+        String model,
+        @JsonProperty("conversation_id")
+        String conversationId,
+        @JsonProperty("max_tokens")
+        Integer maxTokens,
+        List<ChatMessage> messages) {
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class ChatRequest {
-
-    private String model;
-
-    @JsonProperty("conversation_id")
-    private String conversationId;
-
-    @JsonProperty("max_tokens")
-    private Integer maxTokens;
-
-    private List<ChatMessage> messages;
 }

@@ -1,14 +1,5 @@
 package com.moguyn.deepdesk.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+public record ChatMessage(String role, String content) {
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class ChatMessage {
-
-    private String role;
-    private String content;
 }

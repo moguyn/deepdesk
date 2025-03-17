@@ -57,7 +57,7 @@ public class OpenAiService {
     private ChatCompletionResponse buildResponse(ChatCompletionRequest request, String reply) {
         // Estimate token usage (this is approximate)
         int promptTokens = estimateTokenCount(request.getMessages().stream()
-                .map(ChatMessage::getContent)
+                .map(ChatMessage::content)
                 .collect(Collectors.joining()));
         int completionTokens = estimateTokenCount(reply);
 
@@ -69,18 +69,11 @@ public class OpenAiService {
         response.setModel(request.getModel());
 
         // Create a choice with the AI response
-        Choice choice = new Choice();
-        choice.setIndex(0);
-        choice.setMessage(ChatMessage.builder().role("assistant").content(reply).build());
-        choice.setFinishReason("stop");
-
+        Choice choice = new Choice(0, ChatMessage.builder().role("assistant").content(reply).build(), "stop", null);
         response.setChoices(List.of(choice));
 
         // Add usage information
-        OpenAiUsage usage = new OpenAiUsage();
-        usage.setPromptTokens(promptTokens);
-        usage.setCompletionTokens(completionTokens);
-        usage.setTotalTokens(promptTokens + completionTokens);
+        OpenAiUsage usage = new OpenAiUsage(promptTokens, completionTokens, promptTokens + completionTokens);
         response.setUsage(usage);
         return response;
     }
@@ -90,7 +83,7 @@ public class OpenAiService {
 
         // Add system message if not present in the request
         boolean hasSystemMessage = request.getMessages().stream()
-                .anyMatch(m -> "system".equals(m.getRole()));
+                .anyMatch(m -> "system".equals(m.role()));
 
         if (!hasSystemMessage) {
             messages.add(new SystemMessage(systemPrompt));
@@ -98,15 +91,15 @@ public class OpenAiService {
 
         // Add messages from the request
         request.getMessages().forEach(m -> {
-            switch (m.getRole()) {
+            switch (m.role()) {
                 case "system" ->
-                    messages.add(new SystemMessage(m.getContent()));
+                    messages.add(new SystemMessage(m.content()));
                 case "user" ->
-                    messages.add(new UserMessage(m.getContent()));
+                    messages.add(new UserMessage(m.content()));
                 case "assistant" ->
-                    messages.add(new AssistantMessage(m.getContent()));
+                    messages.add(new AssistantMessage(m.content()));
                 default ->
-                    throw new IllegalArgumentException("Unsupported role: " + m.getRole());
+                    throw new IllegalArgumentException("Unsupported role: " + m.role());
             }
         });
 
