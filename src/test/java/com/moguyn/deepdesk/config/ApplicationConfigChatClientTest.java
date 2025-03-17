@@ -1,5 +1,6 @@
 package com.moguyn.deepdesk.config;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -17,13 +18,13 @@ import com.moguyn.deepdesk.config.CoreSettings.Prompt;
 import com.moguyn.deepdesk.config.CoreSettings.UI;
 
 /**
- * Tests for the advisor configuration in ApplicationConfig. These tests
- * complement the more focused AdvisorService tests.
+ * Tests for the ChatClient creation in ApplicationConfig, using a mocked
+ * AdvisorService.
  */
-public class AdvisorConfigTest {
+class ApplicationConfigChatClientTest {
 
     @Test
-    public void testAllAdvisorsEnabled() {
+    void shouldCreateChatClientWithAdvisors() {
         // Arrange
         ApplicationConfig config = new ApplicationConfig();
 
@@ -32,27 +33,26 @@ public class AdvisorConfigTest {
         ToolCallbackProvider toolCallbackProvider = mock(ToolCallbackProvider.class);
         AdvisorService advisorService = mock(AdvisorService.class);
         ChatClient chatClient = mock(ChatClient.class);
-        Advisor mockAdvisor = mock(Advisor.class);
 
-        // Setup CoreSettings with all advisors enabled
-        CoreSettings coreSettings = new CoreSettings(
-                List.of(),
-                new UI(""),
-                new LLM(new Prompt(""),
-                        1000,
-                        1000
-                ),
-                new CoreSettings.Advisors(true));
-
-        // Setup mocked chain
+        // Configure mocks
         when(chatClientBuilder.defaultSystem(any(String.class))).thenReturn(chatClientBuilder);
         when(chatClientBuilder.defaultTools(any(ToolCallbackProvider.class))).thenReturn(chatClientBuilder);
         when(chatClientBuilder.defaultTools(any(Class.class))).thenReturn(chatClientBuilder);
         when(chatClientBuilder.defaultAdvisors(any(Advisor[].class))).thenReturn(chatClientBuilder);
         when(chatClientBuilder.build()).thenReturn(chatClient);
 
-        // Mock the advisor service to return an advisor
-        when(advisorService.getEnabledAdvisors(any(CoreSettings.class))).thenReturn(List.of(mockAdvisor));
+        // Setup core settings
+        CoreSettings coreSettings = new CoreSettings(
+                List.of(),
+                new UI(""),
+                new LLM(new Prompt(""), 1000, 1000),
+                new CoreSettings.Advisors(true)
+        );
+
+        // Mock advisor service to return one advisor
+        List<Advisor> mockAdvisors = new ArrayList<>();
+        mockAdvisors.add(mock(Advisor.class));
+        when(advisorService.getEnabledAdvisors(any(CoreSettings.class))).thenReturn(mockAdvisors);
 
         // Act
         ChatClient result = config.chatClient(
@@ -68,7 +68,7 @@ public class AdvisorConfigTest {
     }
 
     @Test
-    public void testSomeAdvisorsDisabled() {
+    void shouldCreateChatClientWithoutAdvisors() {
         // Arrange
         ApplicationConfig config = new ApplicationConfig();
 
@@ -78,23 +78,21 @@ public class AdvisorConfigTest {
         AdvisorService advisorService = mock(AdvisorService.class);
         ChatClient chatClient = mock(ChatClient.class);
 
-        // Setup CoreSettings with some advisors disabled
-        CoreSettings coreSettings = new CoreSettings(
-                List.of(),
-                new UI(""),
-                new LLM(new Prompt(""),
-                        1000,
-                        1000
-                ),
-                new CoreSettings.Advisors(false));
-
-        // Setup mocked chain
+        // Configure mocks
         when(chatClientBuilder.defaultSystem(any(String.class))).thenReturn(chatClientBuilder);
         when(chatClientBuilder.defaultTools(any(ToolCallbackProvider.class))).thenReturn(chatClientBuilder);
         when(chatClientBuilder.defaultTools(any(Class.class))).thenReturn(chatClientBuilder);
         when(chatClientBuilder.build()).thenReturn(chatClient);
 
-        // Mock the advisor service to return an empty list
+        // Setup core settings
+        CoreSettings coreSettings = new CoreSettings(
+                List.of(),
+                new UI(""),
+                new LLM(new Prompt(""), 1000, 1000),
+                new CoreSettings.Advisors(false)
+        );
+
+        // Mock advisor service to return empty list
         when(advisorService.getEnabledAdvisors(any(CoreSettings.class))).thenReturn(List.of());
 
         // Act

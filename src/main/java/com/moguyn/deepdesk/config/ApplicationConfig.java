@@ -1,6 +1,5 @@
 package com.moguyn.deepdesk.config;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.ai.chat.client.ChatClient;
@@ -11,6 +10,8 @@ import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.tokenizer.JTokkitTokenCountEstimator;
 import org.springframework.ai.tokenizer.TokenCountEstimator;
 import org.springframework.ai.tool.ToolCallbackProvider;
+import org.springframework.ai.tool.execution.DefaultToolExecutionExceptionProcessor;
+import org.springframework.ai.tool.execution.ToolExecutionExceptionProcessor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -19,12 +20,14 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.moguyn.deepdesk.advisor.AdvisorService;
 import com.moguyn.deepdesk.advisor.ChatMemoryAdvisor;
 import com.moguyn.deepdesk.advisor.ContextLimiter;
 import com.moguyn.deepdesk.advisor.MaxTokenSizeContentLimiter;
 import com.moguyn.deepdesk.chat.ChatRunner;
 import com.moguyn.deepdesk.chat.CommandlineChatRunner;
 import com.moguyn.deepdesk.dependency.SoftwareDependencyValidator;
+import com.moguyn.deepdesk.tools.DateTimeTools;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -96,28 +99,17 @@ public class ApplicationConfig {
     @Bean
     public ChatClient chatClient(ChatClient.Builder chatClientBuilder,
             ToolCallbackProvider toolCallbackProvider,
-            ChatMemoryAdvisor tokenLimitedChatMemoryAdvisor,
+            AdvisorService advisorService,
             CoreSettings coreSettings,
             @Value("${core.llm.prompt.system}") String systemPrompt) {
 
         var builder = chatClientBuilder
                 .defaultSystem(systemPrompt)
-                .defaultTools(toolCallbackProvider);
+                .defaultTools(toolCallbackProvider)
+                .defaultTools(DateTimeTools.class);
 
-        // Dynamically add advisors based on configuration
-        List<Advisor> enabledAdvisors = new ArrayList<>();
-
-        CoreSettings.Advisors advisorSettings = coreSettings.advisors();
-        if (advisorSettings != null) {
-
-            if (advisorSettings.isChatMemoryAdvisorEnabled()) {
-                log.info("Enabling Chat Memory Advisor");
-                enabledAdvisors.add(tokenLimitedChatMemoryAdvisor);
-            }
-        } else {
-            log.warn("No advisor configuration found, enabling all advisors by default");
-            enabledAdvisors.add(tokenLimitedChatMemoryAdvisor);
-        }
+        // Get advisors from the service
+        List<Advisor> enabledAdvisors = advisorService.getEnabledAdvisors(coreSettings);
 
         // Apply the enabled advisors
         if (!enabledAdvisors.isEmpty()) {
@@ -127,5 +119,14 @@ public class ApplicationConfig {
         }
 
         return builder.build();
+    }
+
+    /**
+     * This is used to prevent the tool execution from being interrupted by an
+     * exception.
+     */
+    @Bean
+    public ToolExecutionExceptionProcessor toolExecutionExceptionProcessor() {
+        return new DefaultToolExecutionExceptionProcessor(false);
     }
 }

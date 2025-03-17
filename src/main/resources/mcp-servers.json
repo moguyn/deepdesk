@@ -4,12 +4,6 @@
             "command": "/Users/verrerie/git/deepdesk/.vscode/mcp-search-server",
             "args": []
         },
-        "time": {
-            "command": "uvx",
-            "args": [
-                "mcp-server-time"
-            ]
-        },
         "mysql": {
             "command": "npx",
             "args": [
