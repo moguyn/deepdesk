@@ -129,4 +129,9 @@ public class ApplicationConfig {
     public ToolExecutionExceptionProcessor toolExecutionExceptionProcessor() {
         return new DefaultToolExecutionExceptionProcessor(false);
     }
+
+    @Bean
+    public CustomMcpAsyncClientCustomizer customMcpAsyncClientCustomizer(@Value("${core.mcp.roots}") String[] roots) {
+        return new CustomMcpAsyncClientCustomizer(roots);
+    }
 }

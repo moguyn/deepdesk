@@ -54,6 +54,10 @@ core:
 
   ui:
     type: web
-    
+
+  mcp:
+    roots:
+      - "target"
+
   advisors:
     chat-memory-advisor-enabled: true
