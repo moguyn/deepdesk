@@ -7,7 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
+import org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.api.Advisor;
+import org.springframework.ai.vectorstore.VectorStore;
 
 import com.moguyn.deepdesk.config.CoreSettings;
 import com.moguyn.deepdesk.config.CoreSettings.Advisors;
@@ -18,11 +20,13 @@ import com.moguyn.deepdesk.config.CoreSettings.UI;
 class DefaultAdvisorServiceTest {
 
     private DefaultAdvisorService advisorService;
-    private ChatMemoryAdvisor mockChatMemoryAdvisor;
+    private AbstractChatMemoryAdvisor<VectorStore> mockChatMemoryAdvisor;
 
     @BeforeEach
     public void setUp() {
-        mockChatMemoryAdvisor = mock(ChatMemoryAdvisor.class);
+        @SuppressWarnings("unchecked")
+        AbstractChatMemoryAdvisor<VectorStore> advisor = mock(AbstractChatMemoryAdvisor.class);
+        mockChatMemoryAdvisor = advisor;
         advisorService = new DefaultAdvisorService(mockChatMemoryAdvisor);
     }
 
