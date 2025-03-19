@@ -3,7 +3,9 @@ package com.moguyn.deepdesk.advisor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.api.Advisor;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
 
 import com.moguyn.deepdesk.config.CoreSettings;
@@ -20,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class DefaultAdvisorService implements AdvisorService {
 
-    private final ChatMemoryAdvisor chatMemoryAdvisor;
+    private final AbstractChatMemoryAdvisor<VectorStore> chatMemoryAdvisor;
 
     @Override
     public List<Advisor> getEnabledAdvisors(CoreSettings settings) {

@@ -3,15 +3,18 @@ package com.moguyn.deepdesk.config;
 import java.util.List;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.VectorStoreChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.api.Advisor;
-import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.InMemoryChatMemory;
-import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chroma.vectorstore.ChromaApi;
+import org.springframework.ai.chroma.vectorstore.ChromaVectorStore;
+import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.tokenizer.JTokkitTokenCountEstimator;
 import org.springframework.ai.tokenizer.TokenCountEstimator;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.execution.DefaultToolExecutionExceptionProcessor;
 import org.springframework.ai.tool.execution.ToolExecutionExceptionProcessor;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,9 +24,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.moguyn.deepdesk.advisor.AdvisorService;
-import com.moguyn.deepdesk.advisor.ChatMemoryAdvisor;
-import com.moguyn.deepdesk.advisor.ContextLimiter;
-import com.moguyn.deepdesk.advisor.MaxTokenSizeContentLimiter;
 import com.moguyn.deepdesk.chat.ChatRunner;
 import com.moguyn.deepdesk.chat.CommandlineChatRunner;
 import com.moguyn.deepdesk.dependency.SoftwareDependencyValidator;
@@ -41,11 +41,6 @@ import lombok.extern.slf4j.Slf4j;
 @EnableConfigurationProperties(CoreSettings.class)
 public class ApplicationConfig {
 
-    /**
-     * Default conversation ID to use for chat memory.
-     */
-    private static final String DEFAULT_CONVERSATION_ID = "deepdesk-conversation";
-
     @Bean
     @ConditionalOnProperty(prefix = "core.ui", name = "type", havingValue = "cli")
     public CommandLineRunner cli(
@@ -59,31 +54,9 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public ChatMemory chatMemory() {
-        return new InMemoryChatMemory();
-    }
-
-    @Bean
-    public ContextLimiter<Message> contextLimiter(TokenCountEstimator tokenCountEstimator, CoreSettings coreSettings) {
-        return new MaxTokenSizeContentLimiter<>(tokenCountEstimator, coreSettings.llm().maxTokens());
-    }
-
-    @Bean
-    public TokenCountEstimator tokenCountEstimator() {
-        return new JTokkitTokenCountEstimator();
-    }
-
-    @Bean
-    public ChatMemoryAdvisor tokenLimitedChatMemoryAdvisor(
-            ChatMemory chatMemory,
-            ContextLimiter<Message> contextLimiter,
-            CoreSettings coreSettings) {
-        return new ChatMemoryAdvisor(
-                chatMemory,
-                DEFAULT_CONVERSATION_ID,
-                coreSettings.llm().historyWindowSize(),
-                contextLimiter,
-                1000);
+    public AbstractChatMemoryAdvisor<VectorStore> chatMemoryAdvisor(VectorStore vectorStore) {
+        return VectorStoreChatMemoryAdvisor.builder(vectorStore)
+                .build();
     }
 
     @Bean
@@ -122,6 +95,16 @@ public class ApplicationConfig {
         return builder.build();
     }
 
+    @Bean
+    public VectorStore chromaVectorStore(EmbeddingModel embeddingModel, ChromaApi chromaApi,
+            @Value("${spring.ai.vectorstore.chroma.collection-name}") String collectionName,
+            @Value("${spring.ai.vectorstore.chroma.initialize-schema}") boolean initializeSchema) {
+        return ChromaVectorStore.builder(chromaApi, embeddingModel)
+                .collectionName(collectionName)
+                .initializeSchema(initializeSchema)
+                .build();
+    }
+
     /**
      * This is used to prevent the tool execution from being interrupted by an
      * exception.
@@ -134,5 +117,10 @@ public class ApplicationConfig {
     @Bean
     public CustomMcpAsyncClientCustomizer customMcpAsyncClientCustomizer(@Value("#{'${core.mcp.roots}'.split(',')}") String[] roots) {
         return new CustomMcpAsyncClientCustomizer(roots);
+    }
+
+    @Bean
+    public TokenCountEstimator tokenCountEstimator() {
+        return new JTokkitTokenCountEstimator();
     }
 }
