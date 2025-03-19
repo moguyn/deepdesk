@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.3](https://github.com/moguyn/deepdesk/compare/v0.4.2...v0.4.3) (2025-03-19)
+
+
+### Bug Fixes
+
+* add vector store and remove memory advisor ([#121](https://github.com/moguyn/deepdesk/issues/121)) ([e912592](https://github.com/moguyn/deepdesk/commit/e912592334c04508c03d284e890e5cced25f131b))
+
 ## [0.4.2](https://github.com/moguyn/deepdesk/compare/v0.4.1...v0.4.2) (2025-03-17)
 
 
