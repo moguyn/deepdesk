@@ -80,7 +80,7 @@ public class ApplicationConfig {
         var builder = chatClientBuilder
                 .defaultSystem(systemPrompt)
                 .defaultTools(toolCallbackProvider)
-                .defaultTools(DateTimeTools.class, FilepathTools.class);
+                .defaultTools(new DateTimeTools(), new FilepathTools());
 
         // Get advisors from the service
         List<Advisor> enabledAdvisors = advisorService.getEnabledAdvisors(coreSettings);
