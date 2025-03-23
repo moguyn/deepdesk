@@ -57,9 +57,12 @@ public class ApplicationConfig {
         };
     }
 
+    @SuppressWarnings("unchecked")
     @Bean
-    public AbstractChatMemoryAdvisor<VectorStore> chatMemoryAdvisor(VectorStore vectorStore) {
+    public AbstractChatMemoryAdvisor<VectorStore> chatMemoryAdvisor(VectorStore vectorStore,
+            @Value("${core.llm.history-window-size}") int historyWindowSize) {
         return VectorStoreChatMemoryAdvisor.builder(vectorStore)
+                .chatMemoryRetrieveSize(historyWindowSize)
                 .build();
     }
 
