@@ -85,12 +85,8 @@ export BRAVE_API_KEY="your-brave-api-key"
 深知支持为Linux、macOS和Windows生成原生可执行文件。
 
 ```bash
-# Linux/macOS
-chmod +x build-native.sh
-./build-native.sh
-
-# Windows
-build-native.bat
+# 构建原生可执行文件
+./mvnw clean package -Pnative
 ```
 
 所有平台的原生可执行文件也可在GitHub Releases中获取。

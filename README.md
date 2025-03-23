@@ -86,12 +86,8 @@ export BRAVE_API_KEY="your-brave-api-key"
 Deepdesk supports native executable generation for Linux, macOS, and Windows.
 
 ```bash
-# Linux/macOS
-chmod +x build-native.sh
-./build-native.sh
-
-# Windows
-build-native.bat
+# Build native executable
+./mvnw clean package -Pnative
 ```
 
 Native executables for all platforms are also available in GitHub Releases.
