@@ -44,7 +44,7 @@ spring:
         sse:
           connections:
             code-filesystem:
-              url: http://0.0.0.0:38085
+              url: http://filesystem:38085
     vectorstore:
       chroma:
         initialize-schema: true
