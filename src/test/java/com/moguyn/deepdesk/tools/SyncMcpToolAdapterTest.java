@@ -28,6 +28,7 @@ class SyncMcpToolAdapterTest {
     private Tool mockTool;
 
     @BeforeEach
+    @SuppressWarnings("unused")
     void setUp() {
         mockClient = mock(McpSyncClient.class);
         mockTool = mock(Tool.class);

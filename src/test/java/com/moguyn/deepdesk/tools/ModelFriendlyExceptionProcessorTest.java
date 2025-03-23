@@ -14,6 +14,7 @@ class ModelFriendlyExceptionProcessorTest {
     private ToolDefinition mockToolDefinition;
 
     @BeforeEach
+    @SuppressWarnings("unused")
     void setUp() {
         processor = new ModelFriendlyExceptionProcessor();
         mockToolDefinition = ToolDefinition.builder()
