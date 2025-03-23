@@ -126,7 +126,7 @@ class ApplicationConfigTest {
         ApplicationConfig config = new ApplicationConfig();
 
         // Act
-        AbstractChatMemoryAdvisor<VectorStore> advisor = config.chatMemoryAdvisor(vectorStore);
+        AbstractChatMemoryAdvisor<VectorStore> advisor = config.chatMemoryAdvisor(vectorStore, 5);
 
         // Assert
         assertNotNull(advisor);

@@ -17,6 +17,7 @@ class FilepathToolsTest {
     private FilepathTools filepathTools;
 
     @BeforeEach
+    @SuppressWarnings("unused")
     void setUp() {
         filepathTools = new FilepathTools();
     }

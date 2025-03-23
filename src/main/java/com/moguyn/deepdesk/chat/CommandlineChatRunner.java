@@ -20,7 +20,7 @@ public class CommandlineChatRunner implements ChatRunner {
 
     @Override
     public void run(String... args) {
-        console.println("\n我是您的AI助手，退出请键入 bye 或 exit\n");
+        console.println("\n我是您的AI助手,退出请键入 bye 或 exit\n");
         try (Scanner scanner = new Scanner(System.in)) {
             while (true) {
                 String prompt = getUserInput(scanner);
