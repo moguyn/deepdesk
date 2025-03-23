@@ -75,7 +75,7 @@ core:
         - 输出请只使用中文, 并一律使用markdown格式。
         - 如果有文件访问需要，请先确认允许访问的文件路径。所有文件访问请使用绝对路径。
     max-tokens: 20000
-    history-window-size: 6
+    history-window-size: 10
 
   ui:
     type: web
