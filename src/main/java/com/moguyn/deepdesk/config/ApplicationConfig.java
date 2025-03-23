@@ -11,8 +11,8 @@ import org.springframework.ai.chroma.vectorstore.ChromaVectorStore;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.tokenizer.JTokkitTokenCountEstimator;
 import org.springframework.ai.tokenizer.TokenCountEstimator;
+import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
-import org.springframework.ai.tool.execution.DefaultToolExecutionExceptionProcessor;
 import org.springframework.ai.tool.execution.ToolExecutionExceptionProcessor;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +22,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import com.moguyn.deepdesk.advisor.AdvisorService;
 import com.moguyn.deepdesk.chat.ChatRunner;
@@ -29,7 +30,10 @@ import com.moguyn.deepdesk.chat.CommandlineChatRunner;
 import com.moguyn.deepdesk.dependency.SoftwareDependencyValidator;
 import com.moguyn.deepdesk.tools.DateTimeTools;
 import com.moguyn.deepdesk.tools.FilepathTools;
+import com.moguyn.deepdesk.tools.ModelFriendlyExceptionProcessor;
+import com.moguyn.deepdesk.tools.SyncMcpToolAdapter;
 
+import io.modelcontextprotocol.client.McpSyncClient;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
@@ -68,6 +72,15 @@ public class ApplicationConfig {
     public void dependencyValidation() {
         var validator = new SoftwareDependencyValidator("npx", "uvx");
         validator.verifyDependencies();
+    }
+
+    @Primary
+    @Bean
+    public ToolCallbackProvider mcpToolCallbackProvider(List<McpSyncClient> mcpClients) {
+        return () -> mcpClients.stream()
+                .flatMap(client -> client.listTools().tools().stream()
+                .map(tool -> new SyncMcpToolAdapter(client, tool)))
+                .toArray(ToolCallback[]::new);
     }
 
     @Bean
@@ -111,7 +124,7 @@ public class ApplicationConfig {
      */
     @Bean
     public ToolExecutionExceptionProcessor toolExecutionExceptionProcessor() {
-        return new DefaultToolExecutionExceptionProcessor(false);
+        return new ModelFriendlyExceptionProcessor();
     }
 
     @Bean

@@ -20,12 +20,12 @@ import com.moguyn.deepdesk.openai.model.ChatMessage;
 @Component
 public class MessageConverter {
 
-    @Value("${core.llm.prompt.system:你是企业级AI助手, 请说中文, 请使用markdown格式输出}")
+    @Value("${core.llm.prompt.system}")
     private String defaultSystemPrompt;
 
     /**
-     * Converts OpenAI chat messages to Spring AI messages,
-     * adding a default system prompt if none is present
+     * Converts OpenAI chat messages to Spring AI messages, adding a default
+     * system prompt if none is present
      */
     public List<Message> toSpringMessages(List<ChatMessage> openAiMessages) {
         List<Message> messages = new ArrayList<>();
