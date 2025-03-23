@@ -17,6 +17,7 @@ import org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor;
 import org.springframework.ai.chroma.vectorstore.ChromaApi;
 import org.springframework.ai.chroma.vectorstore.ChromaVectorStore;
 import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.ai.mcp.customizer.McpSyncClientCustomizer;
 import org.springframework.ai.tokenizer.TokenCountEstimator;
 import org.springframework.ai.tool.execution.ToolExecutionExceptionProcessor;
 import org.springframework.ai.vectorstore.VectorStore;
@@ -114,7 +115,7 @@ class ApplicationConfigTest {
         String[] roots = new String[]{"/test/path1", "/test/path2"};
 
         // Act
-        CustomMcpAsyncClientCustomizer customizer = config.customMcpAsyncClientCustomizer(roots);
+        McpSyncClientCustomizer customizer = config.customMcpSyncClientCustomizer(roots);
 
         // Assert
         assertNotNull(customizer);

@@ -6,18 +6,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.ai.mcp.customizer.McpAsyncClientCustomizer;
+import org.springframework.ai.mcp.customizer.McpSyncClientCustomizer;
 
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.spec.McpSchema.Root;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class CustomMcpAsyncClientCustomizer implements McpAsyncClientCustomizer {
+public class CustomMcpSyncClientCustomizer implements McpSyncClientCustomizer {
 
     private final List<Root> roots;
 
-    public CustomMcpAsyncClientCustomizer(String... roots) {
+    public CustomMcpSyncClientCustomizer(String... roots) {
         this.roots = Arrays.stream(roots)
                 .map(this::resolve)
                 .filter(this::valid)
@@ -57,7 +57,7 @@ public class CustomMcpAsyncClientCustomizer implements McpAsyncClientCustomizer 
     }
 
     @Override
-    public void customize(String serverConfiurationName, McpClient.AsyncSpec spec) {
+    public void customize(String serverConfiurationName, McpClient.SyncSpec spec) {
         spec.roots(roots);
     }
 }
