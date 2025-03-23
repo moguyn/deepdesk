@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.4](https://github.com/moguyn/deepdesk/compare/v0.4.3...v0.4.4) (2025-03-23)
+
+
+### Documentation
+
+* simplify native build instructions ([#125](https://github.com/moguyn/deepdesk/issues/125)) ([12e2654](https://github.com/moguyn/deepdesk/commit/12e2654a2376ebce1c6154837bc8c4aafcefd25f))
+
 ## [0.4.3](https://github.com/moguyn/deepdesk/compare/v0.4.2...v0.4.3) (2025-03-19)
 
 
