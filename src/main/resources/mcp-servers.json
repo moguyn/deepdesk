@@ -1,5 +1,9 @@
 {
     "mcpServers": {
+        "bocha": {
+            "command": "/tmp/mcp-search-server",
+            "args": []
+        },
         "mysql": {
             "command": "npx",
             "args": [
@@ -7,11 +11,24 @@
                 "@benborla29/mcp-server-mysql"
             ],
             "env": {
-                "MYSQL_HOST": "mysql",
+                "MYSQL_HOST": "localhost",
                 "MYSQL_PORT": "3306",
                 "MYSQL_USER": "root",
                 "MYSQL_PASS": "root",
                 "MYSQL_DB": "deepdesk"
+            }
+        },
+        "command-line": {
+            "command": "uvx",
+            "args": [
+                "cli-mcp-server"
+            ],
+            "env": {
+                "ALLOWED_COMMANDS": "ls,cat,pwd,grep,wc,touch,find,ps,free",
+                "ALLOWED_FLAGS": "-l,-a,--help,--version",
+                "MAX_COMMAND_LENGTH": "1024",
+                "COMMAND_TIMEOUT": "60",
+                "ALLOWED_DIR": "/tmp"
             }
         }
     }

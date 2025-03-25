@@ -8,25 +8,26 @@ services:
       - BOCHA_API_KEY=${BOCHA_API_KEY}
     volumes:
       - ./deepdesk/application.yml:/app/application.yml
+      - ./deepdesk/mcp-servers.json:/app/mcp-servers.json
 
   filesystem:
     image: verrerie/filesystem-go:latest
     ports:
-      - 38085
+      - 38085:38085
     volumes:
       - ./filesystem:/projects
   
   chroma:
     image: ghcr.io/chroma-core/chroma:0.5.20
     ports:
-      - 8000
+      - 8000:8000
     volumes:
       - ./chroma:/data
 
   mysql:
     image: mysql/mysql-server:5.7
     ports:
-      - 3306
+      - 3306:3306
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=deepdesk

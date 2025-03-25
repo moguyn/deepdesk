@@ -40,7 +40,7 @@ spring:
     mcp:
       client:
         stdio:
-          servers-configuration: classpath:mcp-servers.json
+          servers-configuration: file:///app/mcp-servers.json
         sse:
           connections:
             code-filesystem:
