@@ -74,7 +74,7 @@ public class ApplicationConfig {
 
     @PostConstruct
     public void dependencyValidation() {
-        var validator = new SoftwareDependencyValidator("npx", "uvx");
+        var validator = new SoftwareDependencyValidator();
         validator.verifyDependencies();
     }
 

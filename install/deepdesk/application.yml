@@ -47,6 +47,9 @@ spring:
               url: http://filesystem:38085
     vectorstore:
       chroma:
+        client:
+          host: http://chroma
+          port: 8000
         initialize-schema: true
         collection-name: deepdesk
 
