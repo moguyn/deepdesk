@@ -40,7 +40,7 @@ public class SoftwareDependencyValidator implements DependencyValidator {
                         software + " command is not available. Please install it to use this feature.");
             }
         } catch (IOException | InterruptedException e) {
-            throw new IllegalStateException("Failed to verify npx availability: " + e.getMessage(), e);
+            throw new IllegalStateException("Failed to verify " + software + " availability: " + e.getMessage(), e);
         }
     }
 }
