@@ -162,6 +162,13 @@
                     </excludes>
                     <executable>true</executable>
                     <mainClass>com.moguyn.deepdesk.DeepDesk</mainClass>
+                    <image>
+                        <builder>paketobuildpacks/builder-jammy-base:latest</builder>
+                        <name>verrerie/deepdesk:${project.version}</name>
+                        <env>
+                            <BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>
+                        </env>
+                    </image>
                 </configuration>
                 <executions>
                     <execution>
