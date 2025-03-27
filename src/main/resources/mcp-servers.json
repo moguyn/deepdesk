@@ -1,7 +1,7 @@
 {
     "mcpServers": {
         "bocha": {
-            "command": "/Users/verrerie/git/deepdesk/.vscode/mcp-search-server",
+            "command": "/tmp/mcp-search-server",
             "args": []
         },
         "mysql": {
@@ -11,11 +11,11 @@
                 "@benborla29/mcp-server-mysql"
             ],
             "env": {
-                "MYSQL_HOST": "127.0.0.1",
+                "MYSQL_HOST": "localhost",
                 "MYSQL_PORT": "3306",
-                "MYSQL_USER": "test",
-                "MYSQL_PASS": "mysql",
-                "MYSQL_DB": "test"
+                "MYSQL_USER": "root",
+                "MYSQL_PASS": "root",
+                "MYSQL_DB": "deepdesk"
             }
         },
         "command-line": {
@@ -28,7 +28,7 @@
                 "ALLOWED_FLAGS": "-l,-a,--help,--version",
                 "MAX_COMMAND_LENGTH": "1024",
                 "COMMAND_TIMEOUT": "60",
-                "ALLOWED_DIR": "/Users/verrerie/git/deepdesk/target"
+                "ALLOWED_DIR": "/tmp"
             }
         }
     }

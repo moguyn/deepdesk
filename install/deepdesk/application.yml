@@ -40,13 +40,16 @@ spring:
     mcp:
       client:
         stdio:
-          servers-configuration: classpath:mcp-servers.json
+          servers-configuration: file:///app/mcp-servers.json
         sse:
           connections:
             code-filesystem:
               url: http://filesystem:38085
     vectorstore:
       chroma:
+        client:
+          host: http://chroma
+          port: 8000
         initialize-schema: true
         collection-name: deepdesk
 

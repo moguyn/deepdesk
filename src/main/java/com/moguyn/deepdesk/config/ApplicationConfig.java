@@ -9,6 +9,7 @@ import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.chroma.vectorstore.ChromaApi;
 import org.springframework.ai.chroma.vectorstore.ChromaVectorStore;
 import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.ai.mcp.customizer.McpSyncClientCustomizer;
 import org.springframework.ai.tokenizer.JTokkitTokenCountEstimator;
 import org.springframework.ai.tokenizer.TokenCountEstimator;
 import org.springframework.ai.tool.ToolCallback;
@@ -73,7 +74,7 @@ public class ApplicationConfig {
 
     @PostConstruct
     public void dependencyValidation() {
-        var validator = new SoftwareDependencyValidator("npx", "uvx");
+        var validator = new SoftwareDependencyValidator("npx");
         validator.verifyDependencies();
     }
 
@@ -131,8 +132,8 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public CustomMcpAsyncClientCustomizer customMcpAsyncClientCustomizer(@Value("#{'${core.mcp.roots}'.split(',')}") String[] roots) {
-        return new CustomMcpAsyncClientCustomizer(roots);
+    public McpSyncClientCustomizer customMcpSyncClientCustomizer(@Value("#{'${core.mcp.roots}'.split(',')}") String[] roots) {
+        return new CustomMcpSyncClientCustomizer(roots);
     }
 
     @Bean

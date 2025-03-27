@@ -31,10 +31,10 @@ class CustomMcpAsyncClientCustomizerTest {
         String emptyRoot = "";
 
         // Act
-        CustomMcpAsyncClientCustomizer customizer = new CustomMcpAsyncClientCustomizer(invalidPath, emptyRoot);
+        CustomMcpSyncClientCustomizer customizer = new CustomMcpSyncClientCustomizer(invalidPath, emptyRoot);
 
         // Assert
-        McpClient.AsyncSpec spec = mock(McpClient.AsyncSpec.class);
+        McpClient.SyncSpec spec = mock(McpClient.SyncSpec.class);
         customizer.customize("test", spec);
 
         @SuppressWarnings("unchecked")
@@ -53,10 +53,10 @@ class CustomMcpAsyncClientCustomizerTest {
         String validPath = testDirPath.toFile().getAbsolutePath();
 
         // Act
-        CustomMcpAsyncClientCustomizer customizer = new CustomMcpAsyncClientCustomizer(validPath);
+        CustomMcpSyncClientCustomizer customizer = new CustomMcpSyncClientCustomizer(validPath);
 
         // Assert
-        McpClient.AsyncSpec spec = mock(McpClient.AsyncSpec.class);
+        McpClient.SyncSpec spec = mock(McpClient.SyncSpec.class);
         customizer.customize("test", spec);
 
         @SuppressWarnings("unchecked")
@@ -84,10 +84,10 @@ class CustomMcpAsyncClientCustomizerTest {
         String validPath2 = testDir2Path.toFile().getAbsolutePath();
 
         // Act
-        CustomMcpAsyncClientCustomizer customizer = new CustomMcpAsyncClientCustomizer(validPath1, validPath2);
+        CustomMcpSyncClientCustomizer customizer = new CustomMcpSyncClientCustomizer(validPath1, validPath2);
 
         // Assert
-        McpClient.AsyncSpec spec = mock(McpClient.AsyncSpec.class);
+        McpClient.SyncSpec spec = mock(McpClient.SyncSpec.class);
         customizer.customize("test", spec);
 
         @SuppressWarnings("unchecked")
@@ -122,10 +122,10 @@ class CustomMcpAsyncClientCustomizerTest {
         String invalidPath = "non-existent-path";
 
         // Act
-        CustomMcpAsyncClientCustomizer customizer = new CustomMcpAsyncClientCustomizer(validPath, invalidPath);
+        CustomMcpSyncClientCustomizer customizer = new CustomMcpSyncClientCustomizer(validPath, invalidPath);
 
         // Assert
-        McpClient.AsyncSpec spec = mock(McpClient.AsyncSpec.class);
+        McpClient.SyncSpec spec = mock(McpClient.SyncSpec.class);
         customizer.customize("test", spec);
 
         @SuppressWarnings("unchecked")

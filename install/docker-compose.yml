@@ -2,23 +2,35 @@ services:
   deepdesk:
     image: verrerie/deepdesk:latest
     ports:
-      - 18082:8080
+      - 18082
     environment:
-      - WOKA_API_KEY=your_woka_api_key
-      - BOCHAT_API_KEY=your_bocchat_api_key
+      - WOKA_API_KEY=${WOKA_API_KEY}
+      - BOCHA_API_KEY=${BOCHA_API_KEY}
     volumes:
-      - ./deepdesk:/config
+      - ./deepdesk/application.yml:/app/application.yml
+      - ./deepdesk/mcp-servers.json:/app/mcp-servers.json
+
   filesystem:
     image: verrerie/filesystem-go:latest
     ports:
       - 38085:38085
     volumes:
       - ./filesystem:/projects
+    environment:
+      - MCP_SERVER_MODE=sse
+      - MCP_LISTEN_ADDR=filesystem:38085
+  
   chroma:
     image: ghcr.io/chroma-core/chroma:0.5.20
     ports:
       - 8000:8000
+    volumes:
+      - ./chroma:/data
+
+  mysql:
+    image: mysql/mysql-server:5.7
+    ports:
+      - 3306:3306
     environment:
-      - CHROMA_API_IMPL=rest
-      - CHROMA_HOST=0.0.0.0
-      - CHROMA_PORT=8000
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=deepdesk
