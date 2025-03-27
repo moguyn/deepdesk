@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.5](https://github.com/moguyn/deepdesk/compare/v0.4.4...v0.4.5) (2025-03-27)
+
+
+### Bug Fixes
+
+* add study for spring ai tool invocation ([#128](https://github.com/moguyn/deepdesk/issues/128)) ([6715c24](https://github.com/moguyn/deepdesk/commit/6715c248bf20669040f0a1066ca1867c87aebf90))
+
 ## [0.4.4](https://github.com/moguyn/deepdesk/compare/v0.4.3...v0.4.4) (2025-03-23)
 
 
