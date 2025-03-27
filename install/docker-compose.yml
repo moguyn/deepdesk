@@ -16,6 +16,8 @@ services:
       - 38085:38085
     volumes:
       - ./filesystem:/projects
+    environment:
+      - MCP_SERVER_LISTEN=filesystem:38085
   
   chroma:
     image: ghcr.io/chroma-core/chroma:0.5.20
