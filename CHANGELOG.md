@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.6](https://github.com/moguyn/deepdesk/compare/v0.4.5...v0.4.6) (2025-03-30)
+
+
+### Bug Fixes
+
+* step and deps ([#133](https://github.com/moguyn/deepdesk/issues/133)) ([8616f5a](https://github.com/moguyn/deepdesk/commit/8616f5a87680ed33baf2b2351e2a1dd4f7b90c8a))
+
 ## [0.4.5](https://github.com/moguyn/deepdesk/compare/v0.4.4...v0.4.5) (2025-03-27)
 
 
