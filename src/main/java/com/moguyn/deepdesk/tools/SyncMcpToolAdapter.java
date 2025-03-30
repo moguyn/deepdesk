@@ -52,6 +52,7 @@ public class SyncMcpToolAdapter implements ToolCallback {
                         new RuntimeException(response.content().toString())
                 );
             }
+            log.debug("Tool response: {}", response.content());
             return ModelOptionsUtils.toJsonString(response.content());
         } catch (Exception e) {
             // Throw all exceptions as ToolExecutionException
