@@ -14,12 +14,4 @@ public record ChatMessage(
     public static ChatMessage of(String role, String content) {
         return new ChatMessage(role, content, null, null);
     }
-
-    public static ChatMessage of(String role, String content, String name) {
-        return new ChatMessage(role, content, name, null);
-    }
-
-    public static ChatMessage of(String role, String content, String name, Object toolCalls) {
-        return new ChatMessage(role, content, name, toolCalls);
-    }
 }
