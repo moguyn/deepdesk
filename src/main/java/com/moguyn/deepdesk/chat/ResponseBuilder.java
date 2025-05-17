@@ -34,12 +34,12 @@ public class ResponseBuilder {
 
         // Create a choice with the AI response
         Choice choice = new Choice(
-                0, 
+                0,
                 ChatMessage.builder()
                         .role("assistant")
                         .content(reply)
-                        .build(), 
-                "stop", 
+                        .build(),
+                "stop",
                 null);
 
         // Create OpenAI usage information
