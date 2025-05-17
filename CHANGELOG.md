@@ -1,4 +1,6 @@
 # Changelog
+## [0.4.8](https://github.com/moguyn/deepdesk/compare/v0.4.7...v0.4.8) (2025-05-06)
+ * fix lombok and release
 
 ## [0.4.7](https://github.com/moguyn/deepdesk/compare/v0.4.6...v0.4.7) (2025-05-06)
 
