@@ -37,10 +37,10 @@ public class OpenAiService {
 
         // Prepare the prompt with messages
         Prompt prompt = messageConverter.createPrompt(request);
-        
+
         // Configure chat client request spec
         ChatClient.ChatClientRequestSpec promptSpec = chatClient.prompt(prompt);
-        
+
         // Set conversation ID if user is provided
         if (request.getUser() != null) {
             promptSpec = promptSpec.advisors(ad
@@ -56,25 +56,26 @@ public class OpenAiService {
     }
 
     /**
-     * Process a streaming chat request and send chunks of the response as Server-Sent Events
+     * Process a streaming chat request and send chunks of the response as
+     * Server-Sent Events
      */
     public Flux<ChatCompletionChunk> streamChat(ChatCompletionRequest request) {
         // Prepare the prompt with messages
         Prompt prompt = messageConverter.createPrompt(request);
-        
+
         // Configure chat client request spec
         ChatClient.ChatClientRequestSpec promptSpec = chatClient.prompt(prompt);
-        
+
         // Set conversation ID if user is provided
         if (request.getUser() != null) {
             promptSpec = promptSpec.advisors(ad
                     -> ad.param(CHAT_MEMORY_CONVERSATION_ID_KEY, request.getUser()));
         }
-        
+
         var chunkId = "deepdesk-" + java.util.UUID.randomUUID();
         var systemFingerprint = "fp_" + java.util.UUID.randomUUID().toString();
         var created = System.currentTimeMillis() / 1000;
-        
+
         return promptSpec
                 .stream()
                 .chatResponse()
