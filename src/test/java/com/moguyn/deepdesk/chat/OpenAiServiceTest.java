@@ -126,10 +126,7 @@ class OpenAiServiceTest {
 
             com.moguyn.deepdesk.openai.model.Choice choice
                     = new com.moguyn.deepdesk.openai.model.Choice(0,
-                            com.moguyn.deepdesk.openai.model.ChatMessage.builder()
-                                    .role("assistant")
-                                    .content(reply)
-                                    .build(),
+                            com.moguyn.deepdesk.openai.model.ChatMessage.of("assistant", reply),
                             "stop",
                             null);
 
@@ -151,7 +148,7 @@ class OpenAiServiceTest {
         // Arrange
         ChatCompletionRequest request = new ChatCompletionRequest();
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new ChatMessage("user", "Hello"));
+        messages.add(ChatMessage.of("user", "Hello"));
         request.setMessages(messages);
         request.setModel("gpt-3.5-turbo");
 
@@ -179,8 +176,8 @@ class OpenAiServiceTest {
         // Arrange
         ChatCompletionRequest request = new ChatCompletionRequest();
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new ChatMessage("system", "Custom system prompt"));
-        messages.add(new ChatMessage("user", "Hello"));
+        messages.add(ChatMessage.of("system", "Custom system prompt"));
+        messages.add(ChatMessage.of("user", "Hello"));
         request.setMessages(messages);
 
         when(responseSpec.content()).thenReturn("Hello, how can I help you?");
@@ -204,7 +201,7 @@ class OpenAiServiceTest {
         // Arrange
         ChatCompletionRequest request = new ChatCompletionRequest();
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new ChatMessage("user", "Hello"));
+        messages.add(ChatMessage.of("user", "Hello"));
         request.setMessages(messages);
         request.setUser("user-123");
 
@@ -222,7 +219,7 @@ class OpenAiServiceTest {
         // Arrange
         ChatCompletionRequest request = new ChatCompletionRequest();
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new ChatMessage("user", "Hello"));
+        messages.add(ChatMessage.of("user", "Hello"));
         request.setMessages(messages);
 
         when(responseSpec.content()).thenReturn("Response text");
@@ -239,7 +236,7 @@ class OpenAiServiceTest {
         // Arrange
         ChatCompletionRequest request = new ChatCompletionRequest();
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new ChatMessage("user", "Hello"));
+        messages.add(ChatMessage.of("user", "Hello"));
         request.setMessages(messages);
         request.setStream(true);
 
@@ -254,7 +251,7 @@ class OpenAiServiceTest {
         // Arrange
         ChatCompletionRequest request = new ChatCompletionRequest();
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new ChatMessage("unsupported_role", "Content"));
+        messages.add(ChatMessage.of("unsupported_role", "Content"));
         request.setMessages(messages);
 
         // Set up MessageConverter to throw an error for unsupported role
@@ -276,7 +273,7 @@ class OpenAiServiceTest {
         // Arrange
         ChatCompletionRequest request = new ChatCompletionRequest();
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new ChatMessage("user", "Hello"));
+        messages.add(ChatMessage.of("user", "Hello"));
         request.setMessages(messages);
         request.setStream(true);
         request.setModel("test-model");
@@ -334,7 +331,7 @@ class OpenAiServiceTest {
         // Arrange
         ChatCompletionRequest request = new ChatCompletionRequest();
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new ChatMessage("user", "Hello"));
+        messages.add(ChatMessage.of("user", "Hello"));
         request.setMessages(messages);
         request.setStream(true);
 
@@ -359,7 +356,7 @@ class OpenAiServiceTest {
         // Arrange
         ChatCompletionRequest request = new ChatCompletionRequest();
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new ChatMessage("user", "Hello"));
+        messages.add(ChatMessage.of("user", "Hello"));
         request.setMessages(messages);
 
         when(responseSpec.content()).thenReturn("");
@@ -376,7 +373,7 @@ class OpenAiServiceTest {
         // Arrange
         ChatCompletionRequest request = new ChatCompletionRequest();
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new ChatMessage("user", "Hello"));
+        messages.add(ChatMessage.of("user", "Hello"));
         request.setMessages(messages);
 
         when(responseSpec.content()).thenReturn(null);
@@ -393,9 +390,9 @@ class OpenAiServiceTest {
         // Arrange
         ChatCompletionRequest request = new ChatCompletionRequest();
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new ChatMessage("system", "System message"));
-        messages.add(new ChatMessage("user", "User message"));
-        messages.add(new ChatMessage("assistant", "Assistant message"));
+        messages.add(ChatMessage.of("system", "System message"));
+        messages.add(ChatMessage.of("user", "User message"));
+        messages.add(ChatMessage.of("assistant", "Assistant message"));
         request.setMessages(messages);
 
         when(responseSpec.content()).thenReturn("Response");
@@ -413,8 +410,8 @@ class OpenAiServiceTest {
         // Arrange
         ChatCompletionRequest request = new ChatCompletionRequest();
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new ChatMessage("system", "Custom system prompt"));
-        messages.add(new ChatMessage("user", "Hello"));
+        messages.add(ChatMessage.of("system", "Custom system prompt"));
+        messages.add(ChatMessage.of("user", "Hello"));
         request.setMessages(messages);
         request.setStream(true);
 
@@ -439,7 +436,7 @@ class OpenAiServiceTest {
         // Arrange
         ChatCompletionRequest request = new ChatCompletionRequest();
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new ChatMessage("user", "Hello"));
+        messages.add(ChatMessage.of("user", "Hello"));
         request.setMessages(messages);
         request.setStream(true);
         request.setUser("user123"); // Set conversation ID
@@ -466,7 +463,7 @@ class OpenAiServiceTest {
         // Arrange
         ChatCompletionRequest request = new ChatCompletionRequest();
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new ChatMessage("unsupported_role", "Content"));
+        messages.add(ChatMessage.of("unsupported_role", "Content"));
         request.setMessages(messages);
         request.setStream(true);
 

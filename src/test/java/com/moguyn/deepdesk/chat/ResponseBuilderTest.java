@@ -35,7 +35,7 @@ public class ResponseBuilderTest {
         ChatCompletionRequest request = new ChatCompletionRequest();
         request.setModel("gpt-4");
         request.setMessages(List.of(
-                ChatMessage.builder().role("user").content("What is AI?").build()
+                ChatMessage.of("user", "What is AI?")
         ));
 
         String reply = "AI is artificial intelligence.";
@@ -68,7 +68,7 @@ public class ResponseBuilderTest {
         ChatCompletionRequest request = new ChatCompletionRequest();
         request.setModel("gpt-4");
         request.setMessages(List.of(
-                ChatMessage.builder().role("user").content("Hello").build()
+                ChatMessage.of("user", "Hello")
         ));
 
         String reply = "";

@@ -103,10 +103,7 @@ public class OpenAiService {
 
                                 // Safely create delta message
                                 var content = g.getOutput().getText();
-                                choiceBuilder.delta(ChatMessage.builder()
-                                        .role(content != null && content.isEmpty() ? "assistant" : null)
-                                        .content(content)
-                                        .build());
+                                choiceBuilder.delta(ChatMessage.of(content != null && content.isEmpty() ? "assistant" : "", content));
 
                                 // Set finish reason if available
                                 choiceBuilder
