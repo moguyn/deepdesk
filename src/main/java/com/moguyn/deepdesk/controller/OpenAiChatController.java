@@ -41,29 +41,26 @@ public class OpenAiChatController {
             return ResponseEntity.ok(response);
         } else {
             return openAiService.streamChat(request)
-            .onErrorResume(e -> {
-                // Log the error
-                log.error("Error in chat stream: {}", e.getMessage(), e);
+                    .onErrorResume(e -> {
+                        // Log the error
+                        log.error("Error in chat stream: {}", e.getMessage(), e);
 
-                // Return an error chunk
-                ChatCompletionChunk errorChunk = ChatCompletionChunk.builder()
-                        .id("error-" + java.util.UUID.randomUUID())
-                        .object("chat.completion.chunk")
-                        .created(System.currentTimeMillis() / 1000)
-                        .model(request.getModel())
-                        .choices(List.of(
-                                ChatCompletionChunk.ChunkChoice.builder()
-                                        .index(0)
-                                        .delta(ChatMessage.builder()
-                                                .role("assistant")
-                                                .content("An error occurred: " + e.getMessage())
-                                                .build())
-                                        .finishReason("error")
-                                        .build()
-                        ))
-                        .build();
-                return Flux.just(errorChunk);
-            });
+                        // Return an error chunk
+                        ChatCompletionChunk errorChunk = ChatCompletionChunk.builder()
+                                .id("error-" + java.util.UUID.randomUUID())
+                                .object("chat.completion.chunk")
+                                .created(System.currentTimeMillis() / 1000)
+                                .model(request.getModel())
+                                .choices(List.of(
+                                        ChatCompletionChunk.ChunkChoice.builder()
+                                                .index(0)
+                                                .delta(ChatMessage.of("assistant", "An error occurred: " + e.getMessage()))
+                                                .finishReason("error")
+                                                .build()
+                                ))
+                                .build();
+                        return Flux.just(errorChunk);
+                    });
         }
     }
 

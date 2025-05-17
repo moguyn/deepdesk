@@ -82,7 +82,7 @@ public class OpenAiChatControllerTest {
                 .build();
 
         // Set up reusable objects
-        ChatMessage assistantMessage = new ChatMessage("assistant", TEST_AI_RESPONSE);
+        ChatMessage assistantMessage = ChatMessage.of("assistant", TEST_AI_RESPONSE);
 
         Choice choice = new Choice(0, assistantMessage, "stop", null);
 
@@ -100,7 +100,7 @@ public class OpenAiChatControllerTest {
     @Test
     void chat_shouldReturnValidResponse() throws Exception {
         // Arrange
-        ChatMessage message = new ChatMessage("user", TEST_USER_MESSAGE);
+        ChatMessage message = ChatMessage.of("user", TEST_USER_MESSAGE);
 
         ChatCompletionRequest request = new ChatCompletionRequest();
         request.setModel(TEST_MODEL);
@@ -129,7 +129,7 @@ public class OpenAiChatControllerTest {
     @Test
     void chat_shouldReturnStreamResponse_whenStreaming() throws Exception {
         // Arrange
-        ChatMessage message = new ChatMessage("user", TEST_USER_MESSAGE);
+        ChatMessage message = ChatMessage.of("user", TEST_USER_MESSAGE);
 
         ChatCompletionRequest request = new ChatCompletionRequest();
         request.setModel(TEST_MODEL);
@@ -143,7 +143,7 @@ public class OpenAiChatControllerTest {
                 .model(TEST_MODEL)
                 .choices(Arrays.asList(ChatCompletionChunk.ChunkChoice.builder()
                         .index(0)
-                        .delta(ChatMessage.builder().content("Hello").build())
+                        .delta(ChatMessage.of("assistant", "Hello"))
                         .finishReason("stop")
                         .build()))
                 .build();
@@ -172,7 +172,7 @@ public class OpenAiChatControllerTest {
     @Test
     void chatStream_shouldHandleErrorsGracefully() throws Exception {
         // Arrange
-        ChatMessage message = new ChatMessage("user", TEST_USER_MESSAGE);
+        ChatMessage message = ChatMessage.of("user", TEST_USER_MESSAGE);
 
         ChatCompletionRequest request = new ChatCompletionRequest();
         request.setModel(TEST_MODEL);
@@ -198,7 +198,7 @@ public class OpenAiChatControllerTest {
     @Test
     void chatStream_shouldHandleNonStreamingRequestCorrectly() throws Exception {
         // Arrange
-        ChatMessage message = new ChatMessage("user", TEST_USER_MESSAGE);
+        ChatMessage message = ChatMessage.of("user", TEST_USER_MESSAGE);
 
         // Create a request with stream=false
         ChatCompletionRequest request = new ChatCompletionRequest();

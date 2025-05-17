@@ -32,8 +32,8 @@ public class MessageConverterTest {
     void shouldConvertOpenAiMessagesToSpringMessages() {
         // Given
         List<ChatMessage> openAiMessages = List.of(
-                ChatMessage.builder().role("user").content("Hello").build(),
-                ChatMessage.builder().role("assistant").content("Hi there").build()
+                ChatMessage.of("user", "Hello"),
+                ChatMessage.of("assistant", "Hi there")
         );
 
         // When
@@ -56,8 +56,8 @@ public class MessageConverterTest {
     void shouldNotAddSystemMessageIfAlreadyPresent() {
         // Given
         List<ChatMessage> openAiMessages = List.of(
-                ChatMessage.builder().role("system").content("Custom system prompt").build(),
-                ChatMessage.builder().role("user").content("Hello").build()
+                ChatMessage.of("system", "Custom system prompt"),
+                ChatMessage.of("user", "Hello")
         );
 
         // When
@@ -77,7 +77,7 @@ public class MessageConverterTest {
     void shouldThrowExceptionForUnsupportedRole() {
         // Given
         List<ChatMessage> openAiMessages = List.of(
-                ChatMessage.builder().role("unsupported").content("Bad role").build()
+                ChatMessage.of("unsupported", "Bad role")
         );
 
         // When/Then
@@ -92,7 +92,7 @@ public class MessageConverterTest {
         // Given
         ChatCompletionRequest request = new ChatCompletionRequest();
         request.setMessages(List.of(
-                ChatMessage.builder().role("user").content("Hello").build()
+                ChatMessage.of("user", "Hello")
         ));
 
         // When

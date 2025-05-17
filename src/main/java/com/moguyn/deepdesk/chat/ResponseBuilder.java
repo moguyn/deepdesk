@@ -35,10 +35,7 @@ public class ResponseBuilder {
         // Create a choice with the AI response
         Choice choice = new Choice(
                 0,
-                ChatMessage.builder()
-                        .role("assistant")
-                        .content(reply)
-                        .build(),
+                ChatMessage.of("assistant", reply),
                 "stop",
                 null);
 
