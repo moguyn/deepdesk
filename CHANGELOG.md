@@ -1,4 +1,21 @@
 # Changelog
+## [0.4.8](https://github.com/moguyn/deepdesk/compare/v0.4.7...v0.4.8) (2025-05-17)
+
+
+### Bug Fixes
+
+* improve 21 ([#146](https://github.com/moguyn/deepdesk/issues/146)) ([2a13acf](https://github.com/moguyn/deepdesk/commit/2a13acf6f6d5413bb76a6c46c627bbebaddf4768))
+* lombok issues ([#145](https://github.com/moguyn/deepdesk/issues/145)) ([9c078f6](https://github.com/moguyn/deepdesk/commit/9c078f6aaf08671c4b231e2e02d9472ae4983d19))
+* release packages ([#143](https://github.com/moguyn/deepdesk/issues/143)) ([0550750](https://github.com/moguyn/deepdesk/commit/05507504e67bae8fd1f68c1e3d108d50ca8f23cf))
+* release packages ([#144](https://github.com/moguyn/deepdesk/issues/144)) ([1379720](https://github.com/moguyn/deepdesk/commit/1379720e1d6fbb57eb4d9f6494baaa044c10369c))
+* reset release please ([#148](https://github.com/moguyn/deepdesk/issues/148)) ([f4d88ab](https://github.com/moguyn/deepdesk/commit/f4d88ab54b5b4824fcb660dd89d3afb173b4f6a6))
+* update changelog ([#147](https://github.com/moguyn/deepdesk/issues/147)) ([6bcfd2e](https://github.com/moguyn/deepdesk/commit/6bcfd2ebcc029505b655e75ace171575b8265927))
+
+
+### Miscellaneous Chores
+
+* release 0.4.8 ([#149](https://github.com/moguyn/deepdesk/issues/149)) ([32315a1](https://github.com/moguyn/deepdesk/commit/32315a1f1ee729145569add8e3800edc250de0e0))
+
 ## [0.4.8](https://github.com/moguyn/deepdesk/compare/v0.4.7...v0.4.8) (2025-05-06)
  * fix lombok and release
 
